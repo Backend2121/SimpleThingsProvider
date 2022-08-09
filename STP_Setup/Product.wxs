@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"><?define SimpleThingsProvider_TargetDir=$(var.SimpleThingsProvider.TargetDir)?>
+	<Product Id="*" Name="Simple Things Provider" Language="1033" Version="1.0.0.0" Manufacturer="Backend2121" UpgradeCode="9c8751eb-af2f-437a-b5be-ea0a5eeb646c">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes" />
+
+		<Feature Id="ProductFeature" Title="SimpleThingsProvider" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+			<ComponentRef Id="ApplicationShortcut" />
+			<ComponentRef Id="ApplicationShortcutDesktop" />
+		</Feature>
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="SimpleThingsProvider" />
+			</Directory>
+			<Directory Id="ProgramMenuFolder">
+				<Directory Id="ApplicationProgramsFolder" Name="SimpleThingsProvider"/>
+			</Directory>
+			<Directory Id="DesktopFolder" Name="Desktop"/>
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<DirectoryRef Id="ApplicationProgramsFolder">
+			<Component Id="ApplicationShortcut" Guid="8D394FF1-6DF9-4E05-86A5-50A1042D06BE">
+				<Shortcut Id="ApplicationStartMenuShortcut" Name="SimpleThingsProvider" Description="SimpleThingsProvider" Target="[INSTALLFOLDER]SimpleThingsProvider.exe" WorkingDirectory="INSTALLFOLDER" />
+				<RemoveFolder Id="RemoveApplicationProgramsFolder" Directory="ApplicationProgramsFolder" On="uninstall" />
+				<RegistryValue Root="HKCU" Key="Software\SimpleThingsProvider" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+			</Component>
+		</DirectoryRef>
+		<DirectoryRef Id="DesktopFolder">
+			<Component Id="ApplicationShortcutDesktop" Guid="9B69FE87-88FA-499F-91C6-BC6B87039416">
+				<Shortcut Id="ApplicationDesktopShortcut" Name="SimpleThingsProvider" Description="SimpleThingsProvider" Target="[INSTALLFOLDER]SimpleThingsProvider.exe" WorkingDirectory="INSTALLFOLDER" />
+				<RemoveFolder Id="RemoveDesktopFolder" Directory="DesktopFolder" On="uninstall" />
+				<RegistryValue Root="HKCU" Key="Software\SimpleThingsProvider" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+			</Component>
+		</DirectoryRef>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			<Component Id="HtmlAgilityPack.dll" Guid="5ab387d9-834c-4ad4-92a0-23dbee0386c7">
+			  <File Id="HtmlAgilityPack.dll" Name="HtmlAgilityPack.dll" Source="$(var.SimpleThingsProvider_TargetDir)HtmlAgilityPack.dll" />
+			</Component>
+			<Component Id="SimpleThingsProvider.dll" Guid="a5e60903-135e-4cea-b547-edcd0b45732a">
+			  <File Id="SimpleThingsProvider.dll" Name="SimpleThingsProvider.dll" Source="$(var.SimpleThingsProvider_TargetDir)SimpleThingsProvider.dll" />
+			</Component>
+			<Component Id="SimpleThingsProvider.runtimeconfig.json" Guid="6111cc15-1118-4d03-bedb-0e39b5182c4a">
+			  <File Id="SimpleThingsProvider.runtimeconfig.json" Name="SimpleThingsProvider.runtimeconfig.json" Source="$(var.SimpleThingsProvider_TargetDir)SimpleThingsProvider.runtimeconfig.json" />
+			</Component>
+			<Component Id="SimpleThingsProvider.exe" Guid="5D03D291-EAB5-4516-A301-C18224FB1CF2">
+				<File Id="SimpleThingsProvider.exe" Name="SimpleThingsProvider.exe" Source="$(var.SimpleThingsProvider_TargetDir)SimpleThingsProvider.exe" />
+			</Component>
+		</ComponentGroup>
+	</Fragment>
+</Wix>
