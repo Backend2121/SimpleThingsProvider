@@ -12,7 +12,7 @@
             <RowDefinition Height="189*"/>
         </Grid.RowDefinitions>
         <Label Content="Simple Things Provider" FontWeight="Bold" Margin="0,32,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" FontSize="24"/>
-        <Label Content="Version: 1.0.0" Margin="0,80,0,10" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="24"/>
+        <Label x:Name="VersionLabel" Content="Version: 1.0.0" Margin="0,80,0,10" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="24"/>
         <Button x:Name="PatreonButton" HorizontalAlignment="Center" Margin="0,39,0,0" Grid.Row="1" VerticalAlignment="Top" Click="openPatreon">
             <DockPanel>
                 <Image Source="C:\Users\alexi\source\repos\TorrentScraper\TorrentScraper\data\Patreon.png" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="20" MaxHeight="20" DockPanel.Dock="Left"/>

@@ -34,20 +34,58 @@ namespace SimpleThingsProvider
         {
             Application.Current.MainWindow = this;
             InitializeComponent();
+
+            Logger.Log("Initialized MainWindow", "Main");
+
             WebsiteSource.SelectedIndex = Settings.Default.WebsiteSelected;
             WebsiteSubSelector.SelectedIndex = Settings.Default.WebsiteSubSelected;
+
+            Logger.Log($"Loaded settings: {WebsiteSource.SelectedIndex}___{WebsiteSubSelector.SelectedIndex}", "Main");
+
             if (WebsiteSource.SelectedItem.ToString() == "WoWRoms") { WebsiteSubSelector.IsEnabled = true; }
             else { WebsiteSubSelector.IsEnabled = false; }
+            try
+            {
+                Logger.Log("Searching for new updates", "Updater");
+                checkUpdate();
+            }
+            catch (Exception e)
+            {
+                if (e.ToString() == "ArgumentNullException")
+                {
+                    Logger.Log($"{e}", "Exception Handler");
+                }
+                if (e.ToString() == "WebException")
+                {
+                    Logger.Log($"{e}", "Exception Handler");
+                }
+            }
+            Logger.Log("Everything ready!", "Main");
+        }
+        
+        private void checkUpdate()
+        {
+            string repoURL = "https://raw.githubusercontent.com/Backend2121/SimpleThingsProvider/master/TorrentScraper/Settings.settings";
 
-            string myBotNewVersionURL = "https://raw.githubusercontent.com/Backend2121/SimpleThingsProvider/master/TorrentScraper/Settings.settings";
-
-            WebClient myBotNewVersionClient = new WebClient();
-            Stream stream = myBotNewVersionClient.OpenRead(myBotNewVersionURL);
+            WebClient webClient = new WebClient();
+            Stream stream = webClient.OpenRead(repoURL);
             StreamReader reader = new StreamReader(stream);
             String content = reader.ReadToEnd();
-            System.Diagnostics.Debug.WriteLine(content);
 
-            var start = content.IndexOf("ApplicationVersion")
+            var start = content.IndexOf("ApplicationVersion");
+            var end = content.IndexOf("</Value>", start);
+            var start2 = content.IndexOf("(Default)", start);
+            var version = content.Substring(start2 + 11, end - start2 - 11);
+            if (version != Settings.Default.ApplicationVersion)
+            {
+                if (UpdateAvailable() == MessageBoxResult.Yes)
+                {
+                    var process = new System.Diagnostics.ProcessStartInfo() { UseShellExecute = true, FileName = "https://github.com/Backend2121/SimpleThingsProvider/releases/latest" };
+                    System.Diagnostics.Process.Start(process);
+                    Logger.Log($"Newer version: {version} found!", "Updater");
+                    Close();
+                }
+            }
         }
         public class Result
         {
@@ -78,19 +116,29 @@ namespace SimpleThingsProvider
         }
         public void Alert(string messageBoxText, string caption)
         {
+            Logger.Log(messageBoxText, "Alert");
             MessageBoxButton button = MessageBoxButton.OK;
             MessageBoxImage icon = MessageBoxImage.Error;
             MessageBoxResult result;
 
             result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.OK);
         }
+        public MessageBoxResult UpdateAvailable()
+        {
+            MessageBoxButton button = MessageBoxButton.YesNo;
+            MessageBoxImage icon = MessageBoxImage.Question;
+            MessageBoxResult result;
+
+            return MessageBox.Show("A new version of this software has been found, do you want to open the download page?", "UPDATE", button, icon, MessageBoxResult.Yes);
+        }
         private void ResultsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             HtmlWeb web = new HtmlWeb();
             try
             {
-                var magnet = module.getMagnet(ResultsList.SelectedIndex);
-                OutputLabel.Content = magnet;
+                var entry = module.getMagnet(ResultsList.SelectedIndex);
+                Logger.Log($"Entry {entry} has been selected", "Main");
+                OutputLabel.Content = entry;
                 CopyButton.IsEnabled = true;
                 OpenInBrowserButton.IsEnabled = true;
                 return;
@@ -99,6 +147,7 @@ namespace SimpleThingsProvider
         }
         private void Copy(object sender, RoutedEventArgs e)
         {
+            Logger.Log($"User copied {OutputLabel.Content.ToString()}", "Main");
             Clipboard.SetText(OutputLabel.Content.ToString());
         }
         private void OpenWebsiteStatus(object sender, RoutedEventArgs e)
@@ -121,15 +170,19 @@ namespace SimpleThingsProvider
         }
         private void SaveSelected(object sender, RoutedEventArgs e)
         {
+            Logger.Log("Saving settings", "Main");
             if (WebsiteSource.SelectedItem.ToString() == "WoWRoms") { WebsiteSubSelector.IsEnabled = true; }
             else { WebsiteSubSelector.IsEnabled = false; }
             Settings.Default.WebsiteSelected = WebsiteSource.SelectedIndex;
             Settings.Default.Save();
+            Logger.Log("Saved settings", "Main");
         }
         private void OpenInBrowserButton_Click(object sender, RoutedEventArgs e)
         {
+            Logger.Log($"Opening in browser {OutputLabel.Content.ToString()}", "Main");
             var process = new System.Diagnostics.ProcessStartInfo() { UseShellExecute = true, FileName = OutputLabel.Content.ToString() };
             System.Diagnostics.Process.Start(process);
+            Logger.Log($"Opened in browser {OutputLabel.Content.ToString()}", "Main");
         }
         private void WebsiteSubSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

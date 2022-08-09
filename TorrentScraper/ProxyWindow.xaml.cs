@@ -24,6 +24,7 @@ namespace SimpleThingsProvider
         public ProxyWindow()
         {
             InitializeComponent();
+            Logger.Log("Initialized Proxy Window", "Proxy");
             getSettings();
         }
 
@@ -32,10 +33,12 @@ namespace SimpleThingsProvider
             IPTextBox.Text = Settings.Default.ProxyIP;
             PortTextBox.Text = Settings.Default.ProxyPort;
             ProxyEnabledCheckBox.IsChecked = Settings.Default.ProxyEnabled;
+            Logger.Log($"Loaded previous settings IP:{IPTextBox.Text} PORT:{PortTextBox.Text} ENABLED:{ProxyEnabledCheckBox.IsChecked}", "Proxy");
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            Logger.Log("Testing new proxy configuration", "Proxy");
             if (ProxyEnabledCheckBox.IsChecked.Value)
             {
                 try
@@ -45,8 +48,7 @@ namespace SimpleThingsProvider
                 }
                 catch (Exception) { MainWindow mainWindow = (MainWindow)Application.Current.MainWindow; mainWindow.Alert("Proxy unreachable", "Error"); return; }
             }
-            
-
+            Logger.Log("New proxy configuration is valid", "Proxy");
             Settings.Default.ProxyPort = PortTextBox.Text;
             Settings.Default.ProxyIP = IPTextBox.Text;
             Settings.Default.ProxyEnabled = ProxyEnabledCheckBox.IsChecked.Value;

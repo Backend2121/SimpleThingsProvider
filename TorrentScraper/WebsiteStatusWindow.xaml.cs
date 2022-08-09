@@ -41,6 +41,7 @@ namespace SimpleThingsProvider
                         {
                             Website x1337 = new Website() { name = "x1337", code = getStatus("https://www.1377x.to/") };
                             WebsiteList.Items.Add(x1337);
+                            Logger.Log($"Website {x1337.name} answered with {x1337.code} code", "WebsiteStatus");
                         });
                         break;
                     }
@@ -48,8 +49,9 @@ namespace SimpleThingsProvider
                     {
                         this.Dispatcher.Invoke(() =>
                         {
-                            Website rpgonly = new Website() { name = "x1337", code = HttpStatusCode.ServiceUnavailable, info = "Website is down or unreachable without a VPN or Proxy" };
-                            WebsiteList.Items.Add(rpgonly);
+                            Website x1337 = new Website() { name = "x1337", code = HttpStatusCode.ServiceUnavailable, info = "Website is down or unreachable without a VPN or Proxy" };
+                            WebsiteList.Items.Add(x1337);
+                            Logger.Log($"Website {x1337.name} answered with {x1337.code} code", "WebsiteStatus");
                         });
                         break;
                     }
@@ -60,6 +62,7 @@ namespace SimpleThingsProvider
                         {
                             Website thepiratebay = new Website() { name = "ThePirateBay", code = getStatus("https://thepiratebay3.co/") };
                             WebsiteList.Items.Add(thepiratebay);
+                            Logger.Log($"Website {thepiratebay.name} answered with {thepiratebay.code} code", "WebsiteStatus");
                         });
                         break;
                     }
@@ -67,8 +70,9 @@ namespace SimpleThingsProvider
                     {
                         this.Dispatcher.Invoke(() =>
                         {
-                            Website rpgonly = new Website() { name = "ThePirateBay", code = HttpStatusCode.ServiceUnavailable, info = "Website is down or unreachable without a VPN or Proxy" };
-                            WebsiteList.Items.Add(rpgonly);
+                            Website thepiratebay = new Website() { name = "ThePirateBay", code = HttpStatusCode.ServiceUnavailable, info = "Website is down or unreachable without a VPN or Proxy" };
+                            WebsiteList.Items.Add(thepiratebay);
+                            Logger.Log($"Website {thepiratebay.name} answered with {thepiratebay.code} code", "WebsiteStatus");
                         });
                         break;
                     }
@@ -79,6 +83,7 @@ namespace SimpleThingsProvider
                         {
                             Website rpgonly = new Website() { name = "RPGOnly", code = getStatus("https://rpgonly.com/") };
                             WebsiteList.Items.Add(rpgonly);
+                            Logger.Log($"Website {rpgonly.name} answered with {rpgonly.code} code", "WebsiteStatus");
                         });
                         break;
                     }
@@ -88,6 +93,7 @@ namespace SimpleThingsProvider
                         {
                             Website rpgonly = new Website() { name = "RPGOnly", code = HttpStatusCode.ServiceUnavailable, info = "Website is down or unreachable without a VPN or Proxy" };
                             WebsiteList.Items.Add(rpgonly);
+                            Logger.Log($"Website {rpgonly.name} answered with {rpgonly.code} code", "WebsiteStatus");
                         });
                         break; 
                     }
@@ -98,6 +104,7 @@ namespace SimpleThingsProvider
                         {
                             Website nxbrew = new Website() { name = "NxBrew", code = getStatus("https://nxbrew.com/") };
                             WebsiteList.Items.Add(nxbrew);
+                            Logger.Log($"Website {nxbrew.name} answered with {nxbrew.code} code", "WebsiteStatus");
                         });
                         break;
                     }
@@ -107,6 +114,7 @@ namespace SimpleThingsProvider
                         {
                             Website nxbrew = new Website() { name = "NxBrew", code = HttpStatusCode.ServiceUnavailable, info = "Website is down or unreachable without a VPN or Proxy" };
                             WebsiteList.Items.Add(nxbrew);
+                            Logger.Log($"Website {nxbrew.name} answered with {nxbrew.code} code", "WebsiteStatus");
                         });
                         break;
                     }
@@ -117,6 +125,7 @@ namespace SimpleThingsProvider
                         {
                             Website hexrom = new Website() { name = "HexRom", code = getStatus("https://hexrom.com/") };
                             WebsiteList.Items.Add(hexrom);
+                            Logger.Log($"Website {hexrom.name} answered with {hexrom.code} code", "WebsiteStatus");
                         });
                         break;
                     }
@@ -126,15 +135,39 @@ namespace SimpleThingsProvider
                         {
                             Website hexrom = new Website() { name = "HexRom", code = HttpStatusCode.ServiceUnavailable, info = "Website is down or unreachable without a VPN or Proxy" };
                             WebsiteList.Items.Add(hexrom);
+                            Logger.Log($"Website {hexrom.name} answered with {hexrom.code} code", "WebsiteStatus");
+                        });
+                        break;
+                    }
+                case "FitGirl":
+                    try
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            Website fitgirl = new Website() { name = "FitGirl", code = getStatus("https://fitgirl-repacks.site/") };
+                            WebsiteList.Items.Add(fitgirl);
+                            Logger.Log($"Website {fitgirl.name} answered with {fitgirl.code} code", "WebsiteStatus");
+                        });
+                        break;
+                    }
+                    catch (System.Net.WebException err)
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            Website fitgirl = new Website() { name = "FitGirl", code = HttpStatusCode.ServiceUnavailable, info = "Website is down or unreachable without a VPN or Proxy" };
+                            WebsiteList.Items.Add(fitgirl);
+                            Logger.Log($"Website {fitgirl.name} answered with {fitgirl.code} code", "WebsiteStatus");
                         });
                         break;
                     }
                 }
             }
-            public WebsiteStatusWindow()
+        public WebsiteStatusWindow()
         {
             InitializeComponent();
+            Logger.Log("Initialized Website Status Window", "WebsiteStatus");
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
+            Title = "Website Status Checker (I'm not frozen!)";
             foreach (var item in mainWindow.WebsiteSource.Items)
             {
                 BackgroundWorker worker = new BackgroundWorker();

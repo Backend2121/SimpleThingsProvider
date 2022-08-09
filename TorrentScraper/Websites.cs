@@ -47,6 +47,7 @@ namespace SimpleThingsProvider
             HtmlWeb web = new HtmlWeb();
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
             web.UserAgent = "SimpleThingsProvider";
+            Logger.Log("Searching for: " + toSearch, "Website (Search)");
             try
             {
                 switch (whoami)
@@ -72,8 +73,7 @@ namespace SimpleThingsProvider
                         break;
 
                     case ("WoWRoms"):
-                        var console = mainWindow.WebsiteSubSelector.SelectedItem.ToString().Replace(" ", "%2B");
-                        doc = web.Load("https://wowroms.com/en/roms/list/" + console + "?search=" + toSearch);
+                        doc = web.Load("https://wowroms.com/en/roms/list/" + mainWindow.WebsiteSubSelector.SelectedItem.ToString().Replace(" ", "%2B") + "?search=" + toSearch);
                         break;
 
                     case ("FitGirl"):
@@ -81,7 +81,7 @@ namespace SimpleThingsProvider
                         break;
                 }
             }
-            catch { return HttpStatusCode.NotFound; }
+            catch { Logger.Log($"Error code {HttpStatusCode.NotFound} for {mainWindow.WebsiteSource.SelectedItem.ToString()}", "Website (Search)"); return HttpStatusCode.NotFound; }
             
             code = web.StatusCode;
             return code;
@@ -98,6 +98,7 @@ namespace SimpleThingsProvider
         public List<String> getResults(HtmlDocument document, ListView ResultsList, string toSearch)
         {
             //Called by the main window, serves the purpose of switching based on the selection in the dropdown box
+            Logger.Log("Switching for different websites", $"Websites (getResults - {whoami})");
             switch (whoami)
             {
                 case ("x1337"):
@@ -126,8 +127,10 @@ namespace SimpleThingsProvider
 
             if (list == null)
             {
+                Logger.Log("No results found!", "Websites (getResults - x1337)");
                 return new List<string>();
             }
+            Logger.Log($"Found {list.Count} results", "Websites (getResults - x1337)");
             foreach (HtmlNode node in list)
             {
                 // Descend into further nodes to reach the a(s) with the href(depth 3)
@@ -148,6 +151,7 @@ namespace SimpleThingsProvider
                     catch (NullReferenceException) { continue; }
                 }
             }
+            Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - x1337)");
             ResultsList.ItemsSource = results;
             return underlying;
         }
@@ -155,16 +159,18 @@ namespace SimpleThingsProvider
         {
             underlying = new List<string>();
             List<Result> results = new List<Result>();
-            
 
             HtmlNodeCollection trList = document.DocumentNode.SelectNodes("/html/body/div[2]/div[3]/table[1]/tr");
             if (trList == null)
             {
+                Logger.Log("No results found!", "Websites (getResults - ThePirateBay)");
                 return new List<string>();
             }
+            Logger.Log($"Found {trList.Count} results", "Websites (getResults - ThePirateBay)");
             // Foreach tr find all the 4 td(s)
             foreach (HtmlNode tr in trList)
             {
+
                 IEnumerable<HtmlNode> descendants = tr.Descendants(1);
                 // First descendant is useless
                 var title = "";
@@ -203,9 +209,9 @@ namespace SimpleThingsProvider
                     }
                     catch (NullReferenceException) { continue; }
                 }
-                
                 results.Add(new Result() { Title = title, Seeds = seeds, Leechs = leechs, Time = time, Size = size.Replace("Size ", "") });
             }
+            Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - ThePirateBay)");
             ResultsList.ItemsSource = results;
             return underlying;
         }
@@ -215,6 +221,7 @@ namespace SimpleThingsProvider
             List<Result> results = new List<Result>();
 
             HtmlNodeCollection listNode = document.DocumentNode.SelectNodes("/html/body/div/div[6]/div/div[1]/div/main/article/div/div/ul/li");
+            Logger.Log($"Found {listNode.Count} results", "Websites (getResults - RPGOnly)");
             foreach (HtmlNode node in listNode)
             {
                 IEnumerable<HtmlNode> descendants = node.Descendants(1);
@@ -234,6 +241,7 @@ namespace SimpleThingsProvider
                     catch (NullReferenceException) { continue; }
                 }
             }
+            Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - RPGOnly)");
             ResultsList.ItemsSource = results;
             return underlying;
         }
@@ -242,6 +250,7 @@ namespace SimpleThingsProvider
             underlying = new List<string>();
             List<Result> results = new List<Result>();
             HtmlNodeCollection letters = document.DocumentNode.SelectNodes("/html/body/div/div/div/div/div[3]/div/div[2]/article/div/div[1]/div[2]/div/div/ul/li/a");
+            Logger.Log($"Found {letters.Count} results", "Websites (getResults - NxBrew)");
             foreach (HtmlNode letter in letters)
             {
                 if (letter.InnerText.ToLower().Contains(toSearch.ToLower()))
@@ -256,6 +265,7 @@ namespace SimpleThingsProvider
                     catch (NullReferenceException) { continue; }
                 }
             }
+            Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - NxBrew)");
             ResultsList.ItemsSource = results;
             return underlying;
         }
@@ -264,6 +274,7 @@ namespace SimpleThingsProvider
             underlying = new List<string>();
             List<Result> results = new List<Result>();
             HtmlNodeCollection alist = document.DocumentNode.SelectNodes("/html/body/div[2]/div[1]/div/div[1]/div/div/ul/li/a");
+            Logger.Log($"Found {alist.Count} results", "Websites (getResults - HexRom)");
             foreach (HtmlNode game in alist)
             {
                 try
@@ -273,6 +284,7 @@ namespace SimpleThingsProvider
                 }
                 catch { continue; }
             }
+            Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - HexRoms)");
             ResultsList.ItemsSource = results;
             return underlying;
         }
@@ -282,6 +294,7 @@ namespace SimpleThingsProvider
             List<Result> results = new List<Result>();
 
             HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div[1]/div/div/section/div[2]/div[5]/ul/li/ul/li[2]/div/a[1]");
+            Logger.Log($"Found {games.Count} results", "Websites (getResults - WoWRoms)");
             foreach (HtmlNode game in games)
             {
                 var title = game.InnerText;
@@ -292,6 +305,7 @@ namespace SimpleThingsProvider
                 results.Add(new Result { Title = title });
                 underlying.Add(game.Attributes["href"].Value);
             }
+            Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - WoWRoms)");
             ResultsList.ItemsSource = results;
             return underlying;
         }
@@ -301,15 +315,26 @@ namespace SimpleThingsProvider
             List<Result> results = new List<Result>();
 
             HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div/div/section/div/article/header/h1/a");
-            foreach (HtmlNode game in games)
+            try
             {
-                var title = game.InnerText;
-                title = title.Replace("&#8217;", "’");
-                title = title.Replace("&#8211;", "-");
-                title = title.Replace("&#038;", "&");
-                results.Add(new Result() { Title = title });
-                underlying.Add(game.Attributes["href"].Value);
+                Logger.Log($"Found {games.Count} results", "Websites (getResults - FitGirl)");
+                foreach (HtmlNode game in games)
+                {
+                    var title = game.InnerText;
+                    title = title.Replace("&#8217;", "’");
+                    title = title.Replace("&#8211;", "-");
+                    title = title.Replace("&#038;", "&");
+                    results.Add(new Result() { Title = title });
+                    underlying.Add(game.Attributes["href"].Value);
+                }
             }
+            catch(NullReferenceException e)
+            {
+                Logger.Log("No results found!", "Websites (getResults - FitGirl)");
+                return new List<string>();
+            }
+
+            Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - FitGirl)");
             ResultsList.ItemsSource = results;
             return underlying;
         }
@@ -321,6 +346,7 @@ namespace SimpleThingsProvider
             doc = web.Load(gameURL);
             List<GameWebsite> websites = new List<GameWebsite>();
             HtmlNode entry = doc.DocumentNode.SelectSingleNode("/html/body/div/div[6]/div/div[1]/div/main/div[1]/article/div/figure[2]/table/tbody");
+            Logger.Log($"Getting game page links", "Websites (getGamePage - RPGOnly)");
             var infos = "";
             var name = "";
             var link = "";
@@ -349,6 +375,7 @@ namespace SimpleThingsProvider
                     catch { link = ""; continue; }
                 }
             }
+            Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - RPGOnly)");
             linksWindow.LinksList.ItemsSource = websites;
             return "";
         }
@@ -359,6 +386,7 @@ namespace SimpleThingsProvider
             linksWindow.Show();
             doc = web.Load(gameURL);
             List<GameWebsite> websites = new List<GameWebsite>();
+            Logger.Log($"Getting game page links", "Websites (getGamePage - NxBrew)");
             var title = "";
             var link = "";
             var infos = "";
@@ -407,6 +435,7 @@ namespace SimpleThingsProvider
                     }
                 }
             }
+            Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - NxBrew)");
             linksWindow.LinksList.ItemsSource = websites;
             return "";
         }
@@ -422,12 +451,14 @@ namespace SimpleThingsProvider
             var infos = "";
             bool added = false;
             HtmlNodeCollection links = doc.DocumentNode.SelectNodes("/html/body/div[2]/div[1]/div/div/div/div[2]/div/table/tbody/tr/td/a");
+            Logger.Log($"Getting game page links", "Websites (getGamePage - HexRom)");
             foreach (HtmlNode downloadlink in links)
             {
                 title = downloadlink.InnerText;
                 link = downloadlink.Attributes["href"].Value;
                 if (title != " ") { websites.Add(new GameWebsite() { Link = link, Infos = title }); }   
             }
+            Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - HexRom)");
             linksWindow.LinksList.ItemsSource = websites;
             return "";
         }
@@ -435,6 +466,7 @@ namespace SimpleThingsProvider
         {
             HtmlWeb web = new HtmlWeb();
             HtmlDocument doc = web.Load(gameURL);
+            Logger.Log($"Getting the inner link from WoWRoms", "Websites (getGamePage - WoWRoms)");
             return "https://wowroms.com" + doc.DocumentNode.SelectSingleNode("/html/body/div/div/div/section/div[2]/div[2]/div[1]/div[2]/div/div[2]/a").Attributes["href"].Value;
         }
         public string getGamePage_FitGirl(string gameURL)
@@ -445,15 +477,18 @@ namespace SimpleThingsProvider
             HtmlWeb web = new HtmlWeb();
             HtmlDocument doc = web.Load(gameURL);
             HtmlNodeCollection links = doc.DocumentNode.SelectNodes("/html/body/div/div/div[1]/div/article/div/ul[1]/li/a");
+            Logger.Log($"Getting game page links", "Websites (getGamePage - FitGirl)");
             foreach (HtmlNode downloadlink in links)
             {
                 websites.Add(new GameWebsite() { Link = downloadlink.Attributes["href"].Value, Infos = downloadlink.InnerText });
             }
+            Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - FitGirl)");
             linksWindow.LinksList.ItemsSource = websites;
             return "";
         }
         public string getMagnet(int index)
         {
+            Logger.Log("Switching for link to return", $"Websites (getMagnet - {whoami})");
             switch (whoami)
             {
                 case ("x1337"):
