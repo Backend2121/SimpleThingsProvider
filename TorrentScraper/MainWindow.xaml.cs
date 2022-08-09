@@ -18,6 +18,7 @@ using System.Net.Http.Headers;
 using System.Net;
 using System.IO;
 using System.Threading;
+using System.Xml;
 
 namespace SimpleThingsProvider
 {
@@ -37,6 +38,16 @@ namespace SimpleThingsProvider
             WebsiteSubSelector.SelectedIndex = Settings.Default.WebsiteSubSelected;
             if (WebsiteSource.SelectedItem.ToString() == "WoWRoms") { WebsiteSubSelector.IsEnabled = true; }
             else { WebsiteSubSelector.IsEnabled = false; }
+
+            string myBotNewVersionURL = "https://raw.githubusercontent.com/Backend2121/SimpleThingsProvider/master/TorrentScraper/Settings.settings";
+
+            WebClient myBotNewVersionClient = new WebClient();
+            Stream stream = myBotNewVersionClient.OpenRead(myBotNewVersionURL);
+            StreamReader reader = new StreamReader(stream);
+            String content = reader.ReadToEnd();
+            System.Diagnostics.Debug.WriteLine(content);
+
+            var start = content.IndexOf("ApplicationVersion")
         }
         public class Result
         {

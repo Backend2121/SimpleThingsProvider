@@ -86,9 +86,9 @@ namespace SimpleThingsProvider {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1.0.0.0")]
-        public string Version {
+        public string ApplicationVersion {
             get {
-                return ((string)(this["Version"]));
+                return ((string)(this["ApplicationVersion"]));
             }
         }
     }
