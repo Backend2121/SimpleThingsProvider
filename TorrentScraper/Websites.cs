@@ -222,24 +222,32 @@ namespace SimpleThingsProvider
 
             HtmlNodeCollection listNode = document.DocumentNode.SelectNodes("/html/body/div/div[6]/div/div[1]/div/main/article/div/div/ul/li");
             Logger.Log($"Found {listNode.Count} results", "Websites (getResults - RPGOnly)");
-            foreach (HtmlNode node in listNode)
+            try
             {
-                IEnumerable<HtmlNode> descendants = node.Descendants(1);
-                foreach (HtmlNode descendant in descendants)
+                foreach (HtmlNode node in listNode)
                 {
-                    try
+                    IEnumerable<HtmlNode> descendants = node.Descendants(1);
+                    foreach (HtmlNode descendant in descendants)
                     {
-                        if (descendant.Attributes["href"].Value.Contains("https://"))
+                        try
                         {
-                            if (descendant.InnerText.ToLower().Contains(toSearch.ToLower()))
+                            if (descendant.Attributes["href"].Value.Contains("https://"))
                             {
-                                underlying.Add(descendant.Attributes["href"].Value);
-                                results.Add(new Result() { Title = descendant.InnerText });
+                                if (descendant.InnerText.ToLower().Contains(toSearch.ToLower()))
+                                {
+                                    underlying.Add(descendant.Attributes["href"].Value);
+                                    results.Add(new Result() { Title = descendant.InnerText });
+                                }
                             }
                         }
+                        catch (NullReferenceException) { continue; }
                     }
-                    catch (NullReferenceException) { continue; }
                 }
+            }
+            catch (NullReferenceException e)
+            {
+                Logger.Log("No results found!", "Websites (getResults - RPGOnly)");
+                return new List<string>();
             }
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - RPGOnly)");
             ResultsList.ItemsSource = results;
@@ -250,21 +258,30 @@ namespace SimpleThingsProvider
             underlying = new List<string>();
             List<Result> results = new List<Result>();
             HtmlNodeCollection letters = document.DocumentNode.SelectNodes("/html/body/div/div/div/div/div[3]/div/div[2]/article/div/div[1]/div[2]/div/div/ul/li/a");
-            Logger.Log($"Found {letters.Count} results", "Websites (getResults - NxBrew)");
-            foreach (HtmlNode letter in letters)
+            try
             {
-                if (letter.InnerText.ToLower().Contains(toSearch.ToLower()))
+                Logger.Log($"Found {letters.Count} results", "Websites (getResults - NxBrew)");
+                foreach (HtmlNode letter in letters)
                 {
-                    try
+                    if (letter.InnerText.ToLower().Contains(toSearch.ToLower()))
                     {
-                        var title = letter.InnerText.Replace("\t", "");
-                        title = title.Replace("\n", "");
-                        results.Add(new Result() { Title = title });
-                        underlying.Add(letter.Attributes["href"].Value);
+                        try
+                        {
+                            var title = letter.InnerText.Replace("\t", "");
+                            title = title.Replace("\n", "");
+                            results.Add(new Result() { Title = title });
+                            underlying.Add(letter.Attributes["href"].Value);
+                        }
+                        catch (NullReferenceException) { continue; }
                     }
-                    catch (NullReferenceException) { continue; }
                 }
             }
+            catch (NullReferenceException e)
+            {
+                Logger.Log("No results found!", "Websites (getResults - NxBrew)");
+                return new List<string>();
+            }
+            
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - NxBrew)");
             ResultsList.ItemsSource = results;
             return underlying;
@@ -274,16 +291,25 @@ namespace SimpleThingsProvider
             underlying = new List<string>();
             List<Result> results = new List<Result>();
             HtmlNodeCollection alist = document.DocumentNode.SelectNodes("/html/body/div[2]/div[1]/div/div[1]/div/div/ul/li/a");
-            Logger.Log($"Found {alist.Count} results", "Websites (getResults - HexRom)");
-            foreach (HtmlNode game in alist)
+            try
             {
-                try
+                Logger.Log($"Found {alist.Count} results", "Websites (getResults - HexRom)");
+                foreach (HtmlNode game in alist)
                 {
-                    results.Add(new Result() { Title = game.Attributes["title"].Value });
-                    underlying.Add(game.Attributes["href"].Value);
+                    try
+                    {
+                        results.Add(new Result() { Title = game.Attributes["title"].Value });
+                        underlying.Add(game.Attributes["href"].Value);
+                    }
+                    catch { continue; }
                 }
-                catch { continue; }
             }
+            catch(NullReferenceException e)
+            {
+                Logger.Log("No results found!", "Websites (getResults - HexRom)");
+                return new List<string>();
+            }
+            
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - HexRoms)");
             ResultsList.ItemsSource = results;
             return underlying;
@@ -294,17 +320,26 @@ namespace SimpleThingsProvider
             List<Result> results = new List<Result>();
 
             HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div[1]/div/div/section/div[2]/div[5]/ul/li/ul/li[2]/div/a[1]");
-            Logger.Log($"Found {games.Count} results", "Websites (getResults - WoWRoms)");
-            foreach (HtmlNode game in games)
+            try
             {
-                var title = game.InnerText;
-                title = title.Replace("\t", "");
-                title = title.Replace("\n", "");
-                title = title.Replace("\r", "");
-                title = title.Replace("  ", "");
-                results.Add(new Result { Title = title });
-                underlying.Add(game.Attributes["href"].Value);
+                Logger.Log($"Found {games.Count} results", "Websites (getResults - WoWRoms)");
+                foreach (HtmlNode game in games)
+                {
+                    var title = game.InnerText;
+                    title = title.Replace("\t", "");
+                    title = title.Replace("\n", "");
+                    title = title.Replace("\r", "");
+                    title = title.Replace("  ", "");
+                    results.Add(new Result { Title = title });
+                    underlying.Add(game.Attributes["href"].Value);
+                }
             }
+            catch
+            {
+                Logger.Log("No results found!", "Websites (getResults - WoWRoms)");
+                return new List<string>();
+            }
+            
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - WoWRoms)");
             ResultsList.ItemsSource = results;
             return underlying;

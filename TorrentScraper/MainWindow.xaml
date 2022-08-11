@@ -39,14 +39,18 @@
         </Grid.ColumnDefinitions>
         <Button x:Name="CallButton" Margin="10,20,10,0" VerticalAlignment="Top" Command="{StaticResource Search}" Grid.Column="2" Height="20">
             <DockPanel>
-                <Image Source="C:\Users\alexi\source\repos\TorrentScraper\TorrentScraper\data\WebScraping.png" Width="15" Height="15"/>
+                <Image Width="15" Height="15">
+                    <Image.Source>
+                        <BitmapImage UriSource="/data/WebScraping.png"/>
+                    </Image.Source>
+                </Image>
                 <TextBlock Text="Search" Margin="10,0,0,0"/>
             </DockPanel>
         </Button>
         <Label x:Name="StatusCodeLabel" Content="Status Code" Margin="10,50,477,10" FontWeight="Bold"/>
         <TextBox x:Name="SearchTextBox" Margin="10,20,10,0" TextWrapping="Wrap" VerticalAlignment="Top" AutomationProperties.HelpText="Search Bar" ToolTip="Search Bar" HorizontalContentAlignment="Left" RenderTransformOrigin="0.5,0.5" Height="20"/>
         <ListView x:Name="ResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,86,0,0" Grid.ColumnSpan="3" Grid.RowSpan="2" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged">
-            <ListView.View>
+        <ListView.View>
                 <GridView>
                     <GridViewColumn Width="400" Header="Title" DisplayMemberBinding="{Binding Title}"/>
                     <GridViewColumn Width="50" Header="Seeds" DisplayMemberBinding="{Binding Seeds}"/>

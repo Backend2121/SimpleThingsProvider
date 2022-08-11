@@ -4,6 +4,38 @@
              xmlns:local="clr-namespace:SimpleThingsProvider"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <Style x:Key="WindowDark" TargetType="Window">
+            <Setter Property="Background" Value="#222222"/>
+        </Style>
+        <Style x:Key="ButtonDark" TargetType="Button">
+            <Setter Property="Background" Value="#444444"/>
+        </Style>
+        <Style x:Key="ListViewDark" TargetType="ListView">
+            <Setter Property="Background" Value="#444444"/>
+        </Style>
+        <Style x:Key="GridViewColumnHeaderDark" TargetType="GridViewColumnHeader">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
+                        <Border BorderThickness="0,0,0,1" BorderBrush="Black" Background="#333333">
+                            <TextBlock x:Name="ContentHeader" Text="{TemplateBinding Content}" Padding="5,5,5,0" Width="{TemplateBinding Width}" TextAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="TextBoxDark" TargetType="TextBox">
+            <Setter Property="Background" Value="#333333"/>
+        </Style>
+        <Style x:Key="ComboBoxDark" TargetType="ComboBox">
+            <Setter Property="Background" Value="#333333"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <TextBox Background="#333333" Text="{TemplateBinding Text}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Application.Resources>
 </Application>

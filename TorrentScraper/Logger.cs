@@ -9,10 +9,9 @@ namespace SimpleThingsProvider
 {
     static class Logger
     {
-        static string file = $"LOGS/{createLogFile()}";
+        static string file = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}/SimpleThingsProvider_logs/{createLogFile()}";
         public static void Log(string logMessage, string whoami)
         {
-            System.Diagnostics.Debug.WriteLine(file);
             using (StreamWriter w = File.AppendText(file))
             {
                 w.Write("\r\nLog Entry : ");
@@ -26,9 +25,10 @@ namespace SimpleThingsProvider
         {
             var file = $"{DateTime.Now.ToLongTimeString()} {DateTime.Now.ToLongDateString()}".Replace(":", "_") + ".log";
             file = file.Replace(" ", "_");
-            if (!Directory.Exists("LOGS/"))
+            System.Diagnostics.Debug.WriteLine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "/SimpleThingsProvider_logs/"))
             {
-                Directory.CreateDirectory("LOGS/");
+                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "/SimpleThingsProvider_logs/");
             }
             
             return file;

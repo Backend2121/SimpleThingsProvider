@@ -20,5 +20,8 @@
     <Setting Name="ApplicationVersion" Type="System.String" Scope="Application">
       <Value Profile="(Default)">1.0.0.0</Value>
     </Setting>
+    <Setting Name="ColorMode" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Light</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

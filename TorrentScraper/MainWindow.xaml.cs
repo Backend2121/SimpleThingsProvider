@@ -32,8 +32,8 @@ namespace SimpleThingsProvider
         Websites module = new Websites();
         public MainWindow()
         {
-            Application.Current.MainWindow = this;
             InitializeComponent();
+            Application.Current.MainWindow = this;
 
             Logger.Log("Initialized MainWindow", "Main");
 
@@ -41,9 +41,13 @@ namespace SimpleThingsProvider
             WebsiteSubSelector.SelectedIndex = Settings.Default.WebsiteSubSelected;
 
             Logger.Log($"Loaded settings: {WebsiteSource.SelectedIndex}___{WebsiteSubSelector.SelectedIndex}", "Main");
-
-            if (WebsiteSource.SelectedItem.ToString() == "WoWRoms") { WebsiteSubSelector.IsEnabled = true; }
-            else { WebsiteSubSelector.IsEnabled = false; }
+            try
+            {
+                if (WebsiteSource.SelectedItem.ToString() == "WoWRoms") { WebsiteSubSelector.IsEnabled = true; }
+                else { WebsiteSubSelector.IsEnabled = false; }
+            }
+            catch(Exception ex) { Logger.Log(ex.ToString(), "Main"); }
+            
             try
             {
                 Logger.Log("Searching for new updates", "Updater");
@@ -61,6 +65,7 @@ namespace SimpleThingsProvider
                 }
             }
             Logger.Log("Everything ready!", "Main");
+            PiracyDisclaimer();
         }
         
         private void checkUpdate()
@@ -131,6 +136,13 @@ namespace SimpleThingsProvider
 
             return MessageBox.Show("A new version of this software has been found, do you want to open the download page?", "UPDATE", button, icon, MessageBoxResult.Yes);
         }
+        private void PiracyDisclaimer()
+        {
+            MessageBoxButton button = MessageBoxButton.OK;
+            MessageBoxImage icon = MessageBoxImage.Warning;
+
+            MessageBox.Show("This software MUST NOT be used to illegally obtain any form of media!\n\nI do not condone any form of piracy!", "WARNING", button, icon, MessageBoxResult.Yes);
+        }
         private void ResultsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             HtmlWeb web = new HtmlWeb();
@@ -180,6 +192,8 @@ namespace SimpleThingsProvider
         private void OpenInBrowserButton_Click(object sender, RoutedEventArgs e)
         {
             Logger.Log($"Opening in browser {OutputLabel.Content.ToString()}", "Main");
+            var patreon = new System.Diagnostics.ProcessStartInfo() { UseShellExecute = true, FileName = "https://Patreon.com/Backend2121" };
+            System.Diagnostics.Process.Start(patreon);
             var process = new System.Diagnostics.ProcessStartInfo() { UseShellExecute = true, FileName = OutputLabel.Content.ToString() };
             System.Diagnostics.Process.Start(process);
             Logger.Log($"Opened in browser {OutputLabel.Content.ToString()}", "Main");

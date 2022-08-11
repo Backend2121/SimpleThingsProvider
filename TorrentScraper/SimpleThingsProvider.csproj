@@ -5,10 +5,22 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>data\Icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="data\Discord.png" />
+    <None Remove="data\Github.png" />
+    <None Remove="data\Icon.ico" />
     <None Remove="data\Patreon.png" />
+    <None Remove="data\Reddit.png" />
+    <None Remove="data\WebScraping.png" />
+    <None Remove="data\Youtube.png" />
+    <None Remove="Settings.settings" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="data\Icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,7 +32,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="data\Discord.png" />
+    <Resource Include="data\Github.png" />
+    <Resource Include="data\Icon.ico" />
     <Resource Include="data\Patreon.png" />
+    <Resource Include="data\Reddit.png" />
+    <Resource Include="data\WebScraping.png" />
+    <Resource Include="data\Youtube.png" />
+    <Resource Include="Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
@@ -29,13 +51,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
 
 </Project>

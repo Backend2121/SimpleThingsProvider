@@ -15,25 +15,41 @@
         <Label x:Name="VersionLabel" Content="Version: 1.0.0" Margin="0,80,0,10" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="24"/>
         <Button x:Name="PatreonButton" HorizontalAlignment="Center" Margin="0,39,0,0" Grid.Row="1" VerticalAlignment="Top" Click="openPatreon">
             <DockPanel>
-                <Image Source="C:\Users\alexi\source\repos\TorrentScraper\TorrentScraper\data\Patreon.png" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="20" MaxHeight="20" DockPanel.Dock="Left"/>
+                <Image HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="20" MaxHeight="20" DockPanel.Dock="Left">
+                    <Image.Source>
+                        <BitmapImage UriSource="/Data/Patreon.png"/>
+                    </Image.Source>
+                </Image>
                 <TextBlock Text="Patreon" Padding="0,0,0,0" DockPanel.Dock="Right" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0" FontSize="16"/>
             </DockPanel>
         </Button>
         <Button x:Name="DiscordButton" HorizontalAlignment="Center" Margin="0,10,0,0" Grid.Row="1" VerticalAlignment="Top" FontSize="16" Click="openDiscord">
             <DockPanel>
-                <Image Source="C:\Users\alexi\source\repos\TorrentScraper\TorrentScraper\data\Discord.png" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="20" MaxHeight="20" DockPanel.Dock="Left"/>
+                <Image HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="20" MaxHeight="20" DockPanel.Dock="Left">
+                    <Image.Source>
+                        <BitmapImage UriSource="/Data/Discord.png"/>
+                    </Image.Source>
+                </Image>
                 <TextBlock Padding="0,0,0,0" DockPanel.Dock="Right" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0"><Run Text="Discord"/><Run Language="it-it" Text=" Server"/></TextBlock>
             </DockPanel>
         </Button>
         <Button x:Name="RedditButton" HorizontalAlignment="Center" Margin="0,68,0,0" Grid.Row="1" VerticalAlignment="Top" Click="openReddit">
             <DockPanel>
-                <Image Source="C:\Users\alexi\source\repos\TorrentScraper\TorrentScraper\data\Reddit.png" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="20" MaxHeight="20" DockPanel.Dock="Left"/>
+                <Image HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="20" MaxHeight="20" DockPanel.Dock="Left">
+                    <Image.Source>
+                        <BitmapImage UriSource="/Data/Reddit.png"/>
+                    </Image.Source>
+                </Image>
                 <TextBlock Padding="0,0,0,0" DockPanel.Dock="Right" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0" FontSize="16"><Run Language="it-it" Text="Reddit"/></TextBlock>
             </DockPanel>
         </Button>
         <Button x:Name="YoutubeButton" HorizontalAlignment="Center" Margin="0,97,0,0" Grid.Row="1" VerticalAlignment="Top" Click="openYoutube">
             <DockPanel>
-                <Image Source="C:\Users\alexi\source\repos\TorrentScraper\TorrentScraper\data\Youtube.png" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="20" MaxHeight="20" DockPanel.Dock="Left"/>
+                <Image HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="20" MaxHeight="20" DockPanel.Dock="Left">
+                    <Image.Source>
+                        <BitmapImage UriSource="/Data/Youtube.png"/>
+                    </Image.Source>
+                </Image>
                 <TextBlock Padding="0,0,0,0" DockPanel.Dock="Right" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0" FontSize="16"><Run Language="it-it" Text="Youtube"/></TextBlock>
             </DockPanel>
         </Button>
