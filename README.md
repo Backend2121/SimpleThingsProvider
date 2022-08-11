@@ -17,6 +17,7 @@ For any help with the software join the Discord and ask for help!
 * Game search functionality
 * Configurable Proxy
 * Update notifier
+* Easy to install
 
 # SOURCES
 **x1337** for Torrents
