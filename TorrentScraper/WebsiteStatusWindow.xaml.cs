@@ -51,7 +51,7 @@ namespace SimpleThingsProvider
                         {
                             Website x1337 = new Website() { name = "x1337", code = HttpStatusCode.ServiceUnavailable, info = "Website is down or unreachable without a VPN or Proxy" };
                             WebsiteList.Items.Add(x1337);
-                            Logger.Log($"Website {x1337.name} answered with {x1337.code} code", "WebsiteStatus");
+                            Logger.Log($"Website {x1337.name} answered with {x1337.code} code, {err}", "WebsiteStatus");
                         });
                         break;
                     }
@@ -72,7 +72,7 @@ namespace SimpleThingsProvider
                         {
                             Website thepiratebay = new Website() { name = "ThePirateBay", code = HttpStatusCode.ServiceUnavailable, info = "Website is down or unreachable without a VPN or Proxy" };
                             WebsiteList.Items.Add(thepiratebay);
-                            Logger.Log($"Website {thepiratebay.name} answered with {thepiratebay.code} code", "WebsiteStatus");
+                            Logger.Log($"Website {thepiratebay.name} answered with {thepiratebay.code} code, {err}", "WebsiteStatus");
                         });
                         break;
                     }
@@ -93,11 +93,11 @@ namespace SimpleThingsProvider
                         {
                             Website rpgonly = new Website() { name = "RPGOnly", code = HttpStatusCode.ServiceUnavailable, info = "Website is down or unreachable without a VPN or Proxy" };
                             WebsiteList.Items.Add(rpgonly);
-                            Logger.Log($"Website {rpgonly.name} answered with {rpgonly.code} code", "WebsiteStatus");
+                            Logger.Log($"Website {rpgonly.name} answered with {rpgonly.code} code,  {err}", "WebsiteStatus");
                         });
                         break; 
                     }
-                case "NxBrew":
+                /*case "NxBrew":
                     try
                     {
                         this.Dispatcher.Invoke(() =>
@@ -114,10 +114,10 @@ namespace SimpleThingsProvider
                         {
                             Website nxbrew = new Website() { name = "NxBrew", code = HttpStatusCode.ServiceUnavailable, info = "Website is down or unreachable without a VPN or Proxy" };
                             WebsiteList.Items.Add(nxbrew);
-                            Logger.Log($"Website {nxbrew.name} answered with {nxbrew.code} code", "WebsiteStatus");
+                            Logger.Log($"Website {nxbrew.name} answered with {nxbrew.code} code,  {err}", "WebsiteStatus");
                         });
                         break;
-                    }
+                    }*/
                 case "HexRom":
                     try
                     {
@@ -135,7 +135,7 @@ namespace SimpleThingsProvider
                         {
                             Website hexrom = new Website() { name = "HexRom", code = HttpStatusCode.ServiceUnavailable, info = "Website is down or unreachable without a VPN or Proxy" };
                             WebsiteList.Items.Add(hexrom);
-                            Logger.Log($"Website {hexrom.name} answered with {hexrom.code} code", "WebsiteStatus");
+                            Logger.Log($"Website {hexrom.name} answered with {hexrom.code} code,  {err}", "WebsiteStatus");
                         });
                         break;
                     }
@@ -156,7 +156,7 @@ namespace SimpleThingsProvider
                         {
                             Website fitgirl = new Website() { name = "FitGirl", code = HttpStatusCode.ServiceUnavailable, info = "Website is down or unreachable without a VPN or Proxy" };
                             WebsiteList.Items.Add(fitgirl);
-                            Logger.Log($"Website {fitgirl.name} answered with {fitgirl.code} code", "WebsiteStatus");
+                            Logger.Log($"Website {fitgirl.name} answered with {fitgirl.code} code,   {err}", "WebsiteStatus");
                         });
                         break;
                     }

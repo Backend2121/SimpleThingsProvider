@@ -47,7 +47,6 @@ namespace SimpleThingsProvider
                 else { WebsiteSubSelector.IsEnabled = false; }
             }
             catch(Exception ex) { Logger.Log(ex.ToString(), "Main"); }
-            
             try
             {
                 Logger.Log("Searching for new updates", "Updater");
@@ -65,9 +64,9 @@ namespace SimpleThingsProvider
                 }
             }
             Logger.Log("Everything ready!", "Main");
-            PiracyDisclaimer();
-        }
-        
+            //DEBUG
+            //PiracyDisclaimer();
+        } 
         private void checkUpdate()
         {
             string repoURL = "https://raw.githubusercontent.com/Backend2121/SimpleThingsProvider/master/TorrentScraper/Settings.settings";
@@ -106,11 +105,21 @@ namespace SimpleThingsProvider
             OpenInBrowserButton.IsEnabled = false;
             CopyButton.IsEnabled = false;
             OutputLabel.Content = "Output";
-            string whoami = WebsiteSource.SelectedItem.ToString();
 
-            HttpStatusCode code = module.Search(SearchTextBox.Text, whoami);
+            // Hide all ResultsLists
+            TorrentResultsList.Visibility = Visibility.Hidden;
+            VimmResultsList.Visibility = Visibility.Hidden;
+            FitGirlResultsList.Visibility = Visibility.Hidden;
+            WowRomsResultsList.Visibility = Visibility.Hidden;
+            RPGOnlyResultsList.Visibility = Visibility.Hidden;
+            HexRomResultsList.Visibility = Visibility.Hidden;
+
+            HttpStatusCode code = module.Search(SearchTextBox.Text, WebsiteSource.SelectedItem.ToString());
             if (code != HttpStatusCode.OK) { Alert("Received a non 200(OK) response!" + "\n" + code, "STD: Error"); StatusCodeLabel.Content = "Status Code: " + code; StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Red); return; }
-            else { underlying = module.getResults(module.doc, ResultsList, SearchTextBox.Text); StatusCodeLabel.Content = "Status Code: " + code; StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Green); }
+            else
+            {
+                underlying = module.getResults(module.doc, SearchTextBox.Text); StatusCodeLabel.Content = "Status Code: " + code; StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Green);
+            }
             if (underlying.Count <= 0)
             {
                 Alert("No results found!", "STD: Warning");
@@ -132,7 +141,6 @@ namespace SimpleThingsProvider
         {
             MessageBoxButton button = MessageBoxButton.YesNo;
             MessageBoxImage icon = MessageBoxImage.Question;
-            MessageBoxResult result;
 
             return MessageBox.Show("A new version of this software has been found, do you want to open the download page?", "UPDATE", button, icon, MessageBoxResult.Yes);
         }
@@ -148,7 +156,32 @@ namespace SimpleThingsProvider
             HtmlWeb web = new HtmlWeb();
             try
             {
-                var entry = module.getMagnet(ResultsList.SelectedIndex);
+                string entry = "";
+                if (TorrentResultsList.Visibility == Visibility.Visible)
+                {
+                    entry = module.getMagnet(TorrentResultsList.SelectedIndex);
+                }
+                else if (VimmResultsList.Visibility == Visibility.Visible)
+                {
+                    entry = module.getMagnet(VimmResultsList.SelectedIndex);
+                }
+                else if (FitGirlResultsList.Visibility == Visibility.Visible)
+                {
+                    entry = module.getMagnet(FitGirlResultsList.SelectedIndex);
+                }
+                else if (WowRomsResultsList.Visibility == Visibility.Visible)
+                {
+                    entry = module.getMagnet(WowRomsResultsList.SelectedIndex);
+                }
+                else if (RPGOnlyResultsList.Visibility == Visibility.Visible)
+                {
+                    entry = module.getMagnet(RPGOnlyResultsList.SelectedIndex);
+                }
+                else if (HexRomResultsList.Visibility == Visibility.Visible)
+                {
+                    entry = module.getMagnet(HexRomResultsList.SelectedIndex);
+                }
+
                 Logger.Log($"Entry {entry} has been selected", "Main");
                 OutputLabel.Content = entry;
                 CopyButton.IsEnabled = true;

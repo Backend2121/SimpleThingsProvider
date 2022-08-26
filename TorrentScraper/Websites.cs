@@ -17,6 +17,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net;
 using System.IO;
+using System.Diagnostics;
+using System.Threading;
+using System.Reflection;
 
 namespace SimpleThingsProvider
 {
@@ -24,7 +27,8 @@ namespace SimpleThingsProvider
     {
         List<string> underlying;
         string whoami;
-        public class Result
+        MainWindow mainWindow;
+        public class TorrentResult
         {
             public string Title { get; set; }
             public string Seeds { get; set; }
@@ -33,18 +37,51 @@ namespace SimpleThingsProvider
             public string Size { get; set; }
 
         }
+        public class VimmResult
+        {
+            public string System { get; set; }
+            public string Title { get; set; }
+            public string Region { get; set; }
+            public string Version { get; set; }
+            public string Languages { get; set; }
+        }
+        public class FitGirlResult
+        {
+            public string Title { get; set; }
+            public string OriginalSize { get; set; }
+            public string RepackSize { get; set; }
+        }
         public class GameWebsite
         {
             public string Name { get; set; }
             public string Link { get; set; }
             public string Infos { get; set; }
         }
+        public class HexRomsGameWebsite
+        {
+            public string Link { get; set; }
+            public string Infos { get; set; }
+        }
+        public class WowRomsResult{
+            public string Title { get; set; }
+            public string Region { get; set; }
+            public string Size { get; set; }
+            public string Downloads { get; set; }
+        };
+        public class RPGOnlyResult
+        {
+            public string Title { get; set; }
+        }
+        public class HexRomResults
+        {
+            public string Title { get; set; }
+        }
         public HtmlDocument doc { get; set; }
         public HttpStatusCode Search(string toSearch, string caller)
         {
             whoami = caller;
-            HttpStatusCode code = HttpStatusCode.OK;
-            HtmlWeb web = new HtmlWeb();
+            HttpStatusCode code;
+            HtmlWeb web = new();
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
             web.UserAgent = "SimpleThingsProvider";
             Logger.Log("Searching for: " + toSearch, "Website (Search)");
@@ -79,6 +116,10 @@ namespace SimpleThingsProvider
                     case ("FitGirl"):
                         doc = web.Load("https://fitgirl-repacks.site/?s=" + toSearch.Replace(" ", "+"));
                         break;
+
+                    case ("VimmsLair"):
+                        doc = web.Load("https://vimm.net/vault/?p=list&q=" + toSearch.Replace(" ", "+"));
+                        break;
                 }
             }
             catch { Logger.Log($"Error code {HttpStatusCode.NotFound} for {mainWindow.WebsiteSource.SelectedItem.ToString()}", "Website (Search)"); return HttpStatusCode.NotFound; }
@@ -88,40 +129,43 @@ namespace SimpleThingsProvider
         }
         private string buildString(string input)
         {
-            /// Used by x1337
+            // Used by x1337
             string url = "https://1337xx.to/search/";
             var toSearch = url + input;
             toSearch = toSearch.Replace(" ", "%20");
             toSearch = toSearch + "/1/";
             return toSearch;
         }
-        public List<String> getResults(HtmlDocument document, ListView ResultsList, string toSearch)
+        public List<String> getResults(HtmlDocument document, string toSearch)
         {
             //Called by the main window, serves the purpose of switching based on the selection in the dropdown box
             Logger.Log("Switching for different websites", $"Websites (getResults - {whoami})");
+            mainWindow = (MainWindow)Application.Current.MainWindow;
             switch (whoami)
             {
                 case ("x1337"):
-                    return getResults_x1337(document, ResultsList);
+                    return getResults_x1337(document, mainWindow.TorrentResultsList);
                 case ("ThePirateBay"):
-                    return getResults_ThePirateBay(document, ResultsList);
+                    return getResults_ThePirateBay(document, mainWindow.TorrentResultsList);
                 case ("RPGOnly"):
-                    return getResults_RPGOnly(document, ResultsList, toSearch);
+                    return getResults_RPGOnly(document, mainWindow.RPGOnlyResultsList, toSearch);
                 case ("NxBrew"):
-                    return getResults_NxBrew(document, ResultsList, toSearch);
+                    return getResults_NxBrew(document, mainWindow.TorrentResultsList, toSearch);
                 case ("HexRom"):
-                    return getResults_HexRom(document, ResultsList);
+                    return getResults_HexRom(document, mainWindow.HexRomResultsList);
                 case ("WoWRoms"):
-                    return getResults_WoWRoms(document, ResultsList);
+                    return getResults_WoWRoms(document, mainWindow.WowRomsResultsList);
                 case ("FitGirl"):
-                    return getResults_FitGirl(document, ResultsList);
+                    return getResults_FitGirl(document, mainWindow.FitGirlResultsList);
+                case ("VimmsLair"):
+                    return getResults_VimmsLair(document, mainWindow.VimmResultsList);
             }
             return new List<string>();
         }
         public List<String> getResults_x1337(HtmlDocument document, ListView ResultsList)
         {
             underlying = new List<string>();
-            List<Result> results = new List<Result>();
+            List<TorrentResult> results = new();
 
             HtmlNodeCollection list = document.DocumentNode.SelectNodes("/html/body/main/div/div/div/div[2]/div[1]/table/tbody/tr");
 
@@ -137,7 +181,7 @@ namespace SimpleThingsProvider
                 IEnumerable<HtmlNode> descendants = node.Descendants(3);
                 // Needs to be splitted along \n
                 var splittedTexts = node.InnerText.Split("\n");
-                results.Add(new Result() { Title = splittedTexts[2], Seeds = splittedTexts[3], Leechs = splittedTexts[4], Time = splittedTexts[5], Size = splittedTexts[6] });
+                results.Add(new TorrentResult() { Title = splittedTexts[2], Seeds = splittedTexts[3], Leechs = splittedTexts[4], Time = splittedTexts[5], Size = splittedTexts[6] });
 
                 foreach (HtmlNode descendant in descendants)
                 {
@@ -153,12 +197,13 @@ namespace SimpleThingsProvider
             }
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - x1337)");
             ResultsList.ItemsSource = results;
+            ResultsList.Visibility = Visibility.Visible;
             return underlying;
         }
         public List<String> getResults_ThePirateBay(HtmlDocument document, ListView ResultsList)
         {
             underlying = new List<string>();
-            List<Result> results = new List<Result>();
+            List<TorrentResult> results = new();
 
             HtmlNodeCollection trList = document.DocumentNode.SelectNodes("/html/body/div[2]/div[3]/table[1]/tr");
             if (trList == null)
@@ -209,16 +254,18 @@ namespace SimpleThingsProvider
                     }
                     catch (NullReferenceException) { continue; }
                 }
-                results.Add(new Result() { Title = title, Seeds = seeds, Leechs = leechs, Time = time, Size = size.Replace("Size ", "") });
+                results.Add(new TorrentResult() { Title = title, Seeds = seeds, Leechs = leechs, Time = time, Size = size.Replace("Size ", "") });
             }
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - ThePirateBay)");
             ResultsList.ItemsSource = results;
+            ResultsList.Visibility = Visibility.Visible;
             return underlying;
         }
         public List<String> getResults_RPGOnly(HtmlDocument document, ListView ResultsList, string toSearch)
         {
+            ResultsList.Visibility = Visibility.Visible;
             underlying = new List<string>();
-            List<Result> results = new List<Result>();
+            List<RPGOnlyResult> results = new();
 
             HtmlNodeCollection listNode = document.DocumentNode.SelectNodes("/html/body/div/div[6]/div/div[1]/div/main/article/div/div/ul/li");
             Logger.Log($"Found {listNode.Count} results", "Websites (getResults - RPGOnly)");
@@ -236,7 +283,7 @@ namespace SimpleThingsProvider
                                 if (descendant.InnerText.ToLower().Contains(toSearch.ToLower()))
                                 {
                                     underlying.Add(descendant.Attributes["href"].Value);
-                                    results.Add(new Result() { Title = descendant.InnerText });
+                                    results.Add(new RPGOnlyResult() { Title = descendant.InnerText});
                                 }
                             }
                         }
@@ -244,7 +291,7 @@ namespace SimpleThingsProvider
                     }
                 }
             }
-            catch (NullReferenceException e)
+            catch (NullReferenceException)
             {
                 Logger.Log("No results found!", "Websites (getResults - RPGOnly)");
                 return new List<string>();
@@ -256,7 +303,7 @@ namespace SimpleThingsProvider
         public List<String> getResults_NxBrew(HtmlDocument document, ListView ResultsList, string toSearch)
         {
             underlying = new List<string>();
-            List<Result> results = new List<Result>();
+            List<TorrentResult> results = new();
             HtmlNodeCollection letters = document.DocumentNode.SelectNodes("/html/body/div/div/div/div/div[3]/div/div[2]/article/div/div[1]/div[2]/div/div/ul/li/a");
             try
             {
@@ -269,14 +316,14 @@ namespace SimpleThingsProvider
                         {
                             var title = letter.InnerText.Replace("\t", "");
                             title = title.Replace("\n", "");
-                            results.Add(new Result() { Title = title });
+                            results.Add(new TorrentResult() { Title = title, Seeds = "-", Leechs = "-", Size = "-", Time = "-" });
                             underlying.Add(letter.Attributes["href"].Value);
                         }
                         catch (NullReferenceException) { continue; }
                     }
                 }
             }
-            catch (NullReferenceException e)
+            catch (NullReferenceException)
             {
                 Logger.Log("No results found!", "Websites (getResults - NxBrew)");
                 return new List<string>();
@@ -288,8 +335,9 @@ namespace SimpleThingsProvider
         }
         public List<String> getResults_HexRom(HtmlDocument document, ListView ResultsList)
         {
+            ResultsList.Visibility = Visibility.Visible;
             underlying = new List<string>();
-            List<Result> results = new List<Result>();
+            List<HexRomResults> results = new();
             HtmlNodeCollection alist = document.DocumentNode.SelectNodes("/html/body/div[2]/div[1]/div/div[1]/div/div/ul/li/a");
             try
             {
@@ -298,13 +346,13 @@ namespace SimpleThingsProvider
                 {
                     try
                     {
-                        results.Add(new Result() { Title = game.Attributes["title"].Value });
+                        results.Add(new HexRomResults() { Title = game.Attributes["title"].Value});
                         underlying.Add(game.Attributes["href"].Value);
                     }
                     catch { continue; }
                 }
             }
-            catch(NullReferenceException e)
+            catch(NullReferenceException)
             {
                 Logger.Log("No results found!", "Websites (getResults - HexRom)");
                 return new List<string>();
@@ -316,25 +364,30 @@ namespace SimpleThingsProvider
         }
         public List<String> getResults_WoWRoms(HtmlDocument document, ListView ResultsList)
         {
+            ResultsList.Visibility = Visibility.Visible;
             underlying = new List<string>();
-            List<Result> results = new List<Result>();
-
-            HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div[1]/div/div/section/div[2]/div[5]/ul/li/ul/li[2]/div/a[1]");
+            List<WowRomsResult> results = new();
+            HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div[1]/div/div/section/div[2]/div[5]/ul/li/ul/li[2]/div");
             try
             {
                 Logger.Log($"Found {games.Count} results", "Websites (getResults - WoWRoms)");
-                foreach (HtmlNode game in games)
+                foreach (HtmlNode div in games)
                 {
-                    var title = game.InnerText;
+                    var title = div.ChildNodes[1].Attributes["Title"].Value;
+                    underlying.Add(div.ChildNodes[1].Attributes["href"].Value);
                     title = title.Replace("\t", "");
                     title = title.Replace("\n", "");
                     title = title.Replace("\r", "");
                     title = title.Replace("  ", "");
-                    results.Add(new Result { Title = title });
-                    underlying.Add(game.Attributes["href"].Value);
+                    
+                    var region = div.ChildNodes[3].ChildNodes[1].InnerText;
+                    // [7] points at genre
+                    var size = div.ChildNodes[11].ChildNodes[1].InnerText;
+                    var downloads = div.ChildNodes[15].ChildNodes[1].InnerText;
+                    results.Add(new WowRomsResult() { Title = title, Region = region, Size = size, Downloads = downloads});
                 }
             }
-            catch
+            catch (NullReferenceException)
             {
                 Logger.Log("No results found!", "Websites (getResults - WoWRoms)");
                 return new List<string>();
@@ -346,24 +399,44 @@ namespace SimpleThingsProvider
         }
         public List<String> getResults_FitGirl(HtmlDocument document, ListView ResultsList)
         {
+            ResultsList.Visibility = Visibility.Visible;
             underlying = new List<string>();
-            List<Result> results = new List<Result>();
+            List<FitGirlResult> results = new();
 
-            HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div/div/section/div/article/header/h1/a");
+            HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div/div/section/div/article/div/p");
             try
             {
                 Logger.Log($"Found {games.Count} results", "Websites (getResults - FitGirl)");
                 foreach (HtmlNode game in games)
                 {
-                    var title = game.InnerText;
+                    string p = game.InnerText;
+                    // Title section
+                    var titleEnd = p.IndexOf("Genres/Tags:");
+                    string title = p.Substring(0, titleEnd);
                     title = title.Replace("&#8217;", "’");
                     title = title.Replace("&#8211;", "-");
                     title = title.Replace("&#038;", "&");
-                    results.Add(new Result() { Title = title });
-                    underlying.Add(game.Attributes["href"].Value);
+
+                    // Size section
+                    var sizeStart = p.IndexOf("Original Size:");
+                    var sizeEnd = p.IndexOf("Repack Size:");
+                    string size = p.Substring(sizeStart, sizeEnd-sizeStart);
+                    size = size.Replace("Original Size:", "");
+                    
+
+                    // repackSize section
+                    var repacksizeStart = p.IndexOf("Repack Size:");
+                    var repacksizeEnd = p.IndexOf("Download Mirrors");
+                    string repacksize = p.Substring(repacksizeStart, repacksizeEnd - repacksizeStart);
+                    repacksize = repacksize.Replace("Repack Size:", "");
+
+                    //Link section
+                    underlying.Add(game.LastChild.Attributes["href"].Value);
+
+                    results.Add(new FitGirlResult() { Title = title, OriginalSize = size, RepackSize = repacksize});
                 }
             }
-            catch(NullReferenceException e)
+            catch(NullReferenceException)
             {
                 Logger.Log("No results found!", "Websites (getResults - FitGirl)");
                 return new List<string>();
@@ -373,10 +446,32 @@ namespace SimpleThingsProvider
             ResultsList.ItemsSource = results;
             return underlying;
         }
+        public List<String> getResults_VimmsLair(HtmlDocument document, ListView ResultsList)
+        {
+            ResultsList.Visibility = Visibility.Visible;
+            underlying = new List<string>();
+            List<VimmResult> results = new();
+            HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div[4]/div[2]/div/div[3]/table/tr");
+            Logger.Log($"Found {games.Count} results", "Websites (getResults - VimmsLair)");
+            foreach (HtmlNode game in games)
+            {
+                HtmlNodeCollection tds = game.SelectNodes("td");
+                try
+                {
+                    results.Add(new VimmResult() { System = tds[0].InnerText, Title = tds[1].InnerText, Region = tds[2].FirstChild.Attributes["title"].Value, Version = tds[3].InnerText, Languages = tds[4].InnerText });
+                    underlying.Add("https://vimm.net" + tds[1].FirstChild.Attributes["href"].Value);
+                }
+                catch (NullReferenceException) { Logger.Log("No results found!", "Websites (getResults - VimmsLair)"); return new List<string>(); }
+            }
+            ResultsList.ItemsSource = results;
+            Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - VimmsLair)");
+            return underlying;
+        }
         public string getGamePage_RPGOnly(string gameURL)
         {
-            HtmlWeb web = new HtmlWeb();
+            HtmlWeb web = new();
             LinksWindow linksWindow = new LinksWindow();
+            linksWindow.LinksList.Visibility = Visibility.Visible;
             linksWindow.Show();
             doc = web.Load(gameURL);
             List<GameWebsite> websites = new List<GameWebsite>();
@@ -479,27 +574,27 @@ namespace SimpleThingsProvider
             HtmlWeb web = new HtmlWeb();
             HtmlDocument doc = web.Load(gameURL);
             LinksWindow linksWindow = new LinksWindow();
+            linksWindow.HexRomsLinksList.Visibility = Visibility.Visible;
             linksWindow.Show();
-            List<GameWebsite> websites = new List<GameWebsite>();
+            List<HexRomsGameWebsite> websites = new List<HexRomsGameWebsite>();
             var title = "";
             var link = "";
-            var infos = "";
-            bool added = false;
-            HtmlNodeCollection links = doc.DocumentNode.SelectNodes("/html/body/div[2]/div[1]/div/div/div/div[2]/div/table/tbody/tr/td/a");
-            Logger.Log($"Getting game page links", "Websites (getGamePage - HexRom)");
+            HtmlNodeCollection links = doc.DocumentNode.SelectNodes("/html/body/div[2]/div[2]/div/div/div/div[2]/div/table/tbody/tr/td/a");
+            System.Diagnostics.Debug.WriteLine(links.Count);
+            Logger.Log("Getting game page links", "Websites (getGamePage - HexRom)");
             foreach (HtmlNode downloadlink in links)
             {
                 title = downloadlink.InnerText;
                 link = downloadlink.Attributes["href"].Value;
-                if (title != " ") { websites.Add(new GameWebsite() { Link = link, Infos = title }); }   
+                if (title != " ") { websites.Add(new HexRomsGameWebsite() { Link = link, Infos = title }); }   
             }
             Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - HexRom)");
-            linksWindow.LinksList.ItemsSource = websites;
+            linksWindow.HexRomsLinksList.ItemsSource = websites;
             return "";
         }
         public string getGamePage_WoWRoms(string gameURL)
         {
-            HtmlWeb web = new HtmlWeb();
+            HtmlWeb web = new();
             HtmlDocument doc = web.Load(gameURL);
             Logger.Log($"Getting the inner link from WoWRoms", "Websites (getGamePage - WoWRoms)");
             return "https://wowroms.com" + doc.DocumentNode.SelectSingleNode("/html/body/div/div/div/section/div[2]/div[2]/div[1]/div[2]/div/div[2]/a").Attributes["href"].Value;
@@ -520,6 +615,10 @@ namespace SimpleThingsProvider
             Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - FitGirl)");
             linksWindow.LinksList.ItemsSource = websites;
             return "";
+        }
+        public string getGamePage_VimmsLair(string gameURL)
+        {
+            return gameURL;
         }
         public string getMagnet(int index)
         {
@@ -543,6 +642,8 @@ namespace SimpleThingsProvider
                     return getGamePage_WoWRoms("https://wowroms.com" + underlying[index]);
                 case ("FitGirl"):
                     return getGamePage_FitGirl(underlying[index]);
+                case ("VimmsLair"):
+                    return getGamePage_VimmsLair(underlying[index]);
             }
             return "";
         }

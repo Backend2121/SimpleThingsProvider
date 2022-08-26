@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SimpleThingsProvider"
         xmlns:System="clr-namespace:System;assembly=System.Runtime" x:Class="SimpleThingsProvider.MainWindow"
         mc:Ignorable="d"
-        Title="Simple Things Provider" Height="600" Width="800" ResizeMode="CanMinimize" SizeToContent="WidthAndHeight">
+        Title="Simple Things Provider" Height="768" Width="1024" ResizeMode="CanMinimize" SizeToContent="WidthAndHeight">
     <Window.Resources>
         <RoutedCommand x:Key="Search"/>
         <RoutedCommand x:Key="WebsiteStatus"/>
@@ -49,14 +49,58 @@
         </Button>
         <Label x:Name="StatusCodeLabel" Content="Status Code" Margin="10,50,477,10" FontWeight="Bold"/>
         <TextBox x:Name="SearchTextBox" Margin="10,20,10,0" TextWrapping="Wrap" VerticalAlignment="Top" AutomationProperties.HelpText="Search Bar" ToolTip="Search Bar" HorizontalContentAlignment="Left" RenderTransformOrigin="0.5,0.5" Height="20"/>
-        <ListView x:Name="ResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,86,0,0" Grid.ColumnSpan="3" Grid.RowSpan="2" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged">
+        <ListView x:Name="TorrentResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,86,0,0" Grid.ColumnSpan="3" Grid.RowSpan="2" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden">
         <ListView.View>
                 <GridView>
-                    <GridViewColumn Width="400" Header="Title" DisplayMemberBinding="{Binding Title}"/>
-                    <GridViewColumn Width="50" Header="Seeds" DisplayMemberBinding="{Binding Seeds}"/>
-                    <GridViewColumn Width="50" Header="Leechs" DisplayMemberBinding="{Binding Leechs}"/>
-                    <GridViewColumn Width="200" Header="Time" DisplayMemberBinding="{Binding Time}"/>
-                    <GridViewColumn Width="50" Header="Size" DisplayMemberBinding="{Binding Size}"/>
+                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                    <GridViewColumn Width="Auto" Header="Seeds" DisplayMemberBinding="{Binding Seeds}"/>
+                    <GridViewColumn Width="Auto" Header="Leechs" DisplayMemberBinding="{Binding Leechs}"/>
+                    <GridViewColumn Width="Auto" Header="Time" DisplayMemberBinding="{Binding Time}"/>
+                    <GridViewColumn Width="Auto" Header="Size" DisplayMemberBinding="{Binding Size}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView x:Name="VimmResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,86,0,0" Grid.ColumnSpan="3" Grid.RowSpan="2" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                    <GridViewColumn Width="Auto" Header="System" DisplayMemberBinding="{Binding System}"/>
+                    <GridViewColumn Width="Auto" Header="Region" DisplayMemberBinding="{Binding Region}"/>
+                    <GridViewColumn Width="Auto" Header="Version" DisplayMemberBinding="{Binding Version}"/>
+                    <GridViewColumn Width="Auto" Header="Languages" DisplayMemberBinding="{Binding Languages}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView x:Name="FitGirlResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,86,0,0" Grid.ColumnSpan="3" Grid.RowSpan="2" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                    <GridViewColumn Width="Auto" Header="Size" DisplayMemberBinding="{Binding OriginalSize}"/>
+                    <GridViewColumn Width="Auto" Header="RepackSize" DisplayMemberBinding="{Binding RepackSize}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView x:Name="WowRomsResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,86,0,0" Grid.ColumnSpan="3" Grid.RowSpan="2" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                    <GridViewColumn Width="Auto" Header="Region" DisplayMemberBinding="{Binding Region}"/>
+                    <GridViewColumn Width="Auto" Header="Size" DisplayMemberBinding="{Binding Size}"/>
+                    <GridViewColumn Width="Auto" Header="Downloads" DisplayMemberBinding="{Binding Downloads}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView x:Name="RPGOnlyResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,86,0,0" Grid.ColumnSpan="3" Grid.RowSpan="2" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView x:Name="HexRomResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,86,0,0" Grid.ColumnSpan="3" Grid.RowSpan="2" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
                 </GridView>
             </ListView.View>
         </ListView>
@@ -67,7 +111,7 @@
             <System:String>x1337</System:String>
             <System:String>ThePirateBay</System:String>
             <System:String>FitGirl</System:String>
-            <System:String>NxBrew</System:String>
+            <System:String>VimmsLair</System:String>
             <System:String>RPGOnly</System:String>
             <System:String>HexRom</System:String>
             <System:String>WoWRoms</System:String>
