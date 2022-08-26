@@ -26,11 +26,11 @@ For any help with the software join the Discord and ask for help!
 
 **FitGirl** for PC Repacks
 
-**NxBrew** for Switch Games
-
 **RPGOnly** for Switch Games
 
 **HexRoms** for 3ds Games
 
 **WoWRoms** for old Games
+
+**Vimm's Lair** for old Games
 
