@@ -5,9 +5,12 @@ Successor of SGD improved to provide easier access to lots of data (games, films
 # DISCLAIMER
 THIS SOFTWARE MUST BE USED TO DOWNLOAD ONLY LEGALLY OWNED MEDIA! I DECLINE ANY RESPONSIBILITIES OF YOUR ACTIONS!
 
+![alt text](https://github.com/Backend2121/SimpleThingsProvider/blob/master/preview.jpg?raw=true)
+
 # FEATURES
 * User-friendly GUI
 * Game search functionality
+* Multiple Sources
 * Configurable Proxy
 * Update notifier
 * Easy to install
