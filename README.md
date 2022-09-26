@@ -1,5 +1,5 @@
 # Simple Things Provider (STP)
-## Only for Windows
+## Only for Windows 7/10/11
 Successor of SGD improved to provide easier access to lots of data (games, films, books, torrents, etc)
 
 # DISCLAIMER
