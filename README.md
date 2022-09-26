@@ -1,16 +1,9 @@
 # Simple Things Provider (STP)
 ## Only for Windows
-A Windows application to provide easier access to lots of data (games, films, books, torrents, etc)
-
-User-friendly WPF application designed to provide easier access to various forms of media.
+Successor of SGD improved to provide easier access to lots of data (games, films, books, torrents, etc)
 
 # DISCLAIMER
 THIS SOFTWARE MUST BE USED TO DOWNLOAD ONLY LEGALLY OWNED MEDIA! I DECLINE ANY RESPONSIBILITIES OF YOUR ACTIONS!
-
-# DISCORD
-For any help with the software join the Discord and ask for help!
-
-![Discord Banner 1](https://discordapp.com/api/guilds/857306107113766912/widget.png?style=banner1)
 
 # FEATURES
 * User-friendly GUI
@@ -18,6 +11,7 @@ For any help with the software join the Discord and ask for help!
 * Configurable Proxy
 * Update notifier
 * Easy to install
+* Light & Dark mode
 
 # SOURCES
 **x1337** for Torrents
@@ -28,9 +22,15 @@ For any help with the software join the Discord and ask for help!
 
 **RPGOnly** for Switch Games
 
+**NxBrew** for Switch Games
+
 **HexRoms** for 3ds Games
 
 **WoWRoms** for old Games
 
 **Vimm's Lair** for old Games
 
+# DISCORD
+For any help with the software join the Discord and ask for help!
+
+![Discord Banner 1](https://discordapp.com/api/guilds/857306107113766912/widget.png?style=banner1)
