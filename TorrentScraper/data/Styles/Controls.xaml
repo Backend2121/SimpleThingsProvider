@@ -1,0 +1,105 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mah="clr-namespace:MahApps.Metro.Controls">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Data/Styles/Controls.Shadows.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.Page.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.ValidationError.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.Scrollbars.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.ListView.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.Buttons.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.Calendar.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.CheckBox.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.ComboBox.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.MenuItem.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.Menu.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.ContextMenu.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.DatePicker.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.DataGrid.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.Expander.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.GridSplitter.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.GroupBox.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.ListBox.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.PasswordBox.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.ProgressBar.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.RadioButton.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.Slider.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.FlatSlider.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.TabControl.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.TextBlock.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.TextBox.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.RichTextBox.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.Hyperlink.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.Label.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.Tooltip.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.ToolBar.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.TreeView.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.StatusBar.xaml" />
+        <ResourceDictionary Source="/Data/Styles/Controls.ContentControl.xaml" />
+
+        <!--  Theme styles with keys  -->
+        <ResourceDictionary Source="/Data/Themes/NumericUpDown.xaml" />
+        <ResourceDictionary Source="/Data/Themes/Themes/Flyout.xaml" />
+        <ResourceDictionary Source="/Data/Themes/Themes/MetroHeader.xaml" />
+        <ResourceDictionary Source="/Data/Themes/Themes/WindowCommands.xaml" />
+        <ResourceDictionary Source="/Data/Themes/Themes/WindowButtonCommands.xaml" />
+        <ResourceDictionary Source="/Data/Themes/Themes/Dialogs/BaseMetroDialog.xaml" />
+        <ResourceDictionary Source="/Data/Themes/Themes/HamburgerMenu.xaml" />
+        <ResourceDictionary Source="/Data/Themes/Themes/RangeSlider.xaml" />
+        <ResourceDictionary Source="/Data/Themes/Themes/MetroProgressBar.xaml" />
+        <ResourceDictionary Source="/Data/Themes/Themes/ToggleSwitch.xaml" />
+        <ResourceDictionary Source="/Data/Themes/Themes/FlipView.xaml" />
+        <ResourceDictionary Source="/Data/Themes/Themes/ColorPicker/ColorEyeDropper.xaml" />
+        <ResourceDictionary Source="/Data/Themes/Themes/ColorPicker/ColorCanvas.xaml" />
+        <ResourceDictionary Source="/Data/Themes/Themes/ColorPicker/ColorPalette.xaml" />
+        <ResourceDictionary Source="/Data/Themes/Themes/ColorPicker/ColorPicker.xaml" />
+        <ResourceDictionary Source="/Data/Themes/Themes/MultiSelectionComboBox.xaml" />
+
+    </ResourceDictionary.MergedDictionaries>
+
+    <!--  note: default style for textblock is now in MetroWindow !!!  -->
+
+    <Style BasedOn="{StaticResource MahApps.Styles.CustomValidationPopup}" TargetType="{x:Type mah:CustomValidationPopup}" />
+    <Style BasedOn="{StaticResource MahApps.Styles.ToolTip}" TargetType="ToolTip" />
+    <Style BasedOn="{StaticResource MahApps.Styles.Button}" TargetType="Button" />
+    <Style BasedOn="{StaticResource MahApps.Styles.Button}" TargetType="RepeatButton" />
+    <Style BasedOn="{StaticResource MahApps.Styles.ToggleButton}" TargetType="ToggleButton" />
+    <Style BasedOn="{StaticResource MahApps.Styles.TextBox}" TargetType="TextBox" />
+    <Style BasedOn="{StaticResource MahApps.Styles.Hyperlink}" TargetType="{x:Type Hyperlink}" />
+    <Style BasedOn="{StaticResource MahApps.Styles.RichTextBox}" TargetType="RichTextBox" />
+    <Style BasedOn="{StaticResource MahApps.Styles.Slider.Win10}" TargetType="Slider" />
+    <Style BasedOn="{StaticResource MahApps.Styles.Label}" TargetType="Label" />
+    <Style BasedOn="{StaticResource MahApps.Styles.TabItem}" TargetType="TabItem" />
+    <Style BasedOn="{StaticResource MahApps.Styles.TabControl}" TargetType="TabControl" />
+    <Style BasedOn="{StaticResource MahApps.Styles.ScrollBar}" TargetType="ScrollBar" />
+    <Style BasedOn="{StaticResource MahApps.Styles.RadioButton}" TargetType="RadioButton" />
+    <Style BasedOn="{StaticResource MahApps.Styles.ProgressBar}" TargetType="ProgressBar" />
+    <Style BasedOn="{StaticResource MahApps.Styles.PasswordBox}" TargetType="PasswordBox" />
+    <Style BasedOn="{StaticResource MahApps.Styles.CheckBox}" TargetType="CheckBox" />
+    <Style BasedOn="{StaticResource MahApps.Styles.ComboBox}" TargetType="ComboBox" />
+    <Style BasedOn="{StaticResource MahApps.Styles.ComboBoxItem}" TargetType="ComboBoxItem" />
+    <Style BasedOn="{StaticResource MahApps.Styles.MenuItem}" TargetType="MenuItem" />
+    <Style BasedOn="{StaticResource MahApps.Styles.Menu}" TargetType="Menu" />
+    <Style BasedOn="{StaticResource MahApps.Styles.ContextMenu}" TargetType="ContextMenu" />
+    <Style BasedOn="{StaticResource MahApps.Styles.Expander}" TargetType="Expander" />
+    <Style BasedOn="{StaticResource MahApps.Styles.GroupBox}" TargetType="GroupBox" />
+    <Style BasedOn="{StaticResource MahApps.Styles.ListBox}" TargetType="ListBox" />
+    <Style BasedOn="{StaticResource MahApps.Styles.ListBoxItem}" TargetType="ListBoxItem" />
+    <Style BasedOn="{StaticResource MahApps.Styles.GridViewColumnHeader}" TargetType="GridViewColumnHeader" />
+    <Style BasedOn="{StaticResource MahApps.Styles.ListView}" TargetType="ListView" />
+    <Style BasedOn="{StaticResource MahApps.Styles.ListViewItem}" TargetType="ListViewItem" />
+    <Style BasedOn="{StaticResource MahApps.Styles.TreeView}" TargetType="TreeView" />
+    <Style BasedOn="{StaticResource MahApps.Styles.TreeViewItem}" TargetType="TreeViewItem" />
+    <Style BasedOn="{StaticResource MahApps.Styles.DatePicker}" TargetType="DatePicker" />
+    <Style BasedOn="{StaticResource MahApps.Styles.DatePickerTextBox}" TargetType="DatePickerTextBox" />
+    <Style BasedOn="{StaticResource MahApps.Styles.Calendar}" TargetType="Calendar" />
+    <Style BasedOn="{StaticResource MahApps.Styles.DataGrid}" TargetType="DataGrid" />
+    <Style BasedOn="{StaticResource MahApps.Styles.StatusBar}" TargetType="StatusBar" />
+    <Style BasedOn="{StaticResource MahApps.Styles.StatusBarItem}" TargetType="StatusBarItem" />
+    <Style BasedOn="{StaticResource MahApps.Styles.ScrollViewer}" TargetType="ScrollViewer" />
+    <Style BasedOn="{StaticResource MahApps.Styles.GridSplitter}" TargetType="GridSplitter" />
+    <Style BasedOn="{StaticResource MahApps.Styles.ToolBar}" TargetType="ToolBar" />
+    <Style BasedOn="{StaticResource MahApps.Styles.ToolBarTray}" TargetType="ToolBarTray" />
+
+</ResourceDictionary>

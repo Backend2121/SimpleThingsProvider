@@ -10,14 +10,58 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="data\ControlzEx.dll" />
     <None Remove="data\Discord.png" />
     <None Remove="data\Github.png" />
     <None Remove="data\Icon.ico" />
+    <None Remove="data\MahApps.Metro.dll" />
+    <None Remove="data\Microsoft.Xaml.Behaviors.dll" />
     <None Remove="data\Patreon.png" />
     <None Remove="data\Reddit.png" />
     <None Remove="data\WebScraping.png" />
     <None Remove="data\Youtube.png" />
     <None Remove="Settings.settings" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="data\Styles\Controls.Buttons.xaml" />
+    <Page Remove="data\Styles\Controls.Calendar.xaml" />
+    <Page Remove="data\Styles\Controls.CheckBox.xaml" />
+    <Page Remove="data\Styles\Controls.ComboBox.xaml" />
+    <Page Remove="data\Styles\Controls.ContentControl.xaml" />
+    <Page Remove="data\Styles\Controls.ContextMenu.xaml" />
+    <Page Remove="data\Styles\Controls.DataGrid.xaml" />
+    <Page Remove="data\Styles\Controls.DatePicker.xaml" />
+    <Page Remove="data\Styles\Controls.Expander.xaml" />
+    <Page Remove="data\Styles\Controls.FlatButton.xaml" />
+    <Page Remove="data\Styles\Controls.FlatSlider.xaml" />
+    <Page Remove="data\Styles\Controls.GridSplitter.xaml" />
+    <Page Remove="data\Styles\Controls.GroupBox.xaml" />
+    <Page Remove="data\Styles\Controls.Hyperlink.xaml" />
+    <Page Remove="data\Styles\Controls.Label.xaml" />
+    <Page Remove="data\Styles\Controls.ListBox.xaml" />
+    <Page Remove="data\Styles\Controls.ListView.xaml" />
+    <Page Remove="data\Styles\Controls.Menu.xaml" />
+    <Page Remove="data\Styles\Controls.MenuItem.xaml" />
+    <Page Remove="data\Styles\Controls.Page.xaml" />
+    <Page Remove="data\Styles\Controls.PasswordBox.xaml" />
+    <Page Remove="data\Styles\Controls.ProgressBar.xaml" />
+    <Page Remove="data\Styles\Controls.RadioButton.xaml" />
+    <Page Remove="data\Styles\Controls.RichTextBox.xaml" />
+    <Page Remove="data\Styles\Controls.Scrollbars.xaml" />
+    <Page Remove="data\Styles\Controls.Shadows.xaml" />
+    <Page Remove="data\Styles\Controls.Shared.xaml" />
+    <Page Remove="data\Styles\Controls.Slider.xaml" />
+    <Page Remove="data\Styles\Controls.StatusBar.xaml" />
+    <Page Remove="data\Styles\Controls.TabControl.xaml" />
+    <Page Remove="data\Styles\Controls.TextBlock.xaml" />
+    <Page Remove="data\Styles\Controls.TextBox.xaml" />
+    <Page Remove="data\Styles\Controls.Toolbar.xaml" />
+    <Page Remove="data\Styles\Controls.Tooltip.xaml" />
+    <Page Remove="data\Styles\Controls.TreeView.xaml" />
+    <Page Remove="data\Styles\Controls.ValidationError.xaml" />
+    <Page Remove="data\Styles\Controls.xaml" />
+    <Page Remove="data\Styles\Fonts.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,15 +73,61 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.43" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
+    <PackageReference Include="MahApps.Metro" Version="2.4.9" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="data\ControlzEx.dll" />
     <Resource Include="data\Discord.png" />
     <Resource Include="data\Github.png" />
     <Resource Include="data\Icon.ico" />
+    <Resource Include="data\MahApps.Metro.dll" />
+    <Resource Include="data\Microsoft.Xaml.Behaviors.dll" />
     <Resource Include="data\Patreon.png" />
     <Resource Include="data\Reddit.png" />
+    <Resource Include="data\Styles\Controls.Buttons.xaml" />
+    <Resource Include="data\Styles\Controls.Calendar.xaml" />
+    <Resource Include="data\Styles\Controls.CheckBox.xaml" />
+    <Resource Include="data\Styles\Controls.ComboBox.xaml" />
+    <Resource Include="data\Styles\Controls.ContentControl.xaml" />
+    <Resource Include="data\Styles\Controls.ContextMenu.xaml" />
+    <Resource Include="data\Styles\Controls.DataGrid.xaml" />
+    <Resource Include="data\Styles\Controls.DatePicker.xaml" />
+    <Resource Include="data\Styles\Controls.Expander.xaml" />
+    <Resource Include="data\Styles\Controls.FlatButton.xaml" />
+    <Resource Include="data\Styles\Controls.FlatSlider.xaml" />
+    <Resource Include="data\Styles\Controls.GridSplitter.xaml" />
+    <Resource Include="data\Styles\Controls.GroupBox.xaml" />
+    <Resource Include="data\Styles\Controls.Hyperlink.xaml" />
+    <Resource Include="data\Styles\Controls.Label.xaml" />
+    <Resource Include="data\Styles\Controls.ListBox.xaml" />
+    <Resource Include="data\Styles\Controls.ListView.xaml" />
+    <Resource Include="data\Styles\Controls.Menu.xaml" />
+    <Resource Include="data\Styles\Controls.MenuItem.xaml" />
+    <Resource Include="data\Styles\Controls.Page.xaml" />
+    <Resource Include="data\Styles\Controls.PasswordBox.xaml" />
+    <Resource Include="data\Styles\Controls.ProgressBar.xaml" />
+    <Resource Include="data\Styles\Controls.RadioButton.xaml" />
+    <Resource Include="data\Styles\Controls.RichTextBox.xaml" />
+    <Resource Include="data\Styles\Controls.Scrollbars.xaml" />
+    <Resource Include="data\Styles\Controls.Shadows.xaml" />
+    <Resource Include="data\Styles\Controls.Shared.xaml" />
+    <Resource Include="data\Styles\Controls.Slider.xaml" />
+    <Resource Include="data\Styles\Controls.StatusBar.xaml" />
+    <Resource Include="data\Styles\Controls.TabControl.xaml" />
+    <Resource Include="data\Styles\Controls.TextBlock.xaml" />
+    <Resource Include="data\Styles\Controls.TextBox.xaml" />
+    <Resource Include="data\Styles\Controls.Toolbar.xaml" />
+    <Resource Include="data\Styles\Controls.Tooltip.xaml" />
+    <Resource Include="data\Styles\Controls.TreeView.xaml" />
+    <Resource Include="data\Styles\Controls.ValidationError.xaml" />
+    <Content Include="data\Styles\Controls.xaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\Styles\Fonts.xaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Resource Include="data\WebScraping.png" />
     <Resource Include="data\Youtube.png" />
     <Resource Include="Settings.settings">

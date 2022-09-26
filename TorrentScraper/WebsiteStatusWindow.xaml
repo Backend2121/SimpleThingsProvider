@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleThingsProvider"
         mc:Ignorable="d"
+        ResizeMode="NoResize"
         Title="WebsiteStatusWindow" Height="450" Width="800">
     <Grid>
         <ListView x:Name="WebsiteList" d:ItemsSource="{d:SampleData ItemCount=5}">

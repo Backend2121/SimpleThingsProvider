@@ -76,6 +76,25 @@ namespace SimpleThingsProvider
         {
             public string Title { get; set; }
         }
+        public class NxBrewResults
+        {
+            public string Title { get; set; }
+        }
+        public class MangaHubResults
+        {
+            public string Title { get; set; }
+            public string Infos { get; set; }
+            public string Genres { get; set; }
+        }
+        public class MangaWorldResults
+        {
+            public string Title { get; set; }
+            public string Type { get; set; }
+            public string State { get; set; }
+            public string Authors { get; set; }
+            public string Artists { get; set; }
+            public string Genres { get; set; }
+        }
         public HtmlDocument doc { get; set; }
         public HttpStatusCode Search(string toSearch, string caller)
         {
@@ -84,41 +103,53 @@ namespace SimpleThingsProvider
             HtmlWeb web = new();
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
             web.UserAgent = "SimpleThingsProvider";
-            Logger.Log("Searching for: " + toSearch, "Website (Search)");
+
+            Logger.Log("Searching for: " + toSearch + " in: " + whoami, "Website (Search)");
             try
             {
                 switch (whoami)
                 {
                     case ("x1337"):
-                        doc = web.Load(buildString(toSearch));
+                        if (Settings.Default.ProxyEnabled)
+                        {
+                            doc = web.Load(buildString(toSearch), Settings.Default.ProxyIP, Int32.Parse(Settings.Default.ProxyPort), string.Empty, string.Empty);
+                        }
+                        else { doc = web.Load(buildString(toSearch)); }
                         break;
 
                     case ("ThePirateBay"):
-                        doc = web.Load("https://tpb.party/search/" + toSearch);
+                        if (Settings.Default.ProxyEnabled) doc = web.Load("https://tpb.party/search/" + toSearch, Settings.Default.ProxyIP, Int32.Parse(Settings.Default.ProxyPort), string.Empty, string.Empty);
+                        else doc = web.Load("https://tpb.party/search/" + toSearch);
                         break;
 
                     case ("RPGOnly"):
-                        doc = web.Load("https://rpgonly.com/list-of-all-switch-games-nsp-xci/");
+                        if (Settings.Default.ProxyEnabled) doc = web.Load("https://rpgonly.com/list-of-all-switch-games-nsp-xci/", Settings.Default.ProxyIP, Int32.Parse(Settings.Default.ProxyPort), string.Empty, string.Empty);
+                        else doc = web.Load("https://rpgonly.com/list-of-all-switch-games-nsp-xci/");
                         break;
 
                     case ("NxBrew"):
-                        doc = web.Load("https://nxbrew.com/gameindex.html");
+                        if (Settings.Default.ProxyEnabled) doc = web.Load("https://nxbrew.com/gameindex.html", Settings.Default.ProxyIP, Int32.Parse(Settings.Default.ProxyPort), string.Empty, string.Empty);
+                        else doc = web.Load("https://nxbrew.com/gameindex.html");
                         break;
 
                     case ("HexRom"):
-                        doc = web.Load("https://hexrom.com/roms/nintendo-3ds/?title=" + toSearch);
+                        if (Settings.Default.ProxyEnabled) doc = web.Load("https://hexrom.com/roms/nintendo-3ds/?title=" + toSearch, Settings.Default.ProxyIP, Int32.Parse(Settings.Default.ProxyPort), string.Empty, string.Empty);
+                        else doc = web.Load("https://hexrom.com/roms/nintendo-3ds/?title=" + toSearch);
                         break;
 
                     case ("WoWRoms"):
-                        doc = web.Load("https://wowroms.com/en/roms/list/" + mainWindow.WebsiteSubSelector.SelectedItem.ToString().Replace(" ", "%2B") + "?search=" + toSearch);
+                        if (Settings.Default.ProxyEnabled) doc = web.Load("https://wowroms.com/en/roms/list/" + mainWindow.WebsiteSubSelector.SelectedItem.ToString().Replace(" ", "%2B") + "?search=" + toSearch, Settings.Default.ProxyIP, Int32.Parse(Settings.Default.ProxyPort), string.Empty, string.Empty);
+                        else doc = web.Load("https://wowroms.com/en/roms/list/" + mainWindow.WebsiteSubSelector.SelectedItem.ToString().Replace(" ", "%2B") + "?search=" + toSearch);
                         break;
 
                     case ("FitGirl"):
-                        doc = web.Load("https://fitgirl-repacks.site/?s=" + toSearch.Replace(" ", "+"));
+                        if (Settings.Default.ProxyEnabled) doc = web.Load("https://fitgirl-repacks.site/?s=" + toSearch.Replace(" ", "+"), Settings.Default.ProxyIP, Int32.Parse(Settings.Default.ProxyPort), string.Empty, string.Empty);
+                        else doc = web.Load("https://fitgirl-repacks.site/?s=" + toSearch.Replace(" ", "+"));
                         break;
 
                     case ("VimmsLair"):
-                        doc = web.Load("https://vimm.net/vault/?p=list&q=" + toSearch.Replace(" ", "+"));
+                        if (Settings.Default.ProxyEnabled) doc = web.Load("https://vimm.net/vault/?p=list&q=" + toSearch.Replace(" ", "+"), Settings.Default.ProxyIP, Int32.Parse(Settings.Default.ProxyPort), string.Empty, string.Empty);
+                        else doc = web.Load("https://vimm.net/vault/?p=list&q=" + toSearch.Replace(" ", "+"));
                         break;
                 }
             }
@@ -150,7 +181,7 @@ namespace SimpleThingsProvider
                 case ("RPGOnly"):
                     return getResults_RPGOnly(document, mainWindow.RPGOnlyResultsList, toSearch);
                 case ("NxBrew"):
-                    return getResults_NxBrew(document, mainWindow.TorrentResultsList, toSearch);
+                    return getResults_NxBrew(document, mainWindow.NxBrewResultsList, toSearch);
                 case ("HexRom"):
                     return getResults_HexRom(document, mainWindow.HexRomResultsList);
                 case ("WoWRoms"):
@@ -159,6 +190,10 @@ namespace SimpleThingsProvider
                     return getResults_FitGirl(document, mainWindow.FitGirlResultsList);
                 case ("VimmsLair"):
                     return getResults_VimmsLair(document, mainWindow.VimmResultsList);
+                case ("MangaWorld (ITA)"):
+                    return getResults_MangaHub(document, mainWindow.MangaWorldResultsList);
+                case ("MangaHub (ENG)"):
+                    return getResults_MangaHub(document, mainWindow.MangaWorldResultsList);
             }
             return new List<string>();
         }
@@ -283,7 +318,7 @@ namespace SimpleThingsProvider
                                 if (descendant.InnerText.ToLower().Contains(toSearch.ToLower()))
                                 {
                                     underlying.Add(descendant.Attributes["href"].Value);
-                                    results.Add(new RPGOnlyResult() { Title = descendant.InnerText});
+                                    results.Add(new RPGOnlyResult() { Title = descendant.InnerText.Replace("&#038;", "&")});
                                 }
                             }
                         }
@@ -302,8 +337,9 @@ namespace SimpleThingsProvider
         }
         public List<String> getResults_NxBrew(HtmlDocument document, ListView ResultsList, string toSearch)
         {
+            ResultsList.Visibility = Visibility.Visible;
             underlying = new List<string>();
-            List<TorrentResult> results = new();
+            List<NxBrewResults> results = new();
             HtmlNodeCollection letters = document.DocumentNode.SelectNodes("/html/body/div/div/div/div/div[3]/div/div[2]/article/div/div[1]/div[2]/div/div/ul/li/a");
             try
             {
@@ -316,7 +352,9 @@ namespace SimpleThingsProvider
                         {
                             var title = letter.InnerText.Replace("\t", "");
                             title = title.Replace("\n", "");
-                            results.Add(new TorrentResult() { Title = title, Seeds = "-", Leechs = "-", Size = "-", Time = "-" });
+                            title = title.Replace("&#8217;", "'");
+                            title = title.Replace("&#8211;", "-");
+                            results.Add(new NxBrewResults() { Title = title});
                             underlying.Add(letter.Attributes["href"].Value);
                         }
                         catch (NullReferenceException) { continue; }
@@ -458,13 +496,42 @@ namespace SimpleThingsProvider
                 HtmlNodeCollection tds = game.SelectNodes("td");
                 try
                 {
-                    results.Add(new VimmResult() { System = tds[0].InnerText, Title = tds[1].InnerText, Region = tds[2].FirstChild.Attributes["title"].Value, Version = tds[3].InnerText, Languages = tds[4].InnerText });
+                    var title = tds[1].InnerText;
+                    title = title.Replace("&nbsp;", " ");
+                    title = title.Replace("&#x26a0;", "");
+                    title = title.Replace("&#039;", "'");
+
+                    results.Add(new VimmResult() { System = tds[0].InnerText, Title = title, Region = tds[2].FirstChild.Attributes["title"].Value, Version = tds[3].InnerText, Languages = tds[4].InnerText });
                     underlying.Add("https://vimm.net" + tds[1].FirstChild.Attributes["href"].Value);
                 }
                 catch (NullReferenceException) { Logger.Log("No results found!", "Websites (getResults - VimmsLair)"); return new List<string>(); }
             }
             ResultsList.ItemsSource = results;
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - VimmsLair)");
+            return underlying;
+        }
+        public List<String> getResults_MangaHub(HtmlDocument document, ListView ResultsList)
+        {
+            ResultsList.Visibility = Visibility.Visible;
+            underlying = new List<string>();
+            List<MangaWorldResults> results = new();
+            HtmlNodeCollection mangas = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div/div[2]/div");
+            foreach (HtmlNode manga in mangas)
+            {
+                HtmlNode a = manga.SelectSingleNode("a");
+                underlying.Add(a.Attributes["href"].Value);
+                HtmlNode div = manga.SelectSingleNode("div");
+                HtmlNodeCollection attributes = div.SelectNodes("div");
+                MangaWorldResults result = new MangaWorldResults() { Title = div.SelectSingleNode("p").InnerText,
+                                                                     Type = attributes[0].InnerText.Replace("Tipo:", ""),
+                                                                     State = attributes[1].InnerText.Replace("Stato:", ""),
+                                                                     Authors = attributes[2].InnerText.Replace("Autori:", ""),
+                                                                     Artists = attributes[3].InnerText.Replace("Artista:", ""),
+                                                                     Genres = attributes[4].InnerText.Replace("Generi:", "") };
+                results.Add(result);
+            }
+            Logger.Log($"Found {mangas.Count} results", "Websites (getResults - MangaHub)");
+            ResultsList.ItemsSource = results;
             return underlying;
         }
         public string getGamePage_RPGOnly(string gameURL)
@@ -513,6 +580,7 @@ namespace SimpleThingsProvider
         {
             HtmlWeb web = new HtmlWeb();
             LinksWindow linksWindow = new LinksWindow();
+            linksWindow.LinksList.Visibility = Visibility.Visible;
             linksWindow.Show();
             doc = web.Load(gameURL);
             List<GameWebsite> websites = new List<GameWebsite>();
@@ -579,8 +647,10 @@ namespace SimpleThingsProvider
             List<HexRomsGameWebsite> websites = new List<HexRomsGameWebsite>();
             var title = "";
             var link = "";
-            HtmlNodeCollection links = doc.DocumentNode.SelectNodes("/html/body/div[2]/div[2]/div/div/div/div[2]/div/table/tbody/tr/td/a");
-            System.Diagnostics.Debug.WriteLine(links.Count);
+                                                                    //html/body/div[3]/div[1]/div/div/div/div[2]/div/table/tbody/tr/td/a
+            HtmlNodeCollection links = doc.DocumentNode.SelectNodes("/html/body/div[2]/div[1]/div/div/div/div[2]/div/table/tbody/tr/td/a");
+            System.Diagnostics.Debug.Write(links.Count);
+            if (links == null) { return ""; }
             Logger.Log("Getting game page links", "Websites (getGamePage - HexRom)");
             foreach (HtmlNode downloadlink in links)
             {
@@ -603,6 +673,7 @@ namespace SimpleThingsProvider
         {
             LinksWindow linksWindow = new LinksWindow();
             linksWindow.Show();
+            linksWindow.LinksList.Visibility = Visibility.Visible;
             List<GameWebsite> websites = new List<GameWebsite>();
             HtmlWeb web = new HtmlWeb();
             HtmlDocument doc = web.Load(gameURL);
@@ -619,6 +690,10 @@ namespace SimpleThingsProvider
         public string getGamePage_VimmsLair(string gameURL)
         {
             return gameURL;
+        }
+        public string getMangaPage_MangaWorld(string mangaURL)
+        {
+            return "";
         }
         public string getMagnet(int index)
         {
@@ -644,6 +719,8 @@ namespace SimpleThingsProvider
                     return getGamePage_FitGirl(underlying[index]);
                 case ("VimmsLair"):
                     return getGamePage_VimmsLair(underlying[index]);
+                case ("MangaWorld (ITA)"):
+                    return getMangaPage_MangaWorld(underlying[index]);
             }
             return "";
         }

@@ -95,12 +95,48 @@ namespace SimpleThingsProvider {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Light")]
-        public string ColorMode {
+        public string MainTheme {
             get {
-                return ((string)(this["ColorMode"]));
+                return ((string)(this["MainTheme"]));
             }
             set {
-                this["ColorMode"] = value;
+                this["MainTheme"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Blue")]
+        public string SubTheme {
+            get {
+                return ((string)(this["SubTheme"]));
+            }
+            set {
+                this["SubTheme"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SyncWithWindows {
+            get {
+                return ((bool)(this["SyncWithWindows"]));
+            }
+            set {
+                this["SyncWithWindows"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DoNotShowAgain_RestartApplicationAfterThemeChange {
+            get {
+                return ((bool)(this["DoNotShowAgain_RestartApplicationAfterThemeChange"]));
+            }
+            set {
+                this["DoNotShowAgain_RestartApplicationAfterThemeChange"] = value;
             }
         }
     }

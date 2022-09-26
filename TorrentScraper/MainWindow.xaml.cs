@@ -19,21 +19,36 @@ using System.Net;
 using System.IO;
 using System.Threading;
 using System.Xml;
+using System.Diagnostics;
+using MahApps.Metro.Controls;
+using ControlzEx.Theming;
+using MahApps;
 
 namespace SimpleThingsProvider
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
+        public class Result
+        {
+            public string Title { get; set; }
+            public string Seeds { get; set; }
+            public string Leechs { get; set; }
+            public string Time { get; set; }
+            public string Size { get; set; }
+        }
         List<string> underlying;
         Websites module = new Websites();
+        Random r = new Random();
+        string[] motd = {"Hi!", "Hello there!", "Hey!", "Honk!", "Whassup!", "I promise i won't hang", "What do you need?", "Here to help!", "How are you doing?", "Join the Discord!", "Praise the Sun!", "For science, you monster", "It's dangerous to go alone, use me!", "Stupid Shinigami", "Trust me i'm a dolphin!", "...", "Oh, it's you...", "The cake is a lie!", "FBI open up!", "You own the game, right?"};
         public MainWindow()
         {
             InitializeComponent();
+            if (Settings.Default.SyncWithWindows) { ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncWithAppMode; }
+            else { ThemeManager.Current.ChangeTheme(this, Settings.Default.MainTheme + "." + Settings.Default.SubTheme); }
+            
+            ThemeManager.Current.SyncTheme();
             Application.Current.MainWindow = this;
+            this.SizeToContent = SizeToContent.WidthAndHeight;
 
             Logger.Log("Initialized MainWindow", "Main");
 
@@ -66,7 +81,8 @@ namespace SimpleThingsProvider
             Logger.Log("Everything ready!", "Main");
             //DEBUG
             //PiracyDisclaimer();
-        } 
+            OutputLabel.Content = motd[r.Next(0, motd.Length - 1)];
+        }
         private void checkUpdate()
         {
             string repoURL = "https://raw.githubusercontent.com/Backend2121/SimpleThingsProvider/master/TorrentScraper/Settings.settings";
@@ -91,28 +107,23 @@ namespace SimpleThingsProvider
                 }
             }
         }
-        public class Result
-        {
-            public string Title { get; set; }
-            public string Seeds { get; set; }
-            public string Leechs { get; set; }
-            public string Time { get; set; }
-            public string Size { get; set; }
-        }
         private void Search(object sender, RoutedEventArgs e)
         {
             // Reset to default
             OpenInBrowserButton.IsEnabled = false;
             CopyButton.IsEnabled = false;
-            OutputLabel.Content = "Output";
+            OutputLabel.Content = motd[r.Next(0, motd.Length - 1)];
 
             // Hide all ResultsLists
             TorrentResultsList.Visibility = Visibility.Hidden;
             VimmResultsList.Visibility = Visibility.Hidden;
             FitGirlResultsList.Visibility = Visibility.Hidden;
+            NxBrewResultsList.Visibility = Visibility.Hidden;
             WowRomsResultsList.Visibility = Visibility.Hidden;
             RPGOnlyResultsList.Visibility = Visibility.Hidden;
             HexRomResultsList.Visibility = Visibility.Hidden;
+            MangaFreakResultsList.Visibility = Visibility.Hidden;
+            MangaWorldResultsList.Visibility = Visibility.Hidden;
 
             HttpStatusCode code = module.Search(SearchTextBox.Text, WebsiteSource.SelectedItem.ToString());
             if (code != HttpStatusCode.OK) { Alert("Received a non 200(OK) response!" + "\n" + code, "STD: Error"); StatusCodeLabel.Content = "Status Code: " + code; StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Red); return; }
@@ -181,6 +192,14 @@ namespace SimpleThingsProvider
                 {
                     entry = module.getMagnet(HexRomResultsList.SelectedIndex);
                 }
+                else if (NxBrewResultsList.Visibility == Visibility.Visible)
+                {
+                    entry = module.getMagnet(NxBrewResultsList.SelectedIndex);
+                }
+                else if (MangaWorldResultsList.Visibility == Visibility.Visible)
+                {
+                    entry = module.getMagnet(MangaWorldResultsList.SelectedIndex);
+                }
 
                 Logger.Log($"Entry {entry} has been selected", "Main");
                 OutputLabel.Content = entry;
@@ -188,7 +207,7 @@ namespace SimpleThingsProvider
                 OpenInBrowserButton.IsEnabled = true;
                 return;
             }
-            catch (ArgumentOutOfRangeException) { CopyButton.IsEnabled = true; OpenInBrowserButton.IsEnabled = false; OutputLabel.Content = "Output"; return; }
+            catch (ArgumentOutOfRangeException) { CopyButton.IsEnabled = true; OpenInBrowserButton.IsEnabled = false; OutputLabel.Content = "Error "; return; }
         }
         private void Copy(object sender, RoutedEventArgs e)
         {
@@ -201,17 +220,23 @@ namespace SimpleThingsProvider
             websiteStatusWindow.Show();
             websiteStatusWindow.Focus();
         }
+        private void OpenHelpWindow(object sender, RoutedEventArgs e)
+        {
+            HelpWindow helpWindow = new HelpWindow();
+            helpWindow.Show();
+            helpWindow.Focus();
+        }
         private void OpenAboutWindow(object sender, RoutedEventArgs e)
         {
             AboutWindow aboutWindow = new AboutWindow();
             aboutWindow.Show();
             aboutWindow.Focus();
         }
-        private void OpenProxyWindow(object sender, RoutedEventArgs e)
+        private void OpenSettingsWindow(object sender, RoutedEventArgs e)
         {
-            ProxyWindow proxyWindow = new ProxyWindow();
-            proxyWindow.Show();
-            proxyWindow.Focus();
+            SettingsWindow settingsWindow = new SettingsWindow();
+            settingsWindow.Show();
+            settingsWindow.Focus();
         }
         private void SaveSelected(object sender, RoutedEventArgs e)
         {

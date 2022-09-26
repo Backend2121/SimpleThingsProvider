@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ControlzEx.Theming;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,10 @@ namespace SimpleThingsProvider
         public LinksWindow()
         {
             InitializeComponent();
+            if (Settings.Default.SyncWithWindows) { ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncWithAppMode; }
+            else { ThemeManager.Current.ChangeTheme(this, Settings.Default.MainTheme + "." + Settings.Default.SubTheme); }
+
+            ThemeManager.Current.SyncTheme();
             // Hide all linkslists
             LinksList.Visibility = Visibility.Hidden;
             HexRomsLinksList.Visibility = Visibility.Hidden;
@@ -29,18 +34,18 @@ namespace SimpleThingsProvider
         }
         private void SelectionChanged(object sender, RoutedEventArgs e)
         {
-            Websites.GameWebsite link = new();
+            string link = "";
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
             if (LinksList.Visibility == Visibility.Visible)
             {
-                link = (Websites.GameWebsite)LinksList.SelectedValue;
+                link = ((Websites.GameWebsite)LinksList.SelectedValue).Link;
             }
             else if (HexRomsLinksList.Visibility == Visibility.Visible)
             {
-                link = (Websites.GameWebsite)HexRomsLinksList.SelectedValue;
+                link = ((Websites.HexRomsGameWebsite)HexRomsLinksList.SelectedValue).Link;
             }
-            mainWindow.OutputLabel.Content = link.Link;
-            if (link.Link != "") { Close(); }
+            mainWindow.OutputLabel.Content = link;
+            if (link != "") { Close(); }
         }
     }
 }

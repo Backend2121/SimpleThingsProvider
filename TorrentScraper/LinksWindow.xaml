@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleThingsProvider"
         mc:Ignorable="d"
+        ResizeMode="NoResize"
         Title="Choose a link!" Height="600" Width="800">
     <Grid>
         <ListView x:Name="LinksList" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionChanged="SelectionChanged" Visibility="Hidden">
@@ -20,6 +21,15 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="Auto" Header="Infos" DisplayMemberBinding="{Binding Infos}"/>
+                    <GridViewColumn Width="Auto" Header="Website Link" DisplayMemberBinding="{Binding Link}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView x:Name="NxBrewLinksList" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionChanged="SelectionChanged" Visibility="Hidden">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="Auto" Header="Infos" DisplayMemberBinding="{Binding Infos}"/>
+                    <GridViewColumn Width="Auto" Header="Website Name" DisplayMemberBinding="{Binding Name}"/>
                     <GridViewColumn Width="Auto" Header="Website Link" DisplayMemberBinding="{Binding Link}"/>
                 </GridView>
             </ListView.View>

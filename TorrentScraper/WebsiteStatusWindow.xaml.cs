@@ -15,6 +15,8 @@ using System.Net;
 using HtmlAgilityPack;
 using System.Threading;
 using System.ComponentModel;
+using System.Net.Http;
+using ControlzEx.Theming;
 
 namespace SimpleThingsProvider
 {
@@ -66,7 +68,7 @@ namespace SimpleThingsProvider
                         });
                         break;
                     }
-                    catch (System.Net.WebException err) 
+                    catch (System.Net.WebException err)
                     {
                         this.Dispatcher.Invoke(() =>
                         {
@@ -87,7 +89,7 @@ namespace SimpleThingsProvider
                         });
                         break;
                     }
-                    catch (System.Net.WebException err) 
+                    catch (System.Net.WebException err)
                     {
                         this.Dispatcher.Invoke(() =>
                         {
@@ -95,9 +97,9 @@ namespace SimpleThingsProvider
                             WebsiteList.Items.Add(rpgonly);
                             Logger.Log($"Website {rpgonly.name} answered with {rpgonly.code} code,  {err}", "WebsiteStatus");
                         });
-                        break; 
+                        break;
                     }
-                /*case "NxBrew":
+                case "NxBrew":
                     try
                     {
                         this.Dispatcher.Invoke(() =>
@@ -117,7 +119,7 @@ namespace SimpleThingsProvider
                             Logger.Log($"Website {nxbrew.name} answered with {nxbrew.code} code,  {err}", "WebsiteStatus");
                         });
                         break;
-                    }*/
+                    }
                 case "HexRom":
                     try
                     {
@@ -160,11 +162,36 @@ namespace SimpleThingsProvider
                         });
                         break;
                     }
-                }
-            }
+                case "VimmsLair":
+                    try
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            Website vimm = new Website() { name = "VimmsLair", code = getStatus("https://vimm.net/?p=vault") };
+                            WebsiteList.Items.Add(vimm);
+                            Logger.Log($"Website {vimm.name} answered with {vimm.code} code", "WebsiteStatus");
+                        });
+                        break;
+                    }
+                    catch (System.Net.WebException err)
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            Website vimm = new Website() { name = "VimmsLair", code = HttpStatusCode.ServiceUnavailable, info = "Website is down or unreachable without a VPN or Proxy" };
+                            WebsiteList.Items.Add(vimm);
+                            Logger.Log($"Website {vimm.name} answered with {vimm.code} code, {err}", "WebsiteStatus");
+                        });
+                        break;
+                    }
+            }   
+        }
         public WebsiteStatusWindow()
         {
             InitializeComponent();
+            if (Settings.Default.SyncWithWindows) { ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncWithAppMode; }
+            else { ThemeManager.Current.ChangeTheme(this, Settings.Default.MainTheme + "." + Settings.Default.SubTheme); }
+
+            ThemeManager.Current.SyncTheme();
             Logger.Log("Initialized Website Status Window", "WebsiteStatus");
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
             Title = "Website Status Checker (I'm not frozen!)";
@@ -180,9 +207,8 @@ namespace SimpleThingsProvider
             HtmlWeb web = new HtmlWeb();
             if (Settings.Default.ProxyEnabled)
             {
-                string proxy = Settings.Default.ProxyIP;
                 int port = Int32.Parse(Settings.Default.ProxyPort);
-                web.Load(url, proxy, port, String.Empty, String.Empty);
+                web.Load(url, Settings.Default.ProxyIP, port, String.Empty, String.Empty);
                 return web.StatusCode;
             }
             else
