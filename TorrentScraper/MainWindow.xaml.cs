@@ -79,8 +79,7 @@ namespace SimpleThingsProvider
                 }
             }
             Logger.Log("Everything ready!", "Main");
-            //DEBUG
-            //PiracyDisclaimer();
+            PiracyDisclaimer();
             OutputLabel.Content = motd[r.Next(0, motd.Length - 1)];
         }
         private void checkUpdate()
