@@ -28,6 +28,8 @@ THIS SOFTWARE MUST BE USED TO DOWNLOAD ONLY LEGALLY OWNED MEDIA! I DECLINE ANY R
 
 **NxBrew** for Switch Games
 
+**Ziperto** for Switch Games
+
 **HexRoms** for 3ds Games
 
 **WoWRoms** for old Games
