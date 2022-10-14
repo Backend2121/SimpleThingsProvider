@@ -40,3 +40,5 @@ THIS SOFTWARE MUST BE USED TO DOWNLOAD ONLY LEGALLY OWNED MEDIA! I DECLINE ANY R
 For any help with the software join the Discord and ask for help!
 
 ![Discord Banner 1](https://discordapp.com/api/guilds/857306107113766912/widget.png?style=banner1)
+
+# [TUTORIAL](https://youtu.be/49bENmhpf_s)
