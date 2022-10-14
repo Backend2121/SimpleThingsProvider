@@ -18,7 +18,7 @@
       <Value Profile="(Default)">-1</Value>
     </Setting>
     <Setting Name="ApplicationVersion" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">1.0.0.0</Value>
+      <Value Profile="(Default)">1.0.1.0</Value>
     </Setting>
     <Setting Name="MainTheme" Type="System.String" Scope="User">
       <Value Profile="(Default)">Light</Value>

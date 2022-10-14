@@ -80,6 +80,10 @@ namespace SimpleThingsProvider
         {
             public string Title { get; set; }
         }
+        public class ZipertoResults
+        {
+            public string Title { get; set; }
+        }
         public class MangaHubResults
         {
             public string Title { get; set; }
@@ -132,6 +136,11 @@ namespace SimpleThingsProvider
                         else doc = web.Load("https://nxbrew.com/gameindex.html");
                         break;
 
+                    case ("Ziperto"):
+                        if (Settings.Default.ProxyEnabled) doc = web.Load("https://www.ziperto.com/nintendo-switch-nsp-list/", Settings.Default.ProxyIP, Int32.Parse(Settings.Default.ProxyPort), string.Empty, string.Empty);
+                        else doc = web.Load("https://www.ziperto.com/nintendo-switch-nsp-list/");
+                        break;
+
                     case ("HexRom"):
                         if (Settings.Default.ProxyEnabled) doc = web.Load("https://hexrom.com/roms/nintendo-3ds/?title=" + toSearch, Settings.Default.ProxyIP, Int32.Parse(Settings.Default.ProxyPort), string.Empty, string.Empty);
                         else doc = web.Load("https://hexrom.com/roms/nintendo-3ds/?title=" + toSearch);
@@ -182,6 +191,8 @@ namespace SimpleThingsProvider
                     return getResults_RPGOnly(document, mainWindow.RPGOnlyResultsList, toSearch);
                 case ("NxBrew"):
                     return getResults_NxBrew(document, mainWindow.NxBrewResultsList, toSearch);
+                case ("Ziperto"):
+                    return getResults_Ziperto(document, mainWindow.ZipertoResultsList, toSearch);
                 case ("HexRom"):
                     return getResults_HexRom(document, mainWindow.HexRomResultsList);
                 case ("WoWRoms"):
@@ -368,6 +379,42 @@ namespace SimpleThingsProvider
             }
             
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - NxBrew)");
+            ResultsList.ItemsSource = results;
+            return underlying;
+        }
+        public List<String> getResults_Ziperto(HtmlDocument document, ListView ResultsList, string toSearch)
+        {
+            ResultsList.Visibility = Visibility.Visible;
+            underlying = new List<string>();
+            List<ZipertoResults> results = new();
+            HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div[1]/div/div/div/div/div[1]/div[2]/article/div/div[1]/div[2]/div/div/ul/li/a");
+            try
+            {
+                Logger.Log($"Found {games.Count} results", "Websites (getResults - Ziperto)");
+                foreach (HtmlNode game in games)
+                {
+                    if (game.InnerText.ToLower().Contains(toSearch.ToLower()))
+                    {
+                        try
+                        {
+                            var title = game.InnerText.Replace("\t", "");
+                            title = title.Replace("\n", "");
+                            title = title.Replace("&amp;", "&");
+                            title = title.Replace("&#8211;", "-");
+                            results.Add(new ZipertoResults() { Title = title });
+                            underlying.Add(game.Attributes["href"].Value);
+                        }
+                        catch (NullReferenceException) { continue; }
+                    }
+                }
+            }
+            catch (NullReferenceException)
+            {
+                Logger.Log("No results found!", "Websites (getResults - Ziperto)");
+                return new List<string>();
+            }
+
+            Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - Ziperto)");
             ResultsList.ItemsSource = results;
             return underlying;
         }
@@ -637,6 +684,73 @@ namespace SimpleThingsProvider
             linksWindow.LinksList.ItemsSource = websites;
             return "";
         }
+        public string getGamePage_Ziperto(string gameURL)
+        {
+            HtmlWeb web = new HtmlWeb();
+            LinksWindow linksWindow = new LinksWindow();
+            linksWindow.LinksList.Visibility = Visibility.Visible;
+            linksWindow.Show();
+            doc = web.Load(gameURL);
+            List<GameWebsite> websites = new List<GameWebsite>();
+            Logger.Log($"Getting game page links", "Websites (getGamePage - Ziperto)");
+
+            HtmlNodeCollection baseGame = doc.DocumentNode.SelectNodes("/html/body/div[1]/div/div/div/div/div[1]/div[2]/article/div/div[2]/div[1]/p/span/strong/a");
+            try
+            {
+                foreach (HtmlNode node in baseGame)
+                {
+                    string infos = node.ParentNode.ParentNode.ParentNode.InnerText;
+                    infos = infos.Replace("&#8212;", "");
+                    infos = infos.Replace("&#8211;", "");
+                    websites.Add(new GameWebsite() { Infos = infos, Name = node.InnerText, Link = node.Attributes["href"].Value });
+                }
+            }
+            catch { }
+            Debug.WriteLine("baseGame: " + websites.Count);
+            HtmlNodeCollection restGame = doc.DocumentNode.SelectNodes("/html/body/div[1]/div/div/div/div/div[1]/div[2]/article/div/div[2]/div[1]/p/strong/a");
+            int counter = -1;
+            Debug.WriteLine("restGame: " + restGame.Count);
+            try
+            {
+                foreach (var p in restGame)
+                {
+                    var info = p.ParentNode.ParentNode.InnerText;
+                    info = info.Replace("&#8212;", "");
+                    info = info.Replace("Part1", "");
+                    info = info.Replace("Part2", "");
+                    info = info.Replace("Part3", "");
+                    info = info.Replace("&#8211;", ":");
+                    int startList = info.LastIndexOf(':');
+                    string[] strings = info.Substring(startList).Split("-&gt;");
+                    if (p.InnerText.Contains("Part1")) { counter++; }
+                    try
+                    {
+                        websites.Add(new GameWebsite() { Infos = info, Name = strings[counter] + "- " + p.InnerText, Link = p.Attributes["href"].Value });
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        try
+                        {
+                            if (p.InnerText.Contains("Part"))
+                            {
+                                websites.Add(new GameWebsite() { Infos = p.ParentNode.ParentNode.FirstChild.InnerText, Name = "1Fichier" + " - " + p.InnerText, Link = p.Attributes["href"].Value });
+                            }
+                            else
+                            {
+                                websites.Add(new GameWebsite() { Infos = p.ParentNode.ParentNode.FirstChild.InnerText, Name = p.InnerText, Link = p.Attributes["href"].Value });
+                            }
+                        }
+                        catch { continue; }
+                    }
+                    if (counter == strings.Length - 2) { counter = -1; }
+                }
+            }
+            catch { }
+            Debug.WriteLine("Ending: " + websites.Count);
+            Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - Ziperto)");
+            linksWindow.LinksList.ItemsSource = websites;
+            return "";
+        }
         public string getGamePage_HexRom(string gameURL)
         {
             HtmlWeb web = new HtmlWeb();
@@ -711,6 +825,8 @@ namespace SimpleThingsProvider
                     return getGamePage_RPGOnly(underlying[index]);
                 case ("NxBrew"):
                     return getGamePage_NxBrew(underlying[index]);
+                case ("Ziperto"):
+                    return getGamePage_Ziperto(underlying[index]);
                 case ("HexRom"):
                     return getGamePage_HexRom(underlying[index] + "/download/");
                 case ("WoWRoms"):

@@ -118,6 +118,7 @@ namespace SimpleThingsProvider
             VimmResultsList.Visibility = Visibility.Hidden;
             FitGirlResultsList.Visibility = Visibility.Hidden;
             NxBrewResultsList.Visibility = Visibility.Hidden;
+            ZipertoResultsList.Visibility = Visibility.Hidden;
             WowRomsResultsList.Visibility = Visibility.Hidden;
             RPGOnlyResultsList.Visibility = Visibility.Hidden;
             HexRomResultsList.Visibility = Visibility.Hidden;
@@ -194,6 +195,10 @@ namespace SimpleThingsProvider
                 else if (NxBrewResultsList.Visibility == Visibility.Visible)
                 {
                     entry = module.getMagnet(NxBrewResultsList.SelectedIndex);
+                }
+                else if (ZipertoResultsList.Visibility == Visibility.Visible)
+                {
+                    entry = module.getMagnet(ZipertoResultsList.SelectedIndex);
                 }
                 else if (MangaWorldResultsList.Visibility == Visibility.Visible)
                 {

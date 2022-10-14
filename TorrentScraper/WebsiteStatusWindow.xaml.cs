@@ -183,7 +183,29 @@ namespace SimpleThingsProvider
                         });
                         break;
                     }
-            }   
+                case "Ziperto":
+                    try
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            Website ziperto = new Website() { name = "Ziperto", code = getStatus("https://www.ziperto.com/") };
+                            WebsiteList.Items.Add(ziperto);
+                            Logger.Log($"Website {ziperto.name} answered with {ziperto.code} code", "WebsiteStatus");
+                        });
+                        break;
+                    }
+                    catch (System.Net.WebException err)
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            Website ziperto = new Website() { name = "Ziperto", code = HttpStatusCode.ServiceUnavailable, info = "Website is down or unreachable without a VPN or Proxy" };
+                            WebsiteList.Items.Add(ziperto);
+                            Logger.Log($"Website {ziperto.name} answered with {ziperto.code} code, {err}", "WebsiteStatus");
+                        });
+                        break;
+                    }
+            }
+            
         }
         public WebsiteStatusWindow()
         {
