@@ -85,7 +85,7 @@ namespace SimpleThingsProvider {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1.0.1.0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.0.2.0")]
         public string ApplicationVersion {
             get {
                 return ((string)(this["ApplicationVersion"]));
@@ -137,6 +137,18 @@ namespace SimpleThingsProvider {
             }
             set {
                 this["DoNotShowAgain_RestartApplicationAfterThemeChange"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool NSFWContent {
+            get {
+                return ((bool)(this["NSFWContent"]));
+            }
+            set {
+                this["NSFWContent"] = value;
             }
         }
     }

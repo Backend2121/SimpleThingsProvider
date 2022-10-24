@@ -20,6 +20,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Threading;
 using System.Reflection;
+using static SimpleThingsProvider.WebsiteStatusWindow;
 
 namespace SimpleThingsProvider
 {
@@ -28,6 +29,7 @@ namespace SimpleThingsProvider
         List<string> underlying;
         string whoami;
         MainWindow mainWindow;
+        string nsfw = "NSFW Content";
         public class TorrentResult
         {
             public string Title { get; set; }
@@ -227,6 +229,7 @@ namespace SimpleThingsProvider
                 IEnumerable<HtmlNode> descendants = node.Descendants(3);
                 // Needs to be splitted along \n
                 var splittedTexts = node.InnerText.Split("\n");
+
                 results.Add(new TorrentResult() { Title = splittedTexts[2], Seeds = splittedTexts[3], Leechs = splittedTexts[4], Time = splittedTexts[5], Size = splittedTexts[6] });
 
                 foreach (HtmlNode descendant in descendants)
@@ -242,6 +245,20 @@ namespace SimpleThingsProvider
                 }
             }
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - x1337)");
+            if (!Settings.Default.NSFWContent)
+            {
+                foreach (TorrentResult res in results)
+                {
+                    foreach (string s in BannedWords.nsfwWords)
+                    {
+                        if (res.Title.ToLower().Contains(s.ToLower()))
+                        {
+                            res.Title = "NSFW Content";
+                            underlying[results.IndexOf(res)] = string.Empty;
+                        }
+                    }
+                }
+            }
             ResultsList.ItemsSource = results;
             ResultsList.Visibility = Visibility.Visible;
             return underlying;
@@ -303,6 +320,20 @@ namespace SimpleThingsProvider
                 results.Add(new TorrentResult() { Title = title, Seeds = seeds, Leechs = leechs, Time = time, Size = size.Replace("Size ", "") });
             }
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - ThePirateBay)");
+            if (!Settings.Default.NSFWContent)
+            {
+                foreach (TorrentResult res in results)
+                {
+                    foreach (string s in BannedWords.nsfwWords)
+                    {
+                        if (res.Title.ToLower().Contains(s.ToLower()))
+                        {
+                            res.Title = "NSFW Content";
+                            underlying[results.IndexOf(res)] = string.Empty;
+                        }
+                    }
+                }
+            }
             ResultsList.ItemsSource = results;
             ResultsList.Visibility = Visibility.Visible;
             return underlying;
@@ -343,6 +374,20 @@ namespace SimpleThingsProvider
                 return new List<string>();
             }
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - RPGOnly)");
+            if (!Settings.Default.NSFWContent)
+            {
+                foreach (RPGOnlyResult res in results)
+                {
+                    foreach (string s in BannedWords.nsfwWords)
+                    {
+                        if (res.Title.ToLower().Contains(s.ToLower()))
+                        {
+                            res.Title = "NSFW Content";
+                            underlying[results.IndexOf(res)] = string.Empty;
+                        }
+                    }
+                }
+            }
             ResultsList.ItemsSource = results;
             return underlying;
         }
@@ -379,6 +424,20 @@ namespace SimpleThingsProvider
             }
             
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - NxBrew)");
+            if (!Settings.Default.NSFWContent)
+            {
+                foreach (NxBrewResults res in results)
+                {
+                    foreach (string s in BannedWords.nsfwWords)
+                    {
+                        if (res.Title.ToLower().Contains(s.ToLower()))
+                        {
+                            res.Title = "NSFW Content";
+                            underlying[results.IndexOf(res)] = string.Empty;
+                        }
+                    }
+                }
+            }
             ResultsList.ItemsSource = results;
             return underlying;
         }
@@ -415,6 +474,20 @@ namespace SimpleThingsProvider
             }
 
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - Ziperto)");
+            if (!Settings.Default.NSFWContent)
+            {
+                foreach (ZipertoResults res in results)
+                {
+                    foreach (string s in BannedWords.nsfwWords)
+                    {
+                        if (res.Title.ToLower().Contains(s.ToLower()))
+                        {
+                            res.Title = "NSFW Content";
+                            underlying[results.IndexOf(res)] = string.Empty;
+                        }
+                    }
+                }
+            }
             ResultsList.ItemsSource = results;
             return underlying;
         }
@@ -444,6 +517,20 @@ namespace SimpleThingsProvider
             }
             
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - HexRoms)");
+            if (!Settings.Default.NSFWContent)
+            {
+                foreach (HexRomResults res in results)
+                {
+                    foreach (string s in BannedWords.nsfwWords)
+                    {
+                        if (res.Title.ToLower().Contains(s.ToLower()))
+                        {
+                            res.Title = "NSFW Content";
+                            underlying[results.IndexOf(res)] = string.Empty;
+                        }
+                    }
+                }
+            }
             ResultsList.ItemsSource = results;
             return underlying;
         }
@@ -479,6 +566,20 @@ namespace SimpleThingsProvider
             }
             
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - WoWRoms)");
+            if (!Settings.Default.NSFWContent)
+            {
+                foreach (WowRomsResult res in results)
+                {
+                    foreach (string s in BannedWords.nsfwWords)
+                    {
+                        if (res.Title.ToLower().Contains(s.ToLower()))
+                        {
+                            res.Title = "NSFW Content";
+                            underlying[results.IndexOf(res)] = string.Empty;
+                        }
+                    }
+                }
+            }
             ResultsList.ItemsSource = results;
             return underlying;
         }
@@ -528,6 +629,20 @@ namespace SimpleThingsProvider
             }
 
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - FitGirl)");
+            if (!Settings.Default.NSFWContent)
+            {
+                foreach (FitGirlResult res in results)
+                {
+                    foreach (string s in BannedWords.nsfwWords)
+                    {
+                        if (res.Title.ToLower().Contains(s.ToLower()))
+                        {
+                            res.Title = "NSFW Content";
+                            underlying[results.IndexOf(res)] = string.Empty;
+                        }
+                    }
+                }
+            }
             ResultsList.ItemsSource = results;
             return underlying;
         }
@@ -552,6 +667,20 @@ namespace SimpleThingsProvider
                     underlying.Add("https://vimm.net" + tds[1].FirstChild.Attributes["href"].Value);
                 }
                 catch (NullReferenceException) { Logger.Log("No results found!", "Websites (getResults - VimmsLair)"); return new List<string>(); }
+            }
+            if (!Settings.Default.NSFWContent)
+            {
+                foreach (VimmResult res in results)
+                {
+                    foreach (string s in BannedWords.nsfwWords)
+                    {
+                        if (res.Title.ToLower().Contains(s.ToLower()))
+                        {
+                            res.Title = "NSFW Content";
+                            underlying[results.IndexOf(res)] = string.Empty;
+                        }
+                    }
+                }
             }
             ResultsList.ItemsSource = results;
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - VimmsLair)");
@@ -578,6 +707,20 @@ namespace SimpleThingsProvider
                 results.Add(result);
             }
             Logger.Log($"Found {mangas.Count} results", "Websites (getResults - MangaHub)");
+            if (!Settings.Default.NSFWContent)
+            {
+                foreach (MangaWorldResults res in results)
+                {
+                    foreach (string s in BannedWords.nsfwWords)
+                    {
+                        if (res.Title.ToLower().Contains(s.ToLower()))
+                        {
+                            res.Title = "NSFW Content";
+                            underlying[results.IndexOf(res)] = string.Empty;
+                        }
+                    }
+                }
+            }
             ResultsList.ItemsSource = results;
             return underlying;
         }
@@ -620,6 +763,25 @@ namespace SimpleThingsProvider
                 }
             }
             Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - RPGOnly)");
+            if (!Settings.Default.NSFWContent)
+            {
+                foreach (GameWebsite res in websites)
+                {
+                    foreach (string s in BannedWords.nsfwWords)
+                    {
+                        if (res.Name.ToLower().Contains(s.ToLower()))
+                        {
+                            res.Name = "NSFW Content";
+                            underlying[websites.IndexOf(res)] = string.Empty;
+                        }
+                        if (res.Infos.ToLower().Contains(s.ToLower()))
+                        {
+                            res.Infos = "NSFW Content";
+                            underlying[websites.IndexOf(res)] = string.Empty;
+                        }
+                    }
+                }
+            }
             linksWindow.LinksList.ItemsSource = websites;
             return "";
         }
@@ -681,6 +843,25 @@ namespace SimpleThingsProvider
                 }
             }
             Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - NxBrew)");
+            if (!Settings.Default.NSFWContent)
+            {
+                foreach (GameWebsite res in websites)
+                {
+                    foreach (string s in BannedWords.nsfwWords)
+                    {
+                        if (res.Name.ToLower().Contains(s.ToLower()))
+                        {
+                            res.Name = "NSFW Content";
+                            underlying[websites.IndexOf(res)] = string.Empty;
+                        }
+                        if (res.Infos.ToLower().Contains(s.ToLower()))
+                        {
+                            res.Infos = "NSFW Content";
+                            underlying[websites.IndexOf(res)] = string.Empty;
+                        }
+                    }
+                }
+            }
             linksWindow.LinksList.ItemsSource = websites;
             return "";
         }
@@ -748,6 +929,25 @@ namespace SimpleThingsProvider
             catch { }
             Debug.WriteLine("Ending: " + websites.Count);
             Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - Ziperto)");
+            if (!Settings.Default.NSFWContent)
+            {
+                foreach (GameWebsite res in websites)
+                {
+                    foreach (string s in BannedWords.nsfwWords)
+                    {
+                        if (res.Name.ToLower().Contains(s.ToLower()))
+                        {
+                            res.Name = "NSFW Content";
+                            underlying[websites.IndexOf(res)] = string.Empty;
+                        }
+                        if (res.Infos.ToLower().Contains(s.ToLower()))
+                        {
+                            res.Infos = "NSFW Content";
+                            underlying[websites.IndexOf(res)] = string.Empty;
+                        }
+                    }
+                }
+            }
             linksWindow.LinksList.ItemsSource = websites;
             return "";
         }
@@ -773,6 +973,20 @@ namespace SimpleThingsProvider
                 if (title != " ") { websites.Add(new HexRomsGameWebsite() { Link = link, Infos = title }); }   
             }
             Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - HexRom)");
+            if (!Settings.Default.NSFWContent)
+            {
+                foreach (HexRomsGameWebsite res in websites)
+                {
+                    foreach (string s in BannedWords.nsfwWords)
+                    {
+                        if (res.Infos.ToLower().Contains(s.ToLower()))
+                        {
+                            res.Infos = "NSFW Content";
+                            underlying[websites.IndexOf(res)] = string.Empty;
+                        }
+                    }
+                }
+            }
             linksWindow.HexRomsLinksList.ItemsSource = websites;
             return "";
         }
@@ -798,6 +1012,25 @@ namespace SimpleThingsProvider
                 websites.Add(new GameWebsite() { Link = downloadlink.Attributes["href"].Value, Infos = downloadlink.InnerText });
             }
             Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - FitGirl)");
+            if (!Settings.Default.NSFWContent)
+            {
+                foreach (GameWebsite res in websites)
+                {
+                    foreach (string s in BannedWords.nsfwWords)
+                    {
+                        if (res.Name.ToLower().Contains(s.ToLower()))
+                        {
+                            res.Name = "NSFW Content";
+                            underlying[websites.IndexOf(res)] = string.Empty;
+                        }
+                        if (res.Infos.ToLower().Contains(s.ToLower()))
+                        {
+                            res.Infos = "NSFW Content";
+                            underlying[websites.IndexOf(res)] = string.Empty;
+                        }
+                    }
+                }
+            }
             linksWindow.LinksList.ItemsSource = websites;
             return "";
         }
@@ -811,6 +1044,7 @@ namespace SimpleThingsProvider
         }
         public string getMagnet(int index)
         {
+            if (underlying[index].Equals(string.Empty)) { Logger.Log("NSFW Content selected, returning", $"Websites (getMagnet - {whoami}"); return ""; }
             Logger.Log("Switching for link to return", $"Websites (getMagnet - {whoami})");
             switch (whoami)
             {

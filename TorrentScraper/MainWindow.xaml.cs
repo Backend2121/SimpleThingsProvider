@@ -23,6 +23,7 @@ using System.Diagnostics;
 using MahApps.Metro.Controls;
 using ControlzEx.Theming;
 using MahApps;
+using System.Runtime.CompilerServices;
 
 namespace SimpleThingsProvider
 {
@@ -126,6 +127,19 @@ namespace SimpleThingsProvider
             MangaWorldResultsList.Visibility = Visibility.Hidden;
 
             HttpStatusCode code = module.Search(SearchTextBox.Text, WebsiteSource.SelectedItem.ToString());
+            if (!Settings.Default.NSFWContent)
+            {
+                foreach (string s in BannedWords.nsfwWords)
+                {
+                    if (SearchTextBox.Text.Contains(s.ToLower()))
+                    {
+                        Alert("NSFW content detected!", "STD: Warning");
+                        ResultsNumber.Content = "Results: 0";
+                        return;
+                    }
+                }
+            }
+            
             if (code != HttpStatusCode.OK) { Alert("Received a non 200(OK) response!" + "\n" + code, "STD: Error"); StatusCodeLabel.Content = "Status Code: " + code; StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Red); return; }
             else
             {

@@ -16,6 +16,7 @@
     <None Remove="data\Icon.ico" />
     <None Remove="data\MahApps.Metro.dll" />
     <None Remove="data\Microsoft.Xaml.Behaviors.dll" />
+    <None Remove="data\NSFWWords.json" />
     <None Remove="data\Patreon.png" />
     <None Remove="data\Reddit.png" />
     <None Remove="data\WebScraping.png" />
@@ -126,6 +127,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="data\Styles\Fonts.xaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\NSFWWords.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="data\WebScraping.png" />

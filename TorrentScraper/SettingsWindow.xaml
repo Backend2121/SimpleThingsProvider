@@ -14,19 +14,19 @@
             <ColumnDefinition Width="9*"/>
         </Grid.ColumnDefinitions>
         <Label Content="Proxy (ip)" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="18" Padding="0,0,0,0" Grid.IsSharedSizeScope="True"/>
-        <TextBox x:Name="IPTextBox" HorizontalAlignment="Left" Margin="10,6,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Grid.Column="1" ToolTip="Proxy ip"/>
+        <TextBox x:Name="IPTextBox" HorizontalAlignment="Left" Margin="15,5,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Grid.Column="1" ToolTip="Proxy ip"/>
         <Button x:Name="SaveButton" Grid.Column="1" Content="Apply Changes" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Click="SaveButton_Click"/>
         <Label Content="Port" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top" Height="18" Padding="0,0,0,0" Grid.IsSharedSizeScope="True"/>
-        <TextBox x:Name="PortTextBox" HorizontalAlignment="Left" Margin="10,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Grid.Column="1" ToolTip="Proxy port"/>
+        <TextBox x:Name="PortTextBox" HorizontalAlignment="Left" Margin="15,35,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Grid.Column="1" ToolTip="Proxy port"/>
         <Label Content="Enable Proxy" Margin="10,70,0,0" Padding="0,0,0,0" VerticalAlignment="Top" Height="18" HorizontalAlignment="Left" Width="80"/>
-        <CheckBox x:Name="ProxyEnabledCheckBox" Grid.Column="1" Content="" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="ProxyEnabledCheckBox" Grid.Column="1" Content="" HorizontalAlignment="Left" Margin="15,69,0,0" VerticalAlignment="Top"/>
         <Label Content="Main Theme" Margin="10,100,0,0" Padding="0,0,0,0" VerticalAlignment="Top" Height="18" HorizontalAlignment="Left" Width="80" Grid.ColumnSpan="2"/>
         <Label Content="Sub Theme" Margin="10,130,0,0" Padding="0,0,0,0" VerticalAlignment="Top" Height="18" HorizontalAlignment="Left" Width="80" Grid.ColumnSpan="2"/>
-        <ComboBox x:Name="MainThemeComboBox" Grid.Column="1" HorizontalAlignment="Left" Margin="10,96,0,0" VerticalAlignment="Top" Width="120">
+        <ComboBox x:Name="MainThemeComboBox" Grid.Column="1" HorizontalAlignment="Left" Margin="15,95,0,0" VerticalAlignment="Top" Width="120">
             <System:String>Light</System:String>
             <System:String>Dark</System:String>
         </ComboBox>
-        <ComboBox x:Name="SubThemeComboBox" Grid.Column="1" HorizontalAlignment="Left" Margin="10,126,0,0" VerticalAlignment="Top" Width="120">
+        <ComboBox x:Name="SubThemeComboBox" Grid.Column="1" HorizontalAlignment="Left" Margin="15,125,0,0" VerticalAlignment="Top" Width="120">
             <System:String>Red</System:String>
             <System:String>Green</System:String>
             <System:String>Blue</System:String>
@@ -51,6 +51,8 @@
             <System:String>Taupe</System:String>
             <System:String>Sienna</System:String>
         </ComboBox>
-        <CheckBox x:Name="SyncWithWindowsCheckBox" Grid.Column="1" Content="Sync with Windows" HorizontalAlignment="Left" Margin="154,130,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="SyncWithWindowsCheckBox" Grid.Column="1" Content="Sync with Windows" HorizontalAlignment="Left" Margin="159,129,0,0" VerticalAlignment="Top"/>
+        <Label Content="NSFW Content" Margin="10,160,0,0" Padding="0,0,0,0" VerticalAlignment="Top" Height="18" HorizontalAlignment="Left" Width="80" Grid.ColumnSpan="2"/>
+        <CheckBox x:Name="NSFWContentCheckBox" Grid.Column="1" Content="" HorizontalAlignment="Left" Margin="15,159,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

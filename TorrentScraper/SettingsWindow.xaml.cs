@@ -51,15 +51,17 @@ namespace SimpleThingsProvider
             SubThemeComboBox.SelectedItem = Settings.Default.SubTheme;
             SubThemeComboBox.IsEnabled = true;
             SyncWithWindowsCheckBox.IsChecked = Settings.Default.SyncWithWindows;
+            NSFWContentCheckBox.IsChecked = Settings.Default.NSFWContent;
             if (Settings.Default.SyncWithWindows) { MainThemeComboBox.IsEnabled = false; SubThemeComboBox.IsEnabled = false; }
 
-            Logger.Log($"Loaded previous settings IP:{IPTextBox.Text} PORT:{PortTextBox.Text} ENABLED:{ProxyEnabledCheckBox.IsChecked}", "Proxy");
+            Logger.Log($"Loaded previous settings for Proxy IP:{IPTextBox.Text} PORT:{PortTextBox.Text} ENABLED:{ProxyEnabledCheckBox.IsChecked}", "Proxy");
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            Settings.Default.NSFWContent = NSFWContentCheckBox.IsChecked.Value;
             Logger.Log("Testing new proxy configuration", "Proxy");
-            /*if (ProxyEnabledCheckBox.IsChecked.Value)
+            if (ProxyEnabledCheckBox.IsChecked.Value)
             {
                 try
                 {
@@ -68,7 +70,7 @@ namespace SimpleThingsProvider
                     Logger.Log("New proxy configuration is valid", "Proxy");
                 }
                 catch (Exception) { MainWindow mainWindow = (MainWindow)Application.Current.MainWindow; mainWindow.Alert("Proxy unreachable", "Error"); return; }
-            }*/
+            }
             Settings.Default.ProxyPort = PortTextBox.Text.Replace(" ", "");
             Settings.Default.ProxyIP = IPTextBox.Text.Replace(" ", "");
             Settings.Default.ProxyEnabled = ProxyEnabledCheckBox.IsChecked.Value;
