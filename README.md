@@ -38,7 +38,6 @@ THIS SOFTWARE MUST BE USED TO DOWNLOAD ONLY LEGALLY OWNED MEDIA! I DECLINE ANY R
 
 # HOW TO USE
 Just type whatever you want to search from the selected website (in the drop-down menu) and press search!
-Be CAREFUL while torrenting:
 
 # Do i need a VPN?
 
