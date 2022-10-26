@@ -133,21 +133,21 @@ namespace SimpleThingsProvider
                 {
                     if (SearchTextBox.Text.Contains(s.ToLower()))
                     {
-                        Alert("NSFW content detected!", "STD: Warning");
+                        Alert("NSFW content detected!", "STP: Warning");
                         ResultsNumber.Content = "Results: 0";
                         return;
                     }
                 }
             }
             
-            if (code != HttpStatusCode.OK) { Alert("Received a non 200(OK) response!" + "\n" + code, "STD: Error"); StatusCodeLabel.Content = "Status Code: " + code; StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Red); return; }
+            if (code != HttpStatusCode.OK) { Alert("Received a non 200(OK) response!" + "\n" + code, "STP: Error"); StatusCodeLabel.Content = "Status Code: " + code; StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Red); return; }
             else
             {
                 underlying = module.getResults(module.doc, SearchTextBox.Text); StatusCodeLabel.Content = "Status Code: " + code; StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Green);
             }
             if (underlying.Count <= 0)
             {
-                Alert("No results found!", "STD: Warning");
+                Alert("No results found!", "STP: Warning");
                 ResultsNumber.Content = "Results: 0";
                 return;
             }

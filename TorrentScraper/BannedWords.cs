@@ -10,6 +10,6 @@ namespace SimpleThingsProvider
 {
     public static class BannedWords
     {
-        public static List<string> nsfwWords = JsonSerializer.Deserialize<List<string>>(File.ReadAllText("data/NSFWWords.json"));
+        public static List<string> nsfwWords = JsonSerializer.Deserialize<List<string>>(File.ReadAllText("NSFWWords.json"));
     }
 }

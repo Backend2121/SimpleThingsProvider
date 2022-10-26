@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"><?define SimpleThingsProvider_TargetDir=$(var.SimpleThingsProvider.TargetDir)?>
-	<Product Id="*" Name="Simple Things Provider" Language="1033" Version="1.0.2.0" Manufacturer="Backend2121" UpgradeCode="9c8751eb-af2f-437a-b5be-ea0a5eeb646c">
+	<Product Id="*" Name="Simple Things Provider" Language="1033" Version="1.0.2.1" Manufacturer="Backend2121" UpgradeCode="9c8751eb-af2f-437a-b5be-ea0a5eeb646c">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 		<UIRef Id="WixUI_Minimal"/>
 		<WixVariable Id="WixUILicenseRtf" Value="$(var.ProjectDir)license.rtf" />
@@ -61,6 +61,9 @@
 			</Component>
 			<Component Id="SimpleThingsProvider.exe" Guid="5D03D291-EAB5-4516-A301-C18224FB1CF2">
 				<File Id="SimpleThingsProvider.exe" Name="SimpleThingsProvider.exe" Source="$(var.SimpleThingsProvider_TargetDir)SimpleThingsProvider.exe" />
+			</Component>
+			<Component Id="NSFWWords">
+				<File Id="NSFWWords.json" Name="NSFWWords.json" Source="$(var.SimpleThingsProvider_TargetDir)NSFWWords.json"/>
 			</Component>
 				<Component Id="MahAppsMetro">
 					<File Id="MahApps.Metro.dll" Name="MahApps.Metro.dll" Source="$(var.SimpleThingsProvider_TargetDir)MahApps.Metro.dll" />
