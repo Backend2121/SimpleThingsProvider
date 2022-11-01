@@ -1012,7 +1012,7 @@ namespace SimpleThingsProvider
                 websites.Add(new GameWebsite() { Link = downloadlink.Attributes["href"].Value, Infos = downloadlink.InnerText });
             }
             Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - FitGirl)");
-            if (!Settings.Default.NSFWContent)
+            /*if (!Settings.Default.NSFWContent)
             {
                 foreach (GameWebsite res in websites)
                 {
@@ -1030,7 +1030,7 @@ namespace SimpleThingsProvider
                         }
                     }
                 }
-            }
+            }*/
             linksWindow.LinksList.ItemsSource = websites;
             return "";
         }
