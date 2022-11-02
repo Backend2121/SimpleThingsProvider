@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Reflection;
 using static SimpleThingsProvider.WebsiteStatusWindow;
+using System.Text.Json;
 
 namespace SimpleThingsProvider
 {
@@ -1012,17 +1013,12 @@ namespace SimpleThingsProvider
                 websites.Add(new GameWebsite() { Link = downloadlink.Attributes["href"].Value, Infos = downloadlink.InnerText });
             }
             Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - FitGirl)");
-            /*if (!Settings.Default.NSFWContent)
+            if (!Settings.Default.NSFWContent)
             {
                 foreach (GameWebsite res in websites)
                 {
                     foreach (string s in BannedWords.nsfwWords)
-                    {
-                        if (res.Name.ToLower().Contains(s.ToLower()))
-                        {
-                            res.Name = "NSFW Content";
-                            underlying[websites.IndexOf(res)] = string.Empty;
-                        }
+                    { 
                         if (res.Infos.ToLower().Contains(s.ToLower()))
                         {
                             res.Infos = "NSFW Content";
@@ -1030,7 +1026,7 @@ namespace SimpleThingsProvider
                         }
                     }
                 }
-            }*/
+            }
             linksWindow.LinksList.ItemsSource = websites;
             return "";
         }
