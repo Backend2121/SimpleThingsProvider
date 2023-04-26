@@ -31,22 +31,23 @@ namespace SimpleThingsProvider
         string whoami;
         MainWindow mainWindow;
         string nsfw = "NSFW Content";
-        public class TorrentResult
+        public class Result
         {
+            public string System { get; set; }
             public string Title { get; set; }
             public string Seeds { get; set; }
             public string Leechs { get; set; }
             public string Time { get; set; }
             public string Size { get; set; }
-
-        }
-        public class VimmResult
-        {
-            public string System { get; set; }
-            public string Title { get; set; }
             public string Region { get; set; }
             public string Version { get; set; }
             public string Languages { get; set; }
+            public string OriginalSize { get; set; }
+            public string RepackSize { get; set; }
+            public string Name { get; set; }
+            public string Link { get; set; }
+            public string Infos { get; set; }
+            public string Downloads { get; set; }
         }
         public class FitGirlResult
         {
@@ -72,10 +73,6 @@ namespace SimpleThingsProvider
             public string Downloads { get; set; }
         };
         public class RPGOnlyResult
-        {
-            public string Title { get; set; }
-        }
-        public class HexRomResults
         {
             public string Title { get; set; }
         }
@@ -214,7 +211,7 @@ namespace SimpleThingsProvider
         public List<String> getResults_x1337(HtmlDocument document, ListView ResultsList)
         {
             underlying = new List<string>();
-            List<TorrentResult> results = new();
+            List<Result> results = new();
 
             HtmlNodeCollection list = document.DocumentNode.SelectNodes("/html/body/main/div/div/div/div[2]/div[1]/table/tbody/tr");
 
@@ -231,7 +228,7 @@ namespace SimpleThingsProvider
                 // Needs to be splitted along \n
                 var splittedTexts = node.InnerText.Split("\n");
 
-                results.Add(new TorrentResult() { Title = splittedTexts[2], Seeds = splittedTexts[3], Leechs = splittedTexts[4], Time = splittedTexts[5], Size = splittedTexts[6] });
+                results.Add(new Result() { Title = splittedTexts[2], Seeds = splittedTexts[3], Leechs = splittedTexts[4], Time = splittedTexts[5], Size = splittedTexts[6] });
 
                 foreach (HtmlNode descendant in descendants)
                 {
@@ -248,7 +245,7 @@ namespace SimpleThingsProvider
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - x1337)");
             if (!Settings.Default.NSFWContent)
             {
-                foreach (TorrentResult res in results)
+                foreach (Result res in results)
                 {
                     foreach (string s in BannedWords.nsfwWords)
                     {
@@ -267,7 +264,7 @@ namespace SimpleThingsProvider
         public List<String> getResults_ThePirateBay(HtmlDocument document, ListView ResultsList)
         {
             underlying = new List<string>();
-            List<TorrentResult> results = new();
+            List<Result> results = new();
 
             HtmlNodeCollection trList = document.DocumentNode.SelectNodes("/html/body/div[2]/div[3]/table[1]/tr");
             if (trList == null)
@@ -318,12 +315,12 @@ namespace SimpleThingsProvider
                     }
                     catch (NullReferenceException) { continue; }
                 }
-                results.Add(new TorrentResult() { Title = title, Seeds = seeds, Leechs = leechs, Time = time, Size = size.Replace("Size ", "") });
+                results.Add(new Result() { Title = title, Seeds = seeds, Leechs = leechs, Time = time, Size = size.Replace("Size ", "") });
             }
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - ThePirateBay)");
             if (!Settings.Default.NSFWContent)
             {
-                foreach (TorrentResult res in results)
+                foreach (Result res in results)
                 {
                     foreach (string s in BannedWords.nsfwWords)
                     {
@@ -496,7 +493,7 @@ namespace SimpleThingsProvider
         {
             ResultsList.Visibility = Visibility.Visible;
             underlying = new List<string>();
-            List<HexRomResults> results = new();
+            List<Result> results = new();
             HtmlNodeCollection alist = document.DocumentNode.SelectNodes("/html/body/div[2]/div[1]/div/div[1]/div/div/ul/li/a");
             try
             {
@@ -505,7 +502,7 @@ namespace SimpleThingsProvider
                 {
                     try
                     {
-                        results.Add(new HexRomResults() { Title = game.Attributes["title"].Value});
+                        results.Add(new Result() { Title = game.Attributes["title"].Value});
                         underlying.Add(game.Attributes["href"].Value);
                     }
                     catch { continue; }
@@ -520,7 +517,7 @@ namespace SimpleThingsProvider
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - HexRoms)");
             if (!Settings.Default.NSFWContent)
             {
-                foreach (HexRomResults res in results)
+                foreach (Result res in results)
                 {
                     foreach (string s in BannedWords.nsfwWords)
                     {
@@ -651,7 +648,7 @@ namespace SimpleThingsProvider
         {
             ResultsList.Visibility = Visibility.Visible;
             underlying = new List<string>();
-            List<VimmResult> results = new();
+            List<Result> results = new();
             HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div[4]/div[2]/div/div[3]/table/tr");
             Logger.Log($"Found {games.Count} results", "Websites (getResults - VimmsLair)");
             foreach (HtmlNode game in games)
@@ -664,14 +661,14 @@ namespace SimpleThingsProvider
                     title = title.Replace("&#x26a0;", "");
                     title = title.Replace("&#039;", "'");
 
-                    results.Add(new VimmResult() { System = tds[0].InnerText, Title = title, Region = tds[2].FirstChild.Attributes["title"].Value, Version = tds[3].InnerText, Languages = tds[4].InnerText });
+                    results.Add(new Result() { System = tds[0].InnerText, Title = title, Region = tds[2].FirstChild.Attributes["title"].Value, Version = tds[3].InnerText, Languages = tds[4].InnerText });
                     underlying.Add("https://vimm.net" + tds[1].FirstChild.Attributes["href"].Value);
                 }
                 catch (NullReferenceException) { Logger.Log("No results found!", "Websites (getResults - VimmsLair)"); return new List<string>(); }
             }
             if (!Settings.Default.NSFWContent)
             {
-                foreach (VimmResult res in results)
+                foreach (Result res in results)
                 {
                     foreach (string s in BannedWords.nsfwWords)
                     {
