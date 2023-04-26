@@ -14,7 +14,7 @@ namespace SimpleThingsProvider
         {
             using (StreamWriter w = File.AppendText(file))
             {
-                w.Write("\r\nLog Entry: ");
+                w.Write("\r\nLog Entry : ");
                 w.WriteLine($"{DateTime.Now.ToLongTimeString()} {DateTime.Now.ToLongDateString()}");
                 w.WriteLine($"  :{whoami}");
                 w.WriteLine($"  :{logMessage}");

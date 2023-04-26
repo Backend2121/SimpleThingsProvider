@@ -76,6 +76,7 @@
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
     <PackageReference Include="MahApps.Metro" Version="2.4.9" />
+    <PackageReference Include="wix" Version="3.11.2" />
   </ItemGroup>
 
   <ItemGroup>
