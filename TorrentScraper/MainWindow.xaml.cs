@@ -24,6 +24,9 @@ using MahApps.Metro.Controls;
 using ControlzEx.Theming;
 using MahApps;
 using System.Runtime.CompilerServices;
+using SimpleThingsProvider.Interfaces;
+using System.Reflection;
+using System.Reflection.Metadata;
 
 namespace SimpleThingsProvider
 {
@@ -38,12 +41,15 @@ namespace SimpleThingsProvider
             public string Size { get; set; }
         }
         List<string> underlying;
-        Websites module = new Websites();
+        List<IModule> ImodulesList;
+        IModule module;
         Random r = new Random();
         string[] motd = {"Hi!", "Hello there!", "Hey!", "Honk!", "Whassup!", "I promise i won't hang", "What do you need?", "Here to help!", "How are you doing?", "Join the Discord!", "Praise the Sun!", "For science, you monster", "It's dangerous to go alone, use me!", "Stupid Shinigami", "Trust me i'm a dolphin!", "...", "Oh, it's you...", "The cake is a lie!", "FBI open up!", "You own the game, right?"};
         public MainWindow()
         {
             InitializeComponent();
+            Logger.Log("Loading modules", "Main");
+            ImodulesList = new List<IModule>();
             if (Settings.Default.SyncWithWindows) { ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncWithAppMode; }
             else { ThemeManager.Current.ChangeTheme(this, Settings.Default.MainTheme + "." + Settings.Default.SubTheme); }
             
@@ -126,7 +132,23 @@ namespace SimpleThingsProvider
             MangaFreakResultsList.Visibility = Visibility.Hidden;
             MangaWorldResultsList.Visibility = Visibility.Hidden;
 
-            HttpStatusCode code = module.Search(SearchTextBox.Text, WebsiteSource.SelectedItem.ToString());
+            //HttpStatusCode code = module.Search(SearchTextBox.Text, WebsiteSource.SelectedItem.ToString());
+            // Here temporarly
+
+            IModule x1337 = new Modules.x1337();
+            IModule thePirateBay = new Modules.ThePirateBay();
+            ImodulesList.Add(x1337);
+            ImodulesList.Add(thePirateBay);
+            foreach (IModule m in ImodulesList)
+            {
+                if (m.Name == WebsiteSource.Text)
+                {
+                    module = m;
+                }
+            }
+
+            HttpStatusCode code = module.search(SearchTextBox.Text);
+           
             if (!Settings.Default.NSFWContent)
             {
                 foreach (string s in BannedWords.nsfwWords)
@@ -143,7 +165,38 @@ namespace SimpleThingsProvider
             if (code != HttpStatusCode.OK) { Alert("Received a non 200(OK) response!" + "\n" + code, "STP: Error"); StatusCodeLabel.Content = "Status Code: " + code; StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Red); return; }
             else
             {
-                underlying = module.getResults(module.doc, SearchTextBox.Text); StatusCodeLabel.Content = "Status Code: " + code; StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Green);
+                switch (WebsiteSource.Text)
+                {
+                    case ("x1337"):
+                        underlying = module.getResults(module.Doc, TorrentResultsList);
+                        break;
+                    case ("ThePirateBay"):
+                        underlying = module.getResults(module.Doc, TorrentResultsList);
+                        break;
+                    /*case ("RPGOnly"):
+                        underlying = module.getResults(module.Doc, RPGOnlyResultsList, SearchTextBox.Text);
+                        break;
+                    case ("NxBrew"):
+                        underlying = module.getResults(module.Doc, NxBrewResultsList, SearchTextBox.Text);
+                        break;
+                    case ("Ziperto"):
+                        underlying = module.getResults(module.Doc, ZipertoResultsList, SearchTextBox.Text);
+                        break;*/
+                    case ("HexRom"):
+                        underlying = module.getResults(module.Doc, HexRomResultsList);
+                        break;
+                    case ("WoWRoms"):
+                        underlying = module.getResults(module.Doc, WowRomsResultsList);
+                        break;
+                    case ("FitGirl"):
+                        underlying = module.getResults(module.Doc, FitGirlResultsList);
+                        break;
+                    case ("VimmsLair"):
+                        underlying = module.getResults(module.Doc, VimmResultsList);
+                        break;
+                }
+                StatusCodeLabel.Content = "Status Code: " + code;
+                StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Green);
             }
             if (underlying.Count <= 0)
             {
@@ -184,39 +237,39 @@ namespace SimpleThingsProvider
                 string entry = "";
                 if (TorrentResultsList.Visibility == Visibility.Visible)
                 {
-                    entry = module.getMagnet(TorrentResultsList.SelectedIndex);
+                    entry = module.getLink(TorrentResultsList.SelectedIndex);
                 }
                 else if (VimmResultsList.Visibility == Visibility.Visible)
                 {
-                    entry = module.getMagnet(VimmResultsList.SelectedIndex);
+                    entry = module.getLink(VimmResultsList.SelectedIndex);
                 }
                 else if (FitGirlResultsList.Visibility == Visibility.Visible)
                 {
-                    entry = module.getMagnet(FitGirlResultsList.SelectedIndex);
+                    entry = module.getLink(FitGirlResultsList.SelectedIndex);
                 }
                 else if (WowRomsResultsList.Visibility == Visibility.Visible)
                 {
-                    entry = module.getMagnet(WowRomsResultsList.SelectedIndex);
+                    entry = module.getLink(WowRomsResultsList.SelectedIndex);
                 }
                 else if (RPGOnlyResultsList.Visibility == Visibility.Visible)
                 {
-                    entry = module.getMagnet(RPGOnlyResultsList.SelectedIndex);
+                    entry = module.getLink(RPGOnlyResultsList.SelectedIndex);
                 }
                 else if (HexRomResultsList.Visibility == Visibility.Visible)
                 {
-                    entry = module.getMagnet(HexRomResultsList.SelectedIndex);
+                    entry = module.getLink(HexRomResultsList.SelectedIndex);
                 }
                 else if (NxBrewResultsList.Visibility == Visibility.Visible)
                 {
-                    entry = module.getMagnet(NxBrewResultsList.SelectedIndex);
+                    entry = module.getLink(NxBrewResultsList.SelectedIndex);
                 }
                 else if (ZipertoResultsList.Visibility == Visibility.Visible)
                 {
-                    entry = module.getMagnet(ZipertoResultsList.SelectedIndex);
+                    entry = module.getLink(ZipertoResultsList.SelectedIndex);
                 }
                 else if (MangaWorldResultsList.Visibility == Visibility.Visible)
                 {
-                    entry = module.getMagnet(MangaWorldResultsList.SelectedIndex);
+                    entry = module.getLink(MangaWorldResultsList.SelectedIndex);
                 }
 
                 Logger.Log($"Entry {entry} has been selected", "Main");

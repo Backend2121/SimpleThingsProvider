@@ -29,7 +29,7 @@ namespace SimpleThingsProvider
             ThemeManager.Current.SyncTheme();
             // Hide all linkslists
             LinksList.Visibility = Visibility.Hidden;
-            HexRomsLinksList.Visibility = Visibility.Hidden;
+            HexRomsLinksList.Visibility = Visibility.Hidden;    
             Topmost = true;
         }
         private void SelectionChanged(object sender, RoutedEventArgs e)
@@ -38,11 +38,11 @@ namespace SimpleThingsProvider
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
             if (LinksList.Visibility == Visibility.Visible)
             {
-                link = ((Websites.GameWebsite)LinksList.SelectedValue).Link;
+                link = ((Result)LinksList.SelectedValue).Link;
             }
             else if (HexRomsLinksList.Visibility == Visibility.Visible)
             {
-                link = ((Websites.HexRomsGameWebsite)HexRomsLinksList.SelectedValue).Link;
+                link = ((Result)HexRomsLinksList.SelectedValue).Link;
             }
             mainWindow.OutputLabel.Content = link;
             if (link != "") { Close(); }

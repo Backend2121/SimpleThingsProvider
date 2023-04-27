@@ -1,27 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using HtmlAgilityPack;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Net;
-using System.IO;
 using System.Diagnostics;
-using System.Threading;
-using System.Reflection;
-using static SimpleThingsProvider.WebsiteStatusWindow;
-using System.Text.Json;
 
 namespace SimpleThingsProvider
 {
@@ -30,75 +14,6 @@ namespace SimpleThingsProvider
         List<string> underlying;
         string whoami;
         MainWindow mainWindow;
-        string nsfw = "NSFW Content";
-        public class Result
-        {
-            public string System { get; set; }
-            public string Title { get; set; }
-            public string Seeds { get; set; }
-            public string Leechs { get; set; }
-            public string Time { get; set; }
-            public string Size { get; set; }
-            public string Region { get; set; }
-            public string Version { get; set; }
-            public string Languages { get; set; }
-            public string OriginalSize { get; set; }
-            public string RepackSize { get; set; }
-            public string Name { get; set; }
-            public string Link { get; set; }
-            public string Infos { get; set; }
-            public string Downloads { get; set; }
-        }
-        public class FitGirlResult
-        {
-            public string Title { get; set; }
-            public string OriginalSize { get; set; }
-            public string RepackSize { get; set; }
-        }
-        public class GameWebsite
-        {
-            public string Name { get; set; }
-            public string Link { get; set; }
-            public string Infos { get; set; }
-        }
-        public class HexRomsGameWebsite
-        {
-            public string Link { get; set; }
-            public string Infos { get; set; }
-        }
-        public class WowRomsResult{
-            public string Title { get; set; }
-            public string Region { get; set; }
-            public string Size { get; set; }
-            public string Downloads { get; set; }
-        };
-        public class RPGOnlyResult
-        {
-            public string Title { get; set; }
-        }
-        public class NxBrewResults
-        {
-            public string Title { get; set; }
-        }
-        public class ZipertoResults
-        {
-            public string Title { get; set; }
-        }
-        public class MangaHubResults
-        {
-            public string Title { get; set; }
-            public string Infos { get; set; }
-            public string Genres { get; set; }
-        }
-        public class MangaWorldResults
-        {
-            public string Title { get; set; }
-            public string Type { get; set; }
-            public string State { get; set; }
-            public string Authors { get; set; }
-            public string Artists { get; set; }
-            public string Genres { get; set; }
-        }
         public HtmlDocument doc { get; set; }
         public HttpStatusCode Search(string toSearch, string caller)
         {
@@ -183,10 +98,10 @@ namespace SimpleThingsProvider
             mainWindow = (MainWindow)Application.Current.MainWindow;
             switch (whoami)
             {
-                case ("x1337"):
+                /*case ("x1337"):
                     return getResults_x1337(document, mainWindow.TorrentResultsList);
                 case ("ThePirateBay"):
-                    return getResults_ThePirateBay(document, mainWindow.TorrentResultsList);
+                    return getResults_ThePirateBay(document, mainWindow.TorrentResultsList);*/
                 case ("RPGOnly"):
                     return getResults_RPGOnly(document, mainWindow.RPGOnlyResultsList, toSearch);
                 case ("NxBrew"):
@@ -201,10 +116,6 @@ namespace SimpleThingsProvider
                     return getResults_FitGirl(document, mainWindow.FitGirlResultsList);
                 case ("VimmsLair"):
                     return getResults_VimmsLair(document, mainWindow.VimmResultsList);
-                case ("MangaWorld (ITA)"):
-                    return getResults_MangaHub(document, mainWindow.MangaWorldResultsList);
-                case ("MangaHub (ENG)"):
-                    return getResults_MangaHub(document, mainWindow.MangaWorldResultsList);
             }
             return new List<string>();
         }
@@ -340,7 +251,7 @@ namespace SimpleThingsProvider
         {
             ResultsList.Visibility = Visibility.Visible;
             underlying = new List<string>();
-            List<RPGOnlyResult> results = new();
+            List<Result> results = new();
 
             HtmlNodeCollection listNode = document.DocumentNode.SelectNodes("/html/body/div/div[6]/div/div[1]/div/main/article/div/div/ul/li");
             Logger.Log($"Found {listNode.Count} results", "Websites (getResults - RPGOnly)");
@@ -358,7 +269,7 @@ namespace SimpleThingsProvider
                                 if (descendant.InnerText.ToLower().Contains(toSearch.ToLower()))
                                 {
                                     underlying.Add(descendant.Attributes["href"].Value);
-                                    results.Add(new RPGOnlyResult() { Title = descendant.InnerText.Replace("&#038;", "&")});
+                                    results.Add(new Result() { Title = descendant.InnerText.Replace("&#038;", "&")});
                                 }
                             }
                         }
@@ -374,7 +285,7 @@ namespace SimpleThingsProvider
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - RPGOnly)");
             if (!Settings.Default.NSFWContent)
             {
-                foreach (RPGOnlyResult res in results)
+                foreach (Result res in results)
                 {
                     foreach (string s in BannedWords.nsfwWords)
                     {
@@ -393,7 +304,7 @@ namespace SimpleThingsProvider
         {
             ResultsList.Visibility = Visibility.Visible;
             underlying = new List<string>();
-            List<NxBrewResults> results = new();
+            List<Result> results = new();
             HtmlNodeCollection letters = document.DocumentNode.SelectNodes("/html/body/div/div/div/div/div[3]/div/div[2]/article/div/div[1]/div[2]/div/div/ul/li/a");
             try
             {
@@ -408,7 +319,7 @@ namespace SimpleThingsProvider
                             title = title.Replace("\n", "");
                             title = title.Replace("&#8217;", "'");
                             title = title.Replace("&#8211;", "-");
-                            results.Add(new NxBrewResults() { Title = title});
+                            results.Add(new Result() { Title = title});
                             underlying.Add(letter.Attributes["href"].Value);
                         }
                         catch (NullReferenceException) { continue; }
@@ -424,7 +335,7 @@ namespace SimpleThingsProvider
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - NxBrew)");
             if (!Settings.Default.NSFWContent)
             {
-                foreach (NxBrewResults res in results)
+                foreach (Result res in results)
                 {
                     foreach (string s in BannedWords.nsfwWords)
                     {
@@ -443,7 +354,7 @@ namespace SimpleThingsProvider
         {
             ResultsList.Visibility = Visibility.Visible;
             underlying = new List<string>();
-            List<ZipertoResults> results = new();
+            List<Result> results = new();
             HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div[1]/div/div/div/div/div[1]/div[2]/article/div/div[1]/div[2]/div/div/ul/li/a");
             try
             {
@@ -458,7 +369,7 @@ namespace SimpleThingsProvider
                             title = title.Replace("\n", "");
                             title = title.Replace("&amp;", "&");
                             title = title.Replace("&#8211;", "-");
-                            results.Add(new ZipertoResults() { Title = title });
+                            results.Add(new Result() { Title = title });
                             underlying.Add(game.Attributes["href"].Value);
                         }
                         catch (NullReferenceException) { continue; }
@@ -474,7 +385,7 @@ namespace SimpleThingsProvider
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - Ziperto)");
             if (!Settings.Default.NSFWContent)
             {
-                foreach (ZipertoResults res in results)
+                foreach (Result res in results)
                 {
                     foreach (string s in BannedWords.nsfwWords)
                     {
@@ -536,7 +447,7 @@ namespace SimpleThingsProvider
         {
             ResultsList.Visibility = Visibility.Visible;
             underlying = new List<string>();
-            List<WowRomsResult> results = new();
+            List<Result> results = new();
             HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div[1]/div/div/section/div[2]/div[5]/ul/li/ul/li[2]/div");
             try
             {
@@ -554,7 +465,7 @@ namespace SimpleThingsProvider
                     // [7] points at genre
                     var size = div.ChildNodes[11].ChildNodes[1].InnerText;
                     var downloads = div.ChildNodes[15].ChildNodes[1].InnerText;
-                    results.Add(new WowRomsResult() { Title = title, Region = region, Size = size, Downloads = downloads});
+                    results.Add(new Result() { Title = title, Region = region, Size = size, Downloads = downloads});
                 }
             }
             catch (NullReferenceException)
@@ -566,7 +477,7 @@ namespace SimpleThingsProvider
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - WoWRoms)");
             if (!Settings.Default.NSFWContent)
             {
-                foreach (WowRomsResult res in results)
+                foreach (Result res in results)
                 {
                     foreach (string s in BannedWords.nsfwWords)
                     {
@@ -585,7 +496,7 @@ namespace SimpleThingsProvider
         {
             ResultsList.Visibility = Visibility.Visible;
             underlying = new List<string>();
-            List<FitGirlResult> results = new();
+            List<Result> results = new();
 
             HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div/div/section/div/article/div/p");
             try
@@ -617,7 +528,7 @@ namespace SimpleThingsProvider
                     //Link section
                     underlying.Add(game.LastChild.Attributes["href"].Value);
 
-                    results.Add(new FitGirlResult() { Title = title, OriginalSize = size, RepackSize = repacksize});
+                    results.Add(new Result() { Title = title, OriginalSize = size, RepackSize = repacksize});
                 }
             }
             catch(NullReferenceException)
@@ -629,7 +540,7 @@ namespace SimpleThingsProvider
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - FitGirl)");
             if (!Settings.Default.NSFWContent)
             {
-                foreach (FitGirlResult res in results)
+                foreach (Result res in results)
                 {
                     foreach (string s in BannedWords.nsfwWords)
                     {
@@ -684,44 +595,6 @@ namespace SimpleThingsProvider
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - VimmsLair)");
             return underlying;
         }
-        public List<String> getResults_MangaHub(HtmlDocument document, ListView ResultsList)
-        {
-            ResultsList.Visibility = Visibility.Visible;
-            underlying = new List<string>();
-            List<MangaWorldResults> results = new();
-            HtmlNodeCollection mangas = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div/div[2]/div");
-            foreach (HtmlNode manga in mangas)
-            {
-                HtmlNode a = manga.SelectSingleNode("a");
-                underlying.Add(a.Attributes["href"].Value);
-                HtmlNode div = manga.SelectSingleNode("div");
-                HtmlNodeCollection attributes = div.SelectNodes("div");
-                MangaWorldResults result = new MangaWorldResults() { Title = div.SelectSingleNode("p").InnerText,
-                                                                     Type = attributes[0].InnerText.Replace("Tipo:", ""),
-                                                                     State = attributes[1].InnerText.Replace("Stato:", ""),
-                                                                     Authors = attributes[2].InnerText.Replace("Autori:", ""),
-                                                                     Artists = attributes[3].InnerText.Replace("Artista:", ""),
-                                                                     Genres = attributes[4].InnerText.Replace("Generi:", "") };
-                results.Add(result);
-            }
-            Logger.Log($"Found {mangas.Count} results", "Websites (getResults - MangaHub)");
-            if (!Settings.Default.NSFWContent)
-            {
-                foreach (MangaWorldResults res in results)
-                {
-                    foreach (string s in BannedWords.nsfwWords)
-                    {
-                        if (res.Title.ToLower().Contains(s.ToLower()))
-                        {
-                            res.Title = "NSFW Content";
-                            underlying[results.IndexOf(res)] = string.Empty;
-                        }
-                    }
-                }
-            }
-            ResultsList.ItemsSource = results;
-            return underlying;
-        }
         public string getGamePage_RPGOnly(string gameURL)
         {
             HtmlWeb web = new();
@@ -729,7 +602,7 @@ namespace SimpleThingsProvider
             linksWindow.LinksList.Visibility = Visibility.Visible;
             linksWindow.Show();
             doc = web.Load(gameURL);
-            List<GameWebsite> websites = new List<GameWebsite>();
+            List<Result> websites = new List<Result>();
             HtmlNode entry = doc.DocumentNode.SelectSingleNode("/html/body/div/div[6]/div/div[1]/div/main/div[1]/article/div/figure[2]/table/tbody");
             Logger.Log($"Getting game page links", "Websites (getGamePage - RPGOnly)");
             var infos = "";
@@ -754,7 +627,7 @@ namespace SimpleThingsProvider
                         {
                             infos = node2.InnerText;
                             link = node2.Attributes["href"].Value;
-                            websites.Add(new GameWebsite() { Infos = infos, Name = name, Link = link });
+                            websites.Add(new Result() { Infos = infos, Name = name, Link = link });
                         }
                     }
                     catch { link = ""; continue; }
@@ -763,7 +636,7 @@ namespace SimpleThingsProvider
             Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - RPGOnly)");
             if (!Settings.Default.NSFWContent)
             {
-                foreach (GameWebsite res in websites)
+                foreach (Result res in websites)
                 {
                     foreach (string s in BannedWords.nsfwWords)
                     {
@@ -790,7 +663,7 @@ namespace SimpleThingsProvider
             linksWindow.LinksList.Visibility = Visibility.Visible;
             linksWindow.Show();
             doc = web.Load(gameURL);
-            List<GameWebsite> websites = new List<GameWebsite>();
+            List<Result> websites = new List<Result>();
             Logger.Log($"Getting game page links", "Websites (getGamePage - NxBrew)");
             var title = "";
             var link = "";
@@ -828,14 +701,14 @@ namespace SimpleThingsProvider
                                     {
                                         infos = node2.InnerText;
                                         link = node2.Attributes["href"].Value;
-                                        websites.Add(new GameWebsite() { Name = infos, Link = link, Infos = title });
+                                        websites.Add(new Result() { Name = infos, Link = link, Infos = title });
                                         added = true;
                                     }
                                 }
                             }
                             catch (IndexOutOfRangeException) { continue; }
                         }
-                        if (!added) { websites.Add(new GameWebsite() { Name = infos, Link = link, Infos = title }); }
+                        if (!added) { websites.Add(new Result() { Name = infos, Link = link, Infos = title }); }
                         
                     }
                 }
@@ -843,7 +716,7 @@ namespace SimpleThingsProvider
             Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - NxBrew)");
             if (!Settings.Default.NSFWContent)
             {
-                foreach (GameWebsite res in websites)
+                foreach (Result res in websites)
                 {
                     foreach (string s in BannedWords.nsfwWords)
                     {
@@ -870,7 +743,7 @@ namespace SimpleThingsProvider
             linksWindow.LinksList.Visibility = Visibility.Visible;
             linksWindow.Show();
             doc = web.Load(gameURL);
-            List<GameWebsite> websites = new List<GameWebsite>();
+            List<Result> websites = new List<Result>();
             Logger.Log($"Getting game page links", "Websites (getGamePage - Ziperto)");
 
             HtmlNodeCollection baseGame = doc.DocumentNode.SelectNodes("/html/body/div[1]/div/div/div/div/div[1]/div[2]/article/div/div[2]/div[1]/p/span/strong/a");
@@ -881,7 +754,7 @@ namespace SimpleThingsProvider
                     string infos = node.ParentNode.ParentNode.ParentNode.InnerText;
                     infos = infos.Replace("&#8212;", "");
                     infos = infos.Replace("&#8211;", "");
-                    websites.Add(new GameWebsite() { Infos = infos, Name = node.InnerText, Link = node.Attributes["href"].Value });
+                    websites.Add(new Result() { Infos = infos, Name = node.InnerText, Link = node.Attributes["href"].Value });
                 }
             }
             catch { }
@@ -904,7 +777,7 @@ namespace SimpleThingsProvider
                     if (p.InnerText.Contains("Part1")) { counter++; }
                     try
                     {
-                        websites.Add(new GameWebsite() { Infos = info, Name = strings[counter] + "- " + p.InnerText, Link = p.Attributes["href"].Value });
+                        websites.Add(new Result() { Infos = info, Name = strings[counter] + "- " + p.InnerText, Link = p.Attributes["href"].Value });
                     }
                     catch (IndexOutOfRangeException)
                     {
@@ -912,11 +785,11 @@ namespace SimpleThingsProvider
                         {
                             if (p.InnerText.Contains("Part"))
                             {
-                                websites.Add(new GameWebsite() { Infos = p.ParentNode.ParentNode.FirstChild.InnerText, Name = "1Fichier" + " - " + p.InnerText, Link = p.Attributes["href"].Value });
+                                websites.Add(new Result() { Infos = p.ParentNode.ParentNode.FirstChild.InnerText, Name = "1Fichier" + " - " + p.InnerText, Link = p.Attributes["href"].Value });
                             }
                             else
                             {
-                                websites.Add(new GameWebsite() { Infos = p.ParentNode.ParentNode.FirstChild.InnerText, Name = p.InnerText, Link = p.Attributes["href"].Value });
+                                websites.Add(new Result() { Infos = p.ParentNode.ParentNode.FirstChild.InnerText, Name = p.InnerText, Link = p.Attributes["href"].Value });
                             }
                         }
                         catch { continue; }
@@ -929,7 +802,7 @@ namespace SimpleThingsProvider
             Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - Ziperto)");
             if (!Settings.Default.NSFWContent)
             {
-                foreach (GameWebsite res in websites)
+                foreach (Result res in websites)
                 {
                     foreach (string s in BannedWords.nsfwWords)
                     {
@@ -956,7 +829,7 @@ namespace SimpleThingsProvider
             LinksWindow linksWindow = new LinksWindow();
             linksWindow.HexRomsLinksList.Visibility = Visibility.Visible;
             linksWindow.Show();
-            List<HexRomsGameWebsite> websites = new List<HexRomsGameWebsite>();
+            List<Result> websites = new List<Result>();
             var title = "";
             var link = "";
                                                                     //html/body/div[3]/div[1]/div/div/div/div[2]/div/table/tbody/tr/td/a
@@ -968,12 +841,12 @@ namespace SimpleThingsProvider
             {
                 title = downloadlink.InnerText;
                 link = downloadlink.Attributes["href"].Value;
-                if (title != " ") { websites.Add(new HexRomsGameWebsite() { Link = link, Infos = title }); }   
+                if (title != " ") { websites.Add(new Result() { Link = link, Infos = title }); }
             }
             Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - HexRom)");
             if (!Settings.Default.NSFWContent)
             {
-                foreach (HexRomsGameWebsite res in websites)
+                foreach (Result res in websites)
                 {
                     foreach (string s in BannedWords.nsfwWords)
                     {
@@ -1000,19 +873,19 @@ namespace SimpleThingsProvider
             LinksWindow linksWindow = new LinksWindow();
             linksWindow.Show();
             linksWindow.LinksList.Visibility = Visibility.Visible;
-            List<GameWebsite> websites = new List<GameWebsite>();
+            List<Result> websites = new List<Result>();
             HtmlWeb web = new HtmlWeb();
             HtmlDocument doc = web.Load(gameURL);
             HtmlNodeCollection links = doc.DocumentNode.SelectNodes("/html/body/div/div/div[1]/div/article/div/ul[1]/li/a");
             Logger.Log($"Getting game page links", "Websites (getGamePage - FitGirl)");
             foreach (HtmlNode downloadlink in links)
             {
-                websites.Add(new GameWebsite() { Link = downloadlink.Attributes["href"].Value, Infos = downloadlink.InnerText });
+                websites.Add(new Result() { Link = downloadlink.Attributes["href"].Value, Infos = downloadlink.InnerText });
             }
             Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - FitGirl)");
             if (!Settings.Default.NSFWContent)
             {
-                foreach (GameWebsite res in websites)
+                foreach (Result res in websites)
                 {
                     foreach (string s in BannedWords.nsfwWords)
                     { 
@@ -1030,10 +903,6 @@ namespace SimpleThingsProvider
         public string getGamePage_VimmsLair(string gameURL)
         {
             return gameURL;
-        }
-        public string getMangaPage_MangaWorld(string mangaURL)
-        {
-            return "";
         }
         public string getMagnet(int index)
         {
@@ -1062,8 +931,6 @@ namespace SimpleThingsProvider
                     return getGamePage_FitGirl(underlying[index]);
                 case ("VimmsLair"):
                     return getGamePage_VimmsLair(underlying[index]);
-                case ("MangaWorld (ITA)"):
-                    return getMangaPage_MangaWorld(underlying[index]);
             }
             return "";
         }
