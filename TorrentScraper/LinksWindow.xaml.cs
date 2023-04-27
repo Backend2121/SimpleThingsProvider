@@ -25,7 +25,6 @@ namespace SimpleThingsProvider
             InitializeComponent();
             if (Settings.Default.SyncWithWindows) { ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncWithAppMode; }
             else { ThemeManager.Current.ChangeTheme(this, Settings.Default.MainTheme + "." + Settings.Default.SubTheme); }
-
             ThemeManager.Current.SyncTheme();
             // Hide all linkslists
             LinksList.Visibility = Visibility.Hidden;
