@@ -40,6 +40,7 @@ namespace SimpleThingsProvider
             public string Time { get; set; }
             public string Size { get; set; }
         }
+
         List<string> underlying;
         List<IModule> ImodulesList;
         IModule module;
@@ -138,9 +139,17 @@ namespace SimpleThingsProvider
             IModule x1337 = new Modules.x1337();
             IModule thePirateBay = new Modules.ThePirateBay();
             IModule rpgOnly = new Modules.RPGOnly();
+            IModule ziperto = new Modules.Ziperto();
+            IModule hexRoms = new Modules.HexRoms();
+            IModule fitGirl = new Modules.FitGirl();
+            IModule vimmsLair = new Modules.Vimmslair();
             ImodulesList.Add(x1337);
             ImodulesList.Add(thePirateBay);
             ImodulesList.Add(rpgOnly);
+            ImodulesList.Add(ziperto);
+            ImodulesList.Add(hexRoms);
+            ImodulesList.Add(fitGirl);
+            ImodulesList.Add(vimmsLair);
             foreach (IModule m in ImodulesList)
             {
                 if (m.Name == WebsiteSource.Text)
@@ -178,17 +187,11 @@ namespace SimpleThingsProvider
                     case ("RPGOnly"):
                         underlying = module.getResults(module.Doc, RPGOnlyResultsList, SearchTextBox.Text);
                         break;
-                    /*case ("NxBrew"):
-                        underlying = module.getResults(module.Doc, NxBrewResultsList, SearchTextBox.Text);
-                        break;
                     case ("Ziperto"):
                         underlying = module.getResults(module.Doc, ZipertoResultsList, SearchTextBox.Text);
-                        break;*/
+                        break;
                     case ("HexRom"):
                         underlying = module.getResults(module.Doc, HexRomResultsList);
-                        break;
-                    case ("WoWRoms"):
-                        underlying = module.getResults(module.Doc, WowRomsResultsList);
                         break;
                     case ("FitGirl"):
                         underlying = module.getResults(module.Doc, FitGirlResultsList);
