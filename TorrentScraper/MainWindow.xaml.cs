@@ -137,8 +137,10 @@ namespace SimpleThingsProvider
 
             IModule x1337 = new Modules.x1337();
             IModule thePirateBay = new Modules.ThePirateBay();
+            IModule rpgOnly = new Modules.RPGOnly();
             ImodulesList.Add(x1337);
             ImodulesList.Add(thePirateBay);
+            ImodulesList.Add(rpgOnly);
             foreach (IModule m in ImodulesList)
             {
                 if (m.Name == WebsiteSource.Text)
@@ -173,10 +175,10 @@ namespace SimpleThingsProvider
                     case ("ThePirateBay"):
                         underlying = module.getResults(module.Doc, TorrentResultsList);
                         break;
-                    /*case ("RPGOnly"):
+                    case ("RPGOnly"):
                         underlying = module.getResults(module.Doc, RPGOnlyResultsList, SearchTextBox.Text);
                         break;
-                    case ("NxBrew"):
+                    /*case ("NxBrew"):
                         underlying = module.getResults(module.Doc, NxBrewResultsList, SearchTextBox.Text);
                         break;
                     case ("Ziperto"):
@@ -266,10 +268,6 @@ namespace SimpleThingsProvider
                 else if (ZipertoResultsList.Visibility == Visibility.Visible)
                 {
                     entry = module.getLink(ZipertoResultsList.SelectedIndex);
-                }
-                else if (MangaWorldResultsList.Visibility == Visibility.Visible)
-                {
-                    entry = module.getLink(MangaWorldResultsList.SelectedIndex);
                 }
 
                 Logger.Log($"Entry {entry} has been selected", "Main");

@@ -69,15 +69,6 @@ namespace SimpleThingsProvider
             code = web.StatusCode;
             return code;
         }
-        private string buildString(string input)
-        {
-            // Used by x1337
-            string url = "https://1337xx.to/search/";
-            var toSearch = url + input;
-            toSearch = toSearch.Replace(" ", "%20");
-            toSearch = toSearch + "/1/";
-            return toSearch;
-        }
         public List<String> getResults(HtmlDocument document, string toSearch)
         {
             //Called by the main window, serves the purpose of switching based on the selection in the dropdown box
@@ -85,125 +76,16 @@ namespace SimpleThingsProvider
             mainWindow = (MainWindow)Application.Current.MainWindow;
             switch (whoami)
             {
-                case ("RPGOnly"):
-                    return getResults_RPGOnly(document, mainWindow.RPGOnlyResultsList, toSearch);
-                case ("NxBrew"):
-                    return getResults_NxBrew(document, mainWindow.NxBrewResultsList, toSearch);
                 case ("Ziperto"):
                     return getResults_Ziperto(document, mainWindow.ZipertoResultsList, toSearch);
                 case ("HexRom"):
                     return getResults_HexRom(document, mainWindow.HexRomResultsList);
-                case ("WoWRoms"):
-                    return getResults_WoWRoms(document, mainWindow.WowRomsResultsList);
                 case ("FitGirl"):
                     return getResults_FitGirl(document, mainWindow.FitGirlResultsList);
                 case ("VimmsLair"):
                     return getResults_VimmsLair(document, mainWindow.VimmResultsList);
             }
             return new List<string>();
-        }
-        public List<String> getResults_RPGOnly(HtmlDocument document, ListView ResultsList, string toSearch)
-        {
-            ResultsList.Visibility = Visibility.Visible;
-            underlying = new List<string>();
-            List<Result> results = new();
-
-            HtmlNodeCollection listNode = document.DocumentNode.SelectNodes("/html/body/div/div[6]/div/div[1]/div/main/article/div/div/ul/li");
-            Logger.Log($"Found {listNode.Count} results", "Websites (getResults - RPGOnly)");
-            try
-            {
-                foreach (HtmlNode node in listNode)
-                {
-                    IEnumerable<HtmlNode> descendants = node.Descendants(1);
-                    foreach (HtmlNode descendant in descendants)
-                    {
-                        try
-                        {
-                            if (descendant.Attributes["href"].Value.Contains("https://"))
-                            {
-                                if (descendant.InnerText.ToLower().Contains(toSearch.ToLower()))
-                                {
-                                    underlying.Add(descendant.Attributes["href"].Value);
-                                    results.Add(new Result() { Title = descendant.InnerText.Replace("&#038;", "&")});
-                                }
-                            }
-                        }
-                        catch (NullReferenceException) { continue; }
-                    }
-                }
-            }
-            catch (NullReferenceException)
-            {
-                Logger.Log("No results found!", "Websites (getResults - RPGOnly)");
-                return new List<string>();
-            }
-            Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - RPGOnly)");
-            if (!Settings.Default.NSFWContent)
-            {
-                foreach (Result res in results)
-                {
-                    foreach (string s in BannedWords.nsfwWords)
-                    {
-                        if (res.Title.ToLower().Contains(s.ToLower()))
-                        {
-                            res.Title = "NSFW Content";
-                            underlying[results.IndexOf(res)] = string.Empty;
-                        }
-                    }
-                }
-            }
-            ResultsList.ItemsSource = results;
-            return underlying;
-        }
-        public List<String> getResults_NxBrew(HtmlDocument document, ListView ResultsList, string toSearch)
-        {
-            ResultsList.Visibility = Visibility.Visible;
-            underlying = new List<string>();
-            List<Result> results = new();
-            HtmlNodeCollection letters = document.DocumentNode.SelectNodes("/html/body/div/div/div/div/div[3]/div/div[2]/article/div/div[1]/div[2]/div/div/ul/li/a");
-            try
-            {
-                Logger.Log($"Found {letters.Count} results", "Websites (getResults - NxBrew)");
-                foreach (HtmlNode letter in letters)
-                {
-                    if (letter.InnerText.ToLower().Contains(toSearch.ToLower()))
-                    {
-                        try
-                        {
-                            var title = letter.InnerText.Replace("\t", "");
-                            title = title.Replace("\n", "");
-                            title = title.Replace("&#8217;", "'");
-                            title = title.Replace("&#8211;", "-");
-                            results.Add(new Result() { Title = title});
-                            underlying.Add(letter.Attributes["href"].Value);
-                        }
-                        catch (NullReferenceException) { continue; }
-                    }
-                }
-            }
-            catch (NullReferenceException)
-            {
-                Logger.Log("No results found!", "Websites (getResults - NxBrew)");
-                return new List<string>();
-            }
-            
-            Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - NxBrew)");
-            if (!Settings.Default.NSFWContent)
-            {
-                foreach (Result res in results)
-                {
-                    foreach (string s in BannedWords.nsfwWords)
-                    {
-                        if (res.Title.ToLower().Contains(s.ToLower()))
-                        {
-                            res.Title = "NSFW Content";
-                            underlying[results.IndexOf(res)] = string.Empty;
-                        }
-                    }
-                }
-            }
-            ResultsList.ItemsSource = results;
-            return underlying;
         }
         public List<String> getResults_Ziperto(HtmlDocument document, ListView ResultsList, string toSearch)
         {
@@ -281,55 +163,6 @@ namespace SimpleThingsProvider
             }
             
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - HexRoms)");
-            if (!Settings.Default.NSFWContent)
-            {
-                foreach (Result res in results)
-                {
-                    foreach (string s in BannedWords.nsfwWords)
-                    {
-                        if (res.Title.ToLower().Contains(s.ToLower()))
-                        {
-                            res.Title = "NSFW Content";
-                            underlying[results.IndexOf(res)] = string.Empty;
-                        }
-                    }
-                }
-            }
-            ResultsList.ItemsSource = results;
-            return underlying;
-        }
-        public List<String> getResults_WoWRoms(HtmlDocument document, ListView ResultsList)
-        {
-            ResultsList.Visibility = Visibility.Visible;
-            underlying = new List<string>();
-            List<Result> results = new();
-            HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div[1]/div/div/section/div[2]/div[5]/ul/li/ul/li[2]/div");
-            try
-            {
-                Logger.Log($"Found {games.Count} results", "Websites (getResults - WoWRoms)");
-                foreach (HtmlNode div in games)
-                {
-                    var title = div.ChildNodes[1].Attributes["Title"].Value;
-                    underlying.Add(div.ChildNodes[1].Attributes["href"].Value);
-                    title = title.Replace("\t", "");
-                    title = title.Replace("\n", "");
-                    title = title.Replace("\r", "");
-                    title = title.Replace("  ", "");
-                    
-                    var region = div.ChildNodes[3].ChildNodes[1].InnerText;
-                    // [7] points at genre
-                    var size = div.ChildNodes[11].ChildNodes[1].InnerText;
-                    var downloads = div.ChildNodes[15].ChildNodes[1].InnerText;
-                    results.Add(new Result() { Title = title, Region = region, Size = size, Downloads = downloads});
-                }
-            }
-            catch (NullReferenceException)
-            {
-                Logger.Log("No results found!", "Websites (getResults - WoWRoms)");
-                return new List<string>();
-            }
-            
-            Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - WoWRoms)");
             if (!Settings.Default.NSFWContent)
             {
                 foreach (Result res in results)
@@ -449,147 +282,6 @@ namespace SimpleThingsProvider
             ResultsList.ItemsSource = results;
             Logger.Log($"Found {underlying.Count} entries", "Websites (getResults - VimmsLair)");
             return underlying;
-        }
-        public string getGamePage_RPGOnly(string gameURL)
-        {
-            HtmlWeb web = new();
-            LinksWindow linksWindow = new LinksWindow();
-            linksWindow.LinksList.Visibility = Visibility.Visible;
-            linksWindow.Show();
-            doc = web.Load(gameURL);
-            List<Result> websites = new List<Result>();
-            HtmlNode entry = doc.DocumentNode.SelectSingleNode("/html/body/div/div[6]/div/div[1]/div/main/div[1]/article/div/figure[2]/table/tbody");
-            Logger.Log($"Getting game page links", "Websites (getGamePage - RPGOnly)");
-            var infos = "";
-            var name = "";
-            var link = "";
-            foreach(HtmlNode descendant in entry.ChildNodes)
-            {
-                //We are selected the trs
-                bool firstTime = true;
-                foreach (HtmlNode node in descendant.ChildNodes)
-                {
-                    //[0] childnode contains the only non-link text
-                    if (firstTime)
-                    {
-                        firstTime = false;
-                        name = node.InnerText;
-                        continue;
-                    }
-                    try
-                    {
-                        foreach (HtmlNode node2 in node.ChildNodes)
-                        {
-                            infos = node2.InnerText;
-                            link = node2.Attributes["href"].Value;
-                            websites.Add(new Result() { Infos = infos, Name = name, Link = link });
-                        }
-                    }
-                    catch { link = ""; continue; }
-                }
-            }
-            Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - RPGOnly)");
-            if (!Settings.Default.NSFWContent)
-            {
-                foreach (Result res in websites)
-                {
-                    foreach (string s in BannedWords.nsfwWords)
-                    {
-                        if (res.Name.ToLower().Contains(s.ToLower()))
-                        {
-                            res.Name = "NSFW Content";
-                            underlying[websites.IndexOf(res)] = string.Empty;
-                        }
-                        if (res.Infos.ToLower().Contains(s.ToLower()))
-                        {
-                            res.Infos = "NSFW Content";
-                            underlying[websites.IndexOf(res)] = string.Empty;
-                        }
-                    }
-                }
-            }
-            linksWindow.LinksList.ItemsSource = websites;
-            return "";
-        }
-        public string getGamePage_NxBrew(string gameURL)
-        {
-            HtmlWeb web = new HtmlWeb();
-            LinksWindow linksWindow = new LinksWindow();
-            linksWindow.LinksList.Visibility = Visibility.Visible;
-            linksWindow.Show();
-            doc = web.Load(gameURL);
-            List<Result> websites = new List<Result>();
-            Logger.Log($"Getting game page links", "Websites (getGamePage - NxBrew)");
-            var title = "";
-            var link = "";
-            var infos = "";
-            bool added = false;
-
-            HtmlNodeCollection divs = doc.DocumentNode.SelectNodes("/html/body/div[1]/div/div/div/div[3]/div[1]/div/article/div[4]/div/div");
-            foreach (HtmlNode div in divs)
-            {
-                if (div.HasClass("wp-block-column"))
-                {
-                    foreach (HtmlNode node in div.Descendants("p"))
-                    {
-                        if (node.HasClass("has-medium-font-size"))
-                        {
-                            added = false;
-                            title = node.InnerText;
-                            link = "";
-                            infos = "";
-                        }
-                        else
-                        {
-                            try
-                            {
-                                title = "";
-                                if (node.InnerText.Contains("Download"))
-                                {
-                                    added = false;
-                                    infos = node.Descendants("strong").ToArray()[0].InnerText;
-                                    link = node.Descendants("a").ToArray()[0].Attributes["href"].Value;
-                                }
-                                else
-                                {
-                                    foreach (HtmlNode node2 in node.Descendants("a"))
-                                    {
-                                        infos = node2.InnerText;
-                                        link = node2.Attributes["href"].Value;
-                                        websites.Add(new Result() { Name = infos, Link = link, Infos = title });
-                                        added = true;
-                                    }
-                                }
-                            }
-                            catch (IndexOutOfRangeException) { continue; }
-                        }
-                        if (!added) { websites.Add(new Result() { Name = infos, Link = link, Infos = title }); }
-                        
-                    }
-                }
-            }
-            Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - NxBrew)");
-            if (!Settings.Default.NSFWContent)
-            {
-                foreach (Result res in websites)
-                {
-                    foreach (string s in BannedWords.nsfwWords)
-                    {
-                        if (res.Name.ToLower().Contains(s.ToLower()))
-                        {
-                            res.Name = "NSFW Content";
-                            underlying[websites.IndexOf(res)] = string.Empty;
-                        }
-                        if (res.Infos.ToLower().Contains(s.ToLower()))
-                        {
-                            res.Infos = "NSFW Content";
-                            underlying[websites.IndexOf(res)] = string.Empty;
-                        }
-                    }
-                }
-            }
-            linksWindow.LinksList.ItemsSource = websites;
-            return "";
         }
         public string getGamePage_Ziperto(string gameURL)
         {
@@ -716,13 +408,6 @@ namespace SimpleThingsProvider
             linksWindow.HexRomsLinksList.ItemsSource = websites;
             return "";
         }
-        public string getGamePage_WoWRoms(string gameURL)
-        {
-            HtmlWeb web = new();
-            HtmlDocument doc = web.Load(gameURL);
-            Logger.Log($"Getting the inner link from WoWRoms", "Websites (getGamePage - WoWRoms)");
-            return "https://wowroms.com" + doc.DocumentNode.SelectSingleNode("/html/body/div/div/div/section/div[2]/div[2]/div[1]/div[2]/div/div[2]/a").Attributes["href"].Value;
-        }
         public string getGamePage_FitGirl(string gameURL)
         {
             LinksWindow linksWindow = new LinksWindow();
@@ -765,23 +450,10 @@ namespace SimpleThingsProvider
             Logger.Log("Switching for link to return", $"Websites (getMagnet - {whoami})");
             switch (whoami)
             {
-                case ("x1337"):
-                    HtmlWeb web = new HtmlWeb();
-                    HtmlDocument doc = web.Load(underlying[index]);
-                    HtmlNode node = doc.DocumentNode.SelectSingleNode("/html/body/main/div/div/div/div[2]/div[1]/ul[1]/li[1]/a");
-                    return node.Attributes["href"].Value;
-                case ("ThePirateBay"):
-                    return underlying[index];
-                case ("RPGOnly"):
-                    return getGamePage_RPGOnly(underlying[index]);
-                case ("NxBrew"):
-                    return getGamePage_NxBrew(underlying[index]);
                 case ("Ziperto"):
                     return getGamePage_Ziperto(underlying[index]);
                 case ("HexRom"):
                     return getGamePage_HexRom(underlying[index] + "/download/");
-                case ("WoWRoms"):
-                    return getGamePage_WoWRoms("https://wowroms.com" + underlying[index]);
                 case ("FitGirl"):
                     return getGamePage_FitGirl(underlying[index]);
                 case ("VimmsLair"):

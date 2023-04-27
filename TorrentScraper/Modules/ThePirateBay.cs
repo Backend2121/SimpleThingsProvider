@@ -112,10 +112,12 @@ namespace SimpleThingsProvider.Modules
             ResultsList.Visibility = Visibility.Visible;
             return _underlying;
         }
+        public List<string> getResults(HtmlDocument document, ListView ResultsList, string toSearch) { return null; }
         public String getLink(int index)
         {
             return _underlying[index];
         }
+        public string getLink(string gameURL) { return null; }
 
     }
 }
