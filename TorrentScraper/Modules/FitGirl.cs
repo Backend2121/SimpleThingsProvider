@@ -17,11 +17,12 @@ namespace SimpleThingsProvider.Modules
         public HtmlDocument Doc { get; set; }
 
         private List<string> _underlying;
-        public ListView _listview { get; set; }
+        public ListView listview { get; set; }
+        public bool needsSubSelector { get { return true; } }
 
         public FitGirl(ListView lv)
         {
-            _listview = lv;
+            listview = lv;
         }
 
         public string getLink(int index)
@@ -64,7 +65,7 @@ namespace SimpleThingsProvider.Modules
 
         public List<string> getResults(HtmlDocument document)
         {
-            _listview.Visibility = Visibility.Visible;
+            listview.Visibility = Visibility.Visible;
             _underlying = new List<string>();
             List<Result> results = new();
 
@@ -122,7 +123,7 @@ namespace SimpleThingsProvider.Modules
                     }
                 }
             }
-            _listview.ItemsSource = results;
+            listview.ItemsSource = results;
             return _underlying;
         }
         public HttpStatusCode search(string toSearch)

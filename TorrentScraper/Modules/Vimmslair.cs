@@ -16,11 +16,12 @@ namespace SimpleThingsProvider.Modules
         public string Name { get { return "VimmsLair"; } set { } }
         public HtmlDocument Doc { get; set; }
         private List<string> _underlying;
-        public ListView _listview { get; set; }
+        public ListView listview { get; set; }
+        public bool needsSubSelector { get { return false; } }
 
         public Vimmslair(ListView lv)
         {
-            _listview = lv;
+            listview = lv;
         }
         public string getLink(int index)
         {
@@ -32,7 +33,7 @@ namespace SimpleThingsProvider.Modules
         }
         public List<string> getResults(HtmlDocument document)
         {
-            _listview.Visibility = Visibility.Visible;
+            listview.Visibility = Visibility.Visible;
             _underlying = new List<string>();
             List<Result> results = new();
             HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div[4]/div[2]/div/div[3]/table/tr");
@@ -66,7 +67,7 @@ namespace SimpleThingsProvider.Modules
                     }
                 }
             }
-            _listview.ItemsSource = results;
+            listview.ItemsSource = results;
             Logger.Log($"Found {_underlying.Count} entries", "Websites (getResults - VimmsLair)");
             return _underlying;
         }

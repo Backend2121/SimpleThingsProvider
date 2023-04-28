@@ -12,12 +12,12 @@ namespace SimpleThingsProvider.Modules
     {
         public string Name { get { return "x1337"; } set { } }
         private List<string> _underlying;
-        public ListView _listview { get; set; }
-
+        public ListView listview { get; set; }
         public HtmlDocument Doc { get; set; }
+        public bool needsSubSelector { get { return false; } }
         public x1337(ListView lv) 
         {
-            _listview = lv;
+            listview = lv;
         }
         public HttpStatusCode search(string toSearch)
         {
@@ -89,8 +89,8 @@ namespace SimpleThingsProvider.Modules
                     }
                 }
             }
-            _listview.ItemsSource = results;
-            _listview.Visibility = Visibility.Visible;
+            listview.ItemsSource = results;
+            listview.Visibility = Visibility.Visible;
             return _underlying;
         }
         public string getLink(int index)

@@ -16,12 +16,13 @@ namespace SimpleThingsProvider.Modules
         public string Name { get { return "RPGOnly"; } set { } }
         private List<string> _underlying;
         private string _toSearch;
-        public ListView _listview { get; set; }
+        public ListView listview { get; set; }
         public HtmlDocument Doc { get; set; }
+        public bool needsSubSelector { get { return false; } }
 
         public RPGOnly(ListView lv)
         {
-            _listview = lv;
+            listview = lv;
         }
 
         public HttpStatusCode search(string toSearch)
@@ -44,7 +45,7 @@ namespace SimpleThingsProvider.Modules
         }
         public List<string> getResults(HtmlDocument document)
         {
-            _listview.Visibility = Visibility.Visible;
+            listview.Visibility = Visibility.Visible;
             _underlying = new List<string>();
             List<Result> results = new();
 
@@ -92,7 +93,7 @@ namespace SimpleThingsProvider.Modules
                     }
                 }
             }
-            _listview.ItemsSource = results;
+            listview.ItemsSource = results;
             return _underlying;
         }
         public string getLink(int index) {

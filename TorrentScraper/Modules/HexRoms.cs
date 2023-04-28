@@ -16,16 +16,17 @@ namespace SimpleThingsProvider.Modules
         public string Name { get { return "HexRom"; } set { } }
         public HtmlDocument Doc { get; set; }
         private List<string> _underlying;
-        public ListView _listview { get; set; }
+        public ListView listview { get; set; }
+        public bool needsSubSelector { get { return false; } }
 
         public HexRoms(ListView lv)
         {
-            _listview = lv;
+            listview = lv;
         }
 
         public List<string> getResults(HtmlDocument document)
         {
-            _listview.Visibility = Visibility.Visible;
+            listview.Visibility = Visibility.Visible;
             _underlying = new List<string>();
             List<Result> results = new();
             HtmlNodeCollection alist = document.DocumentNode.SelectNodes("/html/body/div[2]/div[1]/div/div[1]/div/div/ul/li/a");
@@ -63,7 +64,7 @@ namespace SimpleThingsProvider.Modules
                     }
                 }
             }
-            _listview.ItemsSource = results;
+            listview.ItemsSource = results;
             return _underlying;
         }
         public string getLink(int index)

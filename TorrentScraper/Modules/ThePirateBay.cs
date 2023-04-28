@@ -16,10 +16,12 @@ namespace SimpleThingsProvider.Modules
         public string Name { get { return "ThePirateBay"; } set { } }
         private List<string> _underlying;
         public HtmlDocument Doc { get; set; }
-        public ListView _listview { get; set; }
+        public ListView listview { get; set; }
+        public bool needsSubSelector { get { return false; } }
+
         public ThePirateBay(ListView lv)
         {
-            _listview = lv;
+            listview = lv;
         }
 
         public HttpStatusCode search(string toSearch)
@@ -113,8 +115,8 @@ namespace SimpleThingsProvider.Modules
                     }
                 }
             }
-            _listview.ItemsSource = results;
-            _listview.Visibility = Visibility.Visible;
+            listview.ItemsSource = results;
+            listview.Visibility = Visibility.Visible;
             return _underlying;
         }
         public String getLink(int index)

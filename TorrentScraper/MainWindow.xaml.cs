@@ -42,6 +42,7 @@ namespace SimpleThingsProvider
             InitializeComponent();
             Logger.Log("Loading modules", "Main");
             ImodulesList = new List<IModule>();
+            loadModules();
             if (Settings.Default.SyncWithWindows) { ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncWithAppMode; }
             else { ThemeManager.Current.ChangeTheme(this, Settings.Default.MainTheme + "." + Settings.Default.SubTheme); }
             
@@ -57,8 +58,14 @@ namespace SimpleThingsProvider
             Logger.Log($"Loaded settings: {WebsiteSource.SelectedIndex}___{WebsiteSubSelector.SelectedIndex}", "Main");
             try
             {
-                if (WebsiteSource.SelectedItem.ToString() == "WoWRoms") { WebsiteSubSelector.IsEnabled = true; }
-                else { WebsiteSubSelector.IsEnabled = false; }
+                foreach (IModule m in ImodulesList)
+                {
+                    if (m.Name.Equals(WebsiteSource.SelectedItem.ToString()))
+                    {
+                        if (m.needsSubSelector) { WebsiteSubSelector.IsEnabled = true; }
+                        else { WebsiteSubSelector.IsEnabled = false; }
+                    }
+                }
             }
             catch(Exception ex) { Logger.Log(ex.ToString(), "Main"); }
             try
@@ -80,6 +87,25 @@ namespace SimpleThingsProvider
             Logger.Log("Everything ready!", "Main");
             PiracyDisclaimer();
             OutputLabel.Content = motd[r.Next(0, motd.Length - 1)];
+        }
+        private void loadModules()
+        {
+            // Here temporarly need to auto-import them
+
+            IModule x1337 = new Modules.x1337(TorrentResultsList);
+            IModule thePirateBay = new Modules.ThePirateBay(TorrentResultsList);
+            IModule rpgOnly = new Modules.RPGOnly(RPGOnlyResultsList);
+            IModule ziperto = new Modules.Ziperto(ZipertoResultsList);
+            IModule hexRoms = new Modules.HexRoms(HexRomResultsList);
+            IModule fitGirl = new Modules.FitGirl(FitGirlResultsList);
+            IModule vimmsLair = new Modules.Vimmslair(VimmResultsList);
+            ImodulesList.Add(x1337);
+            ImodulesList.Add(thePirateBay);
+            ImodulesList.Add(rpgOnly);
+            ImodulesList.Add(ziperto);
+            ImodulesList.Add(hexRoms);
+            ImodulesList.Add(fitGirl);
+            ImodulesList.Add(vimmsLair);
         }
         private void checkUpdate()
         {
@@ -123,23 +149,6 @@ namespace SimpleThingsProvider
             HexRomResultsList.Visibility = Visibility.Hidden;
             MangaFreakResultsList.Visibility = Visibility.Hidden;
             MangaWorldResultsList.Visibility = Visibility.Hidden;
-
-            // Here temporarly need to auto-import them
-
-            IModule x1337 = new Modules.x1337(TorrentResultsList);
-            IModule thePirateBay = new Modules.ThePirateBay(TorrentResultsList);
-            IModule rpgOnly = new Modules.RPGOnly(RPGOnlyResultsList);
-            IModule ziperto = new Modules.Ziperto(ZipertoResultsList);
-            IModule hexRoms = new Modules.HexRoms(HexRomResultsList);
-            IModule fitGirl = new Modules.FitGirl(FitGirlResultsList);
-            IModule vimmsLair = new Modules.Vimmslair(VimmResultsList);
-            ImodulesList.Add(x1337);
-            ImodulesList.Add(thePirateBay);
-            ImodulesList.Add(rpgOnly);
-            ImodulesList.Add(ziperto);
-            ImodulesList.Add(hexRoms);
-            ImodulesList.Add(fitGirl);
-            ImodulesList.Add(vimmsLair);
             foreach (IModule m in ImodulesList)
             {
                 if (m.Name == WebsiteSource.Text)
@@ -163,7 +172,13 @@ namespace SimpleThingsProvider
                 }
             }
             
-            if (code != HttpStatusCode.OK) { Alert("Received a non 200(OK) response!" + "\n" + code, "STP: Error"); StatusCodeLabel.Content = "Status Code: " + code; StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Red); return; }
+            if (code != HttpStatusCode.OK) 
+            {
+                Alert("Received a non 200(OK) response!" + "\n" + code, "STP: Error");
+                StatusCodeLabel.Content = "Status Code: " + code;
+                StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Red);
+                return;
+            }
             else
             {
                 foreach (IModule m in ImodulesList)
@@ -213,38 +228,7 @@ namespace SimpleThingsProvider
             try
             {
                 string entry = "";
-                if (TorrentResultsList.Visibility == Visibility.Visible)
-                {
-                    entry = module.getLink(TorrentResultsList.SelectedIndex);
-                }
-                else if (VimmResultsList.Visibility == Visibility.Visible)
-                {
-                    entry = module.getLink(VimmResultsList.SelectedIndex);
-                }
-                else if (FitGirlResultsList.Visibility == Visibility.Visible)
-                {
-                    entry = module.getLink(FitGirlResultsList.SelectedIndex);
-                }
-                else if (WowRomsResultsList.Visibility == Visibility.Visible)
-                {
-                    entry = module.getLink(WowRomsResultsList.SelectedIndex);
-                }
-                else if (RPGOnlyResultsList.Visibility == Visibility.Visible)
-                {
-                    entry = module.getLink(RPGOnlyResultsList.SelectedIndex);
-                }
-                else if (HexRomResultsList.Visibility == Visibility.Visible)
-                {
-                    entry = module.getLink(HexRomResultsList.SelectedIndex);
-                }
-                else if (NxBrewResultsList.Visibility == Visibility.Visible)
-                {
-                    entry = module.getLink(NxBrewResultsList.SelectedIndex);
-                }
-                else if (ZipertoResultsList.Visibility == Visibility.Visible)
-                {
-                    entry = module.getLink(ZipertoResultsList.SelectedIndex);
-                }
+                entry = module.getLink(module.listview.SelectedIndex);
 
                 Logger.Log($"Entry {entry} has been selected", "Main");
                 OutputLabel.Content = entry;
@@ -285,9 +269,18 @@ namespace SimpleThingsProvider
         }
         private void SaveSelected(object sender, RoutedEventArgs e)
         {
+            // Enables subselector for the next time it changes
+            Debug.WriteLine(WebsiteSource.Text);
+            Debug.WriteLine((sender as ComboBox).SelectedItem.ToString());
             Logger.Log("Saving settings", "Main");
-            if (WebsiteSource.SelectedItem.ToString() == "WoWRoms") { WebsiteSubSelector.IsEnabled = true; }
-            else { WebsiteSubSelector.IsEnabled = false; }
+            foreach(IModule m in ImodulesList)
+            { 
+                if (m.Name.Equals((sender as ComboBox).SelectedItem.ToString()))
+                {
+                    if (m.needsSubSelector) { WebsiteSubSelector.IsEnabled = true; }
+                    else { WebsiteSubSelector.IsEnabled = false; }
+                }
+            }
             Settings.Default.WebsiteSelected = WebsiteSource.SelectedIndex;
             Settings.Default.Save();
             Logger.Log("Saved settings", "Main");

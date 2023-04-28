@@ -18,11 +18,12 @@ namespace SimpleThingsProvider.Modules
         public HtmlDocument Doc { get; set; }
         private List<string> _underlying;
         private string _toSearch;
-        public ListView _listview { get; set; }
+        public ListView listview { get; set; }
+        public bool needsSubSelector { get { return false; } }
 
         public Ziperto(ListView lv)
         {
-            _listview = lv;
+            listview = lv;
         }
         public string getLink(int index)
         {
@@ -118,7 +119,7 @@ namespace SimpleThingsProvider.Modules
 
         public List<string> getResults(HtmlDocument document)
         {
-            _listview.Visibility = Visibility.Visible;
+            listview.Visibility = Visibility.Visible;
             _underlying = new List<string>();
             List<Result> results = new();
             HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div[1]/div/div/div/div/div[1]/div[2]/article/div/div[1]/div[2]/div/div/ul/li/a");
@@ -163,7 +164,7 @@ namespace SimpleThingsProvider.Modules
                     }
                 }
             }
-            _listview.ItemsSource = results;
+            listview.ItemsSource = results;
             return _underlying;
         }
 
