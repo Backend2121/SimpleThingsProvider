@@ -8,12 +8,17 @@ using System.Windows.Controls;
 
 namespace SimpleThingsProvider.Modules
 {
-    internal class x1337 : IModule
+    class x1337 : IModule
     {
         public string Name { get { return "x1337"; } set { } }
         private List<string> _underlying;
+        public ListView _listview { get; set; }
+
         public HtmlDocument Doc { get; set; }
-        public x1337() { }
+        public x1337(ListView lv) 
+        {
+            _listview = lv;
+        }
         public HttpStatusCode search(string toSearch)
         {
             HttpStatusCode code;
@@ -35,7 +40,7 @@ namespace SimpleThingsProvider.Modules
             code = web.StatusCode;
             return code;
         }
-        public List<string> getResults(HtmlDocument document, ListView ResultsList)
+        public List<string> getResults(HtmlDocument document)
         {
             _underlying = new List<string>();
             List<Result> results = new();
@@ -84,11 +89,10 @@ namespace SimpleThingsProvider.Modules
                     }
                 }
             }
-            ResultsList.ItemsSource = results;
-            ResultsList.Visibility = Visibility.Visible;
+            _listview.ItemsSource = results;
+            _listview.Visibility = Visibility.Visible;
             return _underlying;
         }
-        public List<string> getResults(HtmlDocument document, ListView ResultsList, string toSearch) { return null; }
         public string getLink(int index)
         {
             HtmlWeb web = new HtmlWeb();

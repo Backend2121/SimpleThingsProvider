@@ -32,15 +32,6 @@ namespace SimpleThingsProvider
 {
     public partial class MainWindow
     {
-        public class Result
-        {
-            public string Title { get; set; }
-            public string Seeds { get; set; }
-            public string Leechs { get; set; }
-            public string Time { get; set; }
-            public string Size { get; set; }
-        }
-
         List<string> underlying;
         List<IModule> ImodulesList;
         IModule module;
@@ -133,16 +124,15 @@ namespace SimpleThingsProvider
             MangaFreakResultsList.Visibility = Visibility.Hidden;
             MangaWorldResultsList.Visibility = Visibility.Hidden;
 
-            //HttpStatusCode code = module.Search(SearchTextBox.Text, WebsiteSource.SelectedItem.ToString());
-            // Here temporarly
+            // Here temporarly need to auto-import them
 
-            IModule x1337 = new Modules.x1337();
-            IModule thePirateBay = new Modules.ThePirateBay();
-            IModule rpgOnly = new Modules.RPGOnly();
-            IModule ziperto = new Modules.Ziperto();
-            IModule hexRoms = new Modules.HexRoms();
-            IModule fitGirl = new Modules.FitGirl();
-            IModule vimmsLair = new Modules.Vimmslair();
+            IModule x1337 = new Modules.x1337(TorrentResultsList);
+            IModule thePirateBay = new Modules.ThePirateBay(TorrentResultsList);
+            IModule rpgOnly = new Modules.RPGOnly(RPGOnlyResultsList);
+            IModule ziperto = new Modules.Ziperto(ZipertoResultsList);
+            IModule hexRoms = new Modules.HexRoms(HexRomResultsList);
+            IModule fitGirl = new Modules.FitGirl(FitGirlResultsList);
+            IModule vimmsLair = new Modules.Vimmslair(VimmResultsList);
             ImodulesList.Add(x1337);
             ImodulesList.Add(thePirateBay);
             ImodulesList.Add(rpgOnly);
@@ -176,29 +166,12 @@ namespace SimpleThingsProvider
             if (code != HttpStatusCode.OK) { Alert("Received a non 200(OK) response!" + "\n" + code, "STP: Error"); StatusCodeLabel.Content = "Status Code: " + code; StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Red); return; }
             else
             {
-                switch (WebsiteSource.Text)
+                foreach (IModule m in ImodulesList)
                 {
-                    case ("x1337"):
-                        underlying = module.getResults(module.Doc, TorrentResultsList);
-                        break;
-                    case ("ThePirateBay"):
-                        underlying = module.getResults(module.Doc, TorrentResultsList);
-                        break;
-                    case ("RPGOnly"):
-                        underlying = module.getResults(module.Doc, RPGOnlyResultsList, SearchTextBox.Text);
-                        break;
-                    case ("Ziperto"):
-                        underlying = module.getResults(module.Doc, ZipertoResultsList, SearchTextBox.Text);
-                        break;
-                    case ("HexRom"):
-                        underlying = module.getResults(module.Doc, HexRomResultsList);
-                        break;
-                    case ("FitGirl"):
-                        underlying = module.getResults(module.Doc, FitGirlResultsList);
-                        break;
-                    case ("VimmsLair"):
-                        underlying = module.getResults(module.Doc, VimmResultsList);
-                        break;
+                    if (m.Name.Equals(WebsiteSource.Text))
+                    {
+                        underlying = m.getResults(module.Doc);
+                    }
                 }
                 StatusCodeLabel.Content = "Status Code: " + code;
                 StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Green);

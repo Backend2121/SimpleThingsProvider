@@ -11,11 +11,16 @@ using System.Net;
 
 namespace SimpleThingsProvider.Modules
 {
-    internal class ThePirateBay : IModule
+    class ThePirateBay : IModule
     {
         public string Name { get { return "ThePirateBay"; } set { } }
         private List<string> _underlying;
         public HtmlDocument Doc { get; set; }
+        public ListView _listview { get; set; }
+        public ThePirateBay(ListView lv)
+        {
+            _listview = lv;
+        }
 
         public HttpStatusCode search(string toSearch)
         {
@@ -35,7 +40,7 @@ namespace SimpleThingsProvider.Modules
 
             return web.StatusCode;
         }
-        public List<String> getResults(HtmlDocument document, ListView ResultsList)
+        public List<String> getResults(HtmlDocument document)
         {
             _underlying = new List<string>();
             List<Result> results = new();
@@ -108,11 +113,10 @@ namespace SimpleThingsProvider.Modules
                     }
                 }
             }
-            ResultsList.ItemsSource = results;
-            ResultsList.Visibility = Visibility.Visible;
+            _listview.ItemsSource = results;
+            _listview.Visibility = Visibility.Visible;
             return _underlying;
         }
-        public List<string> getResults(HtmlDocument document, ListView ResultsList, string toSearch) { return null; }
         public String getLink(int index)
         {
             return _underlying[index];

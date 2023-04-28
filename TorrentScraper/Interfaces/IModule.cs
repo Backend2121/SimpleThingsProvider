@@ -11,8 +11,8 @@ namespace SimpleThingsProvider.Interfaces
     {
         string Name { get; set; }
         public HtmlDocument Doc { get; set; }
-        public List<string> getResults(HtmlDocument document, ListView ResultsList);
-        public List<string> getResults(HtmlDocument document, ListView ResultsList, string toSearch);
+        public ListView _listview { set; }
+        public List<string> getResults(HtmlDocument document);
         public string getLink(int index);
         public string getLink(string gameURL);
         public HttpStatusCode search(string toSearch);

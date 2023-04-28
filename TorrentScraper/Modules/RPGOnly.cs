@@ -15,10 +15,18 @@ namespace SimpleThingsProvider.Modules
     {
         public string Name { get { return "RPGOnly"; } set { } }
         private List<string> _underlying;
+        private string _toSearch;
+        public ListView _listview { get; set; }
         public HtmlDocument Doc { get; set; }
+
+        public RPGOnly(ListView lv)
+        {
+            _listview = lv;
+        }
 
         public HttpStatusCode search(string toSearch)
         {
+            _toSearch = toSearch;
             HttpStatusCode code;
             HtmlWeb web = new();
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
@@ -34,10 +42,9 @@ namespace SimpleThingsProvider.Modules
 
             return web.StatusCode;
         }
-        public List<string> getResults(HtmlDocument document, ListView ResultsList) { return null; }
-        public List<string> getResults(HtmlDocument document, ListView ResultsList, string toSearch)
+        public List<string> getResults(HtmlDocument document)
         {
-            ResultsList.Visibility = Visibility.Visible;
+            _listview.Visibility = Visibility.Visible;
             _underlying = new List<string>();
             List<Result> results = new();
 
@@ -54,7 +61,7 @@ namespace SimpleThingsProvider.Modules
                         {
                             if (descendant.Attributes["href"].Value.Contains("https://"))
                             {
-                                if (descendant.InnerText.ToLower().Contains(toSearch.ToLower()))
+                                if (descendant.InnerText.ToLower().Contains(_toSearch.ToLower()))
                                 {
                                     _underlying.Add(descendant.Attributes["href"].Value);
                                     results.Add(new Result() { Title = descendant.InnerText.Replace("&#038;", "&") });
@@ -85,7 +92,7 @@ namespace SimpleThingsProvider.Modules
                     }
                 }
             }
-            ResultsList.ItemsSource = results;
+            _listview.ItemsSource = results;
             return _underlying;
         }
         public string getLink(int index) {
@@ -153,7 +160,5 @@ namespace SimpleThingsProvider.Modules
             linksWindow.LinksList.ItemsSource = websites;
             return "";
         }
-
-
     }
 }

@@ -11,11 +11,18 @@ using System.Windows.Controls;
 
 namespace SimpleThingsProvider.Modules
 {
-    internal class FitGirl : IModule
+    class FitGirl : IModule
     {
         public string Name { get { return "FitGirl"; } set { } }
         public HtmlDocument Doc { get; set; }
+
         private List<string> _underlying;
+        public ListView _listview { get; set; }
+
+        public FitGirl(ListView lv)
+        {
+            _listview = lv;
+        }
 
         public string getLink(int index)
         {
@@ -55,9 +62,9 @@ namespace SimpleThingsProvider.Modules
             return "";
         }
 
-        public List<string> getResults(HtmlDocument document, ListView ResultsList)
+        public List<string> getResults(HtmlDocument document)
         {
-            ResultsList.Visibility = Visibility.Visible;
+            _listview.Visibility = Visibility.Visible;
             _underlying = new List<string>();
             List<Result> results = new();
 
@@ -115,12 +122,9 @@ namespace SimpleThingsProvider.Modules
                     }
                 }
             }
-            ResultsList.ItemsSource = results;
+            _listview.ItemsSource = results;
             return _underlying;
         }
-
-        public List<string> getResults(HtmlDocument document, ListView ResultsList, string toSearch){return null;}
-
         public HttpStatusCode search(string toSearch)
         {
             HttpStatusCode code;

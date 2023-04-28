@@ -11,11 +11,17 @@ using System.Windows.Controls;
 
 namespace SimpleThingsProvider.Modules
 {
-    internal class Vimmslair : IModule
+    class Vimmslair : IModule
     {
         public string Name { get { return "VimmsLair"; } set { } }
         public HtmlDocument Doc { get; set; }
         private List<string> _underlying;
+        public ListView _listview { get; set; }
+
+        public Vimmslair(ListView lv)
+        {
+            _listview = lv;
+        }
         public string getLink(int index)
         {
             return getLink(_underlying[index]);
@@ -24,9 +30,9 @@ namespace SimpleThingsProvider.Modules
         {
             return gameURL;
         }
-        public List<string> getResults(HtmlDocument document, ListView ResultsList)
+        public List<string> getResults(HtmlDocument document)
         {
-            ResultsList.Visibility = Visibility.Visible;
+            _listview.Visibility = Visibility.Visible;
             _underlying = new List<string>();
             List<Result> results = new();
             HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div[4]/div[2]/div/div[3]/table/tr");
@@ -60,16 +66,10 @@ namespace SimpleThingsProvider.Modules
                     }
                 }
             }
-            ResultsList.ItemsSource = results;
+            _listview.ItemsSource = results;
             Logger.Log($"Found {_underlying.Count} entries", "Websites (getResults - VimmsLair)");
             return _underlying;
         }
-
-        public List<string> getResults(HtmlDocument document, ListView ResultsList, string toSearch)
-        {
-            throw new NotImplementedException();
-        }
-
         public HttpStatusCode search(string toSearch)
         {
             HttpStatusCode code;

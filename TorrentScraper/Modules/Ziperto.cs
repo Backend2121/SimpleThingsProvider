@@ -17,8 +17,14 @@ namespace SimpleThingsProvider.Modules
         public string Name { get { return "Ziperto"; } set { } }
         public HtmlDocument Doc { get; set; }
         private List<string> _underlying;
+        private string _toSearch;
+        public ListView _listview { get; set; }
 
-        string IModule.getLink(int index)
+        public Ziperto(ListView lv)
+        {
+            _listview = lv;
+        }
+        public string getLink(int index)
         {
             return getLink(_underlying[index]);
         }
@@ -110,11 +116,9 @@ namespace SimpleThingsProvider.Modules
             return "";
         }
 
-        public List<string> getResults(HtmlDocument document, ListView ResultsList){return null;}
-
-        public List<string> getResults(HtmlDocument document, ListView ResultsList, string toSearch)
+        public List<string> getResults(HtmlDocument document)
         {
-            ResultsList.Visibility = Visibility.Visible;
+            _listview.Visibility = Visibility.Visible;
             _underlying = new List<string>();
             List<Result> results = new();
             HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div[1]/div/div/div/div/div[1]/div[2]/article/div/div[1]/div[2]/div/div/ul/li/a");
@@ -123,7 +127,7 @@ namespace SimpleThingsProvider.Modules
                 Logger.Log($"Found {games.Count} results", "Websites (getResults - Ziperto)");
                 foreach (HtmlNode game in games)
                 {
-                    if (game.InnerText.ToLower().Contains(toSearch.ToLower()))
+                    if (game.InnerText.ToLower().Contains(_toSearch.ToLower()))
                     {
                         try
                         {
@@ -159,12 +163,13 @@ namespace SimpleThingsProvider.Modules
                     }
                 }
             }
-            ResultsList.ItemsSource = results;
+            _listview.ItemsSource = results;
             return _underlying;
         }
 
         public HttpStatusCode search(string toSearch)
         {
+            _toSearch = toSearch;
             HttpStatusCode code;
             HtmlWeb web = new();
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
