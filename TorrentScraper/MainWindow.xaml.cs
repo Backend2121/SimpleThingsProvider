@@ -24,9 +24,9 @@ using MahApps.Metro.Controls;
 using ControlzEx.Theming;
 using MahApps;
 using System.Runtime.CompilerServices;
-using SimpleThingsProvider.Interfaces;
 using System.Reflection;
 using System.Reflection.Metadata;
+using Utils;
 
 namespace SimpleThingsProvider
 {
@@ -229,7 +229,6 @@ namespace SimpleThingsProvider
             {
                 string entry = "";
                 entry = module.getLink(module.listview.SelectedIndex);
-
                 Logger.Log($"Entry {entry} has been selected", "Main");
                 OutputLabel.Content = entry;
                 CopyButton.IsEnabled = true;

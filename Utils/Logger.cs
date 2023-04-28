@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SimpleThingsProvider
 {
-    static class Logger
+    public class Logger
     {
         static string file = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}/SimpleThingsProvider_logs/{createLogFile()}";
         public static void Log(string logMessage, string whoami)

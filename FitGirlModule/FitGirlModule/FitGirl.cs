@@ -1,5 +1,4 @@
-﻿using HtmlAgilityPack;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -7,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using HtmlAgilityPack;
+using Utils;
 
 namespace SimpleThingsProvider.Modules
 {
@@ -33,17 +34,17 @@ namespace SimpleThingsProvider.Modules
         {
             LinksWindow linksWindow = new LinksWindow();
             linksWindow.Show();
-            linksWindow.LinksList.Visibility = Visibility.Visible;
+            linksWindow.linkWindow.Visibility = Visibility.Visible;
             List<Result> websites = new List<Result>();
             HtmlWeb web = new HtmlWeb();
             HtmlDocument doc = web.Load(gameURL);
             HtmlNodeCollection links = doc.DocumentNode.SelectNodes("/html/body/div/div/div[1]/div/article/div/ul[1]/li/a");
-            Logger.Log($"Getting game page links", "Websites (getGamePage - FitGirl)");
+            //Logger.Log($"Getting game page links", "Websites (getGamePage - FitGirl)");
             foreach (HtmlNode downloadlink in links)
             {
                 websites.Add(new Result() { Link = downloadlink.Attributes["href"].Value, Infos = downloadlink.InnerText });
             }
-            Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - FitGirl)");
+            //Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - FitGirl)");
             if (!Settings.Default.NSFWContent)
             {
                 foreach (Result res in websites)
@@ -58,7 +59,7 @@ namespace SimpleThingsProvider.Modules
                     }
                 }
             }
-            linksWindow.LinksList.ItemsSource = websites;
+            linksWindow.linkWindow.ItemsSource = websites;
             return "";
         }
 
@@ -71,7 +72,7 @@ namespace SimpleThingsProvider.Modules
             HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div/div/section/div/article/div/p");
             try
             {
-                Logger.Log($"Found {games.Count} results", "Websites (getResults - FitGirl)");
+                //Logger.Log($"Found {games.Count} results", "Websites (getResults - FitGirl)");
                 foreach (HtmlNode game in games)
                 {
                     string p = game.InnerText;
@@ -103,11 +104,11 @@ namespace SimpleThingsProvider.Modules
             }
             catch (NullReferenceException)
             {
-                Logger.Log("No results found!", "Websites (getResults - FitGirl)");
+                //Logger.Log("No results found!", "Websites (getResults - FitGirl)");
                 return new List<string>();
             }
 
-            Logger.Log($"Found {_underlying.Count} entries", "Websites (getResults - FitGirl)");
+            //Logger.Log($"Found {_underlying.Count} entries", "Websites (getResults - FitGirl)");
             if (!Settings.Default.NSFWContent)
             {
                 foreach (Result res in results)
@@ -132,13 +133,16 @@ namespace SimpleThingsProvider.Modules
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
             web.UserAgent = "SimpleThingsProvider";
 
-            Logger.Log("Searching for: " + toSearch + " in: " + Name, "Website (Search)");
+           //Logger.Log("Searching for: " + toSearch + " in: " + Name, "Website (Search)");
             try
             {
                 if (Settings.Default.ProxyEnabled) Doc = web.Load("https://fitgirl-repacks.site/?s=" + toSearch.Replace(" ", "+"), Settings.Default.ProxyIP, Int32.Parse(Settings.Default.ProxyPort), string.Empty, string.Empty);
                 else Doc = web.Load("https://fitgirl-repacks.site/?s=" + toSearch.Replace(" ", "+"));
             }
-            catch { Logger.Log($"Error code {HttpStatusCode.NotFound} for {mainWindow.WebsiteSource.SelectedItem.ToString()}", "Website (Search)"); return HttpStatusCode.NotFound; }
+            catch { 
+                //Logger.Log($"Error code {HttpStatusCode.NotFound} for {mainWindow.WebsiteSource.SelectedItem.ToString()}", "Website (Search)");
+                return HttpStatusCode.NotFound;
+            }
 
             code = web.StatusCode;
             return code;

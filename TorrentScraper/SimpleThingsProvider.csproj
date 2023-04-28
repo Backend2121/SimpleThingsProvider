@@ -21,7 +21,6 @@
     <None Remove="data\Reddit.png" />
     <None Remove="data\WebScraping.png" />
     <None Remove="data\Youtube.png" />
-    <None Remove="Settings.settings" />
   </ItemGroup>
 
   <ItemGroup>
@@ -133,20 +132,10 @@
     <Content Include="data\NSFWWords.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <ProjectReference Include="..\IModuleProject\IModuleProject.csproj" />
+    <ProjectReference Include="..\Utils\Utils.csproj" />
     <Resource Include="data\WebScraping.png" />
     <Resource Include="data\Youtube.png" />
-    <Resource Include="Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </Resource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Settings.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
   </ItemGroup>
 
 </Project>
