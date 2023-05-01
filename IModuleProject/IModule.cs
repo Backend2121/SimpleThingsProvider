@@ -3,6 +3,7 @@ using SimpleThingsProvider;
 using System.Collections.Generic;
 using System.Net;
 using System.Windows.Controls;
+
 public interface IModule
 {
     string Name { get; set; }

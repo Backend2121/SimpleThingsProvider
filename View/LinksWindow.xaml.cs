@@ -1,5 +1,6 @@
 ﻿using ControlzEx.Theming;
 using System.Windows;
+using System.Windows.Controls;
 using Utils;
 
 namespace SimpleThingsProvider
@@ -18,7 +19,7 @@ namespace SimpleThingsProvider
             ThemeManager.Current.SyncTheme();
             // Hide all linkslists
             LinksList.Visibility = Visibility.Hidden;
-            HexRomsLinksList.Visibility = Visibility.Hidden;    
+            HexRomsLinksList.Visibility = Visibility.Hidden;
             Topmost = true;
         }
         private void SelectionChanged(object sender, RoutedEventArgs e)
@@ -35,6 +36,10 @@ namespace SimpleThingsProvider
             }
             mainWindow.OutputLabel.Content = link;
             if (link != "") { Close(); }
+        }
+        public ListView getLinksList()
+        {
+            return LinksList;
         }
     }
 }

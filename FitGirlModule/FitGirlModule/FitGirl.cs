@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using HtmlAgilityPack;
+using SimpleThingsProvider;
 using Utils;
 
-namespace SimpleThingsProvider.Modules
+namespace SimpleThingsProvider
 {
     class FitGirl : IModule
     {
@@ -59,7 +60,7 @@ namespace SimpleThingsProvider.Modules
                     }
                 }
             }
-            linksWindow.linkWindow.ItemsSource = websites;
+            linksWindow.getLinksList().ItemsSource = websites;
             return "";
         }
 
@@ -130,7 +131,6 @@ namespace SimpleThingsProvider.Modules
         {
             HttpStatusCode code;
             HtmlWeb web = new();
-            MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
             web.UserAgent = "SimpleThingsProvider";
 
            //Logger.Log("Searching for: " + toSearch + " in: " + Name, "Website (Search)");
@@ -139,8 +139,8 @@ namespace SimpleThingsProvider.Modules
                 if (Settings.Default.ProxyEnabled) Doc = web.Load("https://fitgirl-repacks.site/?s=" + toSearch.Replace(" ", "+"), Settings.Default.ProxyIP, Int32.Parse(Settings.Default.ProxyPort), string.Empty, string.Empty);
                 else Doc = web.Load("https://fitgirl-repacks.site/?s=" + toSearch.Replace(" ", "+"));
             }
-            catch { 
-                //Logger.Log($"Error code {HttpStatusCode.NotFound} for {mainWindow.WebsiteSource.SelectedItem.ToString()}", "Website (Search)");
+            catch
+            {
                 return HttpStatusCode.NotFound;
             }
 

@@ -134,6 +134,7 @@
     </Content>
     <ProjectReference Include="..\IModuleProject\IModuleProject.csproj" />
     <ProjectReference Include="..\Utils\Utils.csproj" />
+    <ProjectReference Include="..\View\View.csproj" />
     <Resource Include="data\WebScraping.png" />
     <Resource Include="data\Youtube.png" />
   </ItemGroup>
