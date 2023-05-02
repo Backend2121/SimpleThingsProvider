@@ -26,7 +26,6 @@ using MahApps;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Reflection.Metadata;
-using Utils;
 
 namespace SimpleThingsProvider
 {
@@ -91,21 +90,22 @@ namespace SimpleThingsProvider
         private void loadModules()
         {
             // Here temporarly need to auto-import them
-
+            Assembly myassembly = Assembly.LoadFrom("./Modules/FitGirlModule.dll");
+            Type type = myassembly.GetType("SimpleThingsProvider.FitGirl");
             /*IModule x1337 = new Modules.x1337(TorrentResultsList);
             IModule thePirateBay = new Modules.ThePirateBay(TorrentResultsList);
             IModule rpgOnly = new Modules.RPGOnly(RPGOnlyResultsList);
             IModule ziperto = new Modules.Ziperto(ZipertoResultsList);
-            IModule hexRoms = new Modules.HexRoms(HexRomResultsList);
-            IModule fitGirl = new Modules.FitGirl(FitGirlResultsList);
-            IModule vimmsLair = new Modules.Vimmslair(VimmResultsList);
+            IModule hexRoms = new Modules.HexRoms(HexRomResultsList);*/
+            IModule fitGirl = (IModule)Activator.CreateInstance(type, new object[] { FitGirlResultsList });
+            /*IModule vimmsLair = new Modules.Vimmslair(VimmResultsList);
             ImodulesList.Add(x1337);
             ImodulesList.Add(thePirateBay);
             ImodulesList.Add(rpgOnly);
             ImodulesList.Add(ziperto);
-            ImodulesList.Add(hexRoms);
+            ImodulesList.Add(hexRoms);*/
             ImodulesList.Add(fitGirl);
-            ImodulesList.Add(vimmsLair);*/
+            /*ImodulesList.Add(vimmsLair);*/
         }
         private void checkUpdate()
         {
@@ -273,7 +273,7 @@ namespace SimpleThingsProvider
             Debug.WriteLine((sender as ComboBox).SelectedItem.ToString());
             Logger.Log("Saving settings", "Main");
             foreach(IModule m in ImodulesList)
-            { 
+            {
                 if (m.Name.Equals((sender as ComboBox).SelectedItem.ToString()))
                 {
                     if (m.needsSubSelector) { WebsiteSubSelector.IsEnabled = true; }

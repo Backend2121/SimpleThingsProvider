@@ -17,7 +17,6 @@ using System.Threading;
 using System.ComponentModel;
 using System.Net.Http;
 using ControlzEx.Theming;
-using Utils;
 
 namespace SimpleThingsProvider
 {

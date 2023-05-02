@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -7,8 +8,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using HtmlAgilityPack;
-using SimpleThingsProvider;
-using Utils;
 
 namespace SimpleThingsProvider
 {
@@ -20,10 +19,11 @@ namespace SimpleThingsProvider
         private List<string> _underlying;
         public ListView listview { get; set; }
         public bool needsSubSelector { get { return true; } }
-
+        public LinksWindow linksWindow { get { return new LinksWindow(); } }
         public FitGirl(ListView lv)
         {
             listview = lv;
+            Debug.Write("Here");
         }
 
         public string getLink(int index)
@@ -35,7 +35,8 @@ namespace SimpleThingsProvider
         {
             LinksWindow linksWindow = new LinksWindow();
             linksWindow.Show();
-            linksWindow.linkWindow.Visibility = Visibility.Visible;
+            linksWindow.getLinksList().Visibility = Visibility.Visible;
+            listview.Visibility = Visibility.Visible;
             List<Result> websites = new List<Result>();
             HtmlWeb web = new HtmlWeb();
             HtmlDocument doc = web.Load(gameURL);
@@ -60,6 +61,7 @@ namespace SimpleThingsProvider
                     }
                 }
             }
+            Alert(websites.Count.ToString(), "Something");
             linksWindow.getLinksList().ItemsSource = websites;
             return "";
         }
@@ -146,6 +148,15 @@ namespace SimpleThingsProvider
 
             code = web.StatusCode;
             return code;
+        }
+        public void Alert(string messageBoxText, string caption)
+        {
+            Logger.Log(messageBoxText, "Alert");
+            MessageBoxButton button = MessageBoxButton.OK;
+            MessageBoxImage icon = MessageBoxImage.Error;
+            MessageBoxResult result;
+
+            result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.OK);
         }
     }
 }

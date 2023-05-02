@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\IModuleProject\IModuleProject.csproj" />
+    <ProjectReference Include="..\..\TorrentScraper\SimpleThingsProvider.csproj" />
   </ItemGroup>
 
 </Project>

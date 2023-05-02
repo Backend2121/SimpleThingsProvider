@@ -14,7 +14,6 @@ using System.Windows.Shapes;
 using HtmlAgilityPack;
 using System.Net.Http;
 using ControlzEx.Theming;
-using Utils;
 
 namespace SimpleThingsProvider
 {
@@ -23,7 +22,6 @@ namespace SimpleThingsProvider
     /// </summary>
     public partial class SettingsWindow
     {
-        bool shown = false;
         public SettingsWindow()
         {
             InitializeComponent();
