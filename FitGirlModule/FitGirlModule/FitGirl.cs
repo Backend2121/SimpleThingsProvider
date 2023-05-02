@@ -23,7 +23,6 @@ namespace SimpleThingsProvider
         public FitGirl(ListView lv)
         {
             listview = lv;
-            Debug.Write("Here");
         }
 
         public string getLink(int index)

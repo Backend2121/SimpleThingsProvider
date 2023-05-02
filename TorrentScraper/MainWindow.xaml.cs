@@ -90,20 +90,24 @@ namespace SimpleThingsProvider
         private void loadModules()
         {
             // Here temporarly need to auto-import them
-            Assembly myassembly = Assembly.LoadFrom("./Modules/FitGirlModule.dll");
-            Type type = myassembly.GetType("SimpleThingsProvider.FitGirl");
-            /*IModule x1337 = new Modules.x1337(TorrentResultsList);
+            Assembly x1337Dll = Assembly.LoadFrom("./Modules/x1337Module.dll");
+            Type x1337DllType = x1337Dll.GetType("SimpleThingsProvider.x1337");
+
+            Assembly fitgirlDll = Assembly.LoadFrom("./Modules/FitGirlModule.dll");
+            Type fitgirlDllType = fitgirlDll.GetType("SimpleThingsProvider.FitGirl");
+            /*
             IModule thePirateBay = new Modules.ThePirateBay(TorrentResultsList);
             IModule rpgOnly = new Modules.RPGOnly(RPGOnlyResultsList);
             IModule ziperto = new Modules.Ziperto(ZipertoResultsList);
             IModule hexRoms = new Modules.HexRoms(HexRomResultsList);*/
-            IModule fitGirl = (IModule)Activator.CreateInstance(type, new object[] { FitGirlResultsList });
+            IModule x1337 = (IModule)Activator.CreateInstance(x1337DllType, new object[] { TorrentResultsList });
+            IModule fitGirl = (IModule)Activator.CreateInstance(fitgirlDllType, new object[] { FitGirlResultsList });
             /*IModule vimmsLair = new Modules.Vimmslair(VimmResultsList);
-            ImodulesList.Add(x1337);
             ImodulesList.Add(thePirateBay);
             ImodulesList.Add(rpgOnly);
             ImodulesList.Add(ziperto);
             ImodulesList.Add(hexRoms);*/
+            ImodulesList.Add(x1337);
             ImodulesList.Add(fitGirl);
             /*ImodulesList.Add(vimmsLair);*/
         }
@@ -297,6 +301,10 @@ namespace SimpleThingsProvider
         {
             Settings.Default.WebsiteSubSelected = WebsiteSubSelector.SelectedIndex;
             Settings.Default.Save();
+        }
+        public ComboBox getWebsiteSource()
+        {
+            return WebsiteSource;
         }
     }
 }
