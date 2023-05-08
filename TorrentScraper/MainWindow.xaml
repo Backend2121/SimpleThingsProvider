@@ -72,94 +72,10 @@
         </Button>
         <Label x:Name="StatusCodeLabel" Content="Status Code" Margin="10,50,10,10" FontWeight="Bold" Grid.ColumnSpan="2"/>
         <TextBox x:Name="SearchTextBox" Margin="10,10,10,0" TextWrapping="Wrap" VerticalAlignment="Top" AutomationProperties.HelpText="Search Bar" ToolTip="Search Bar" HorizontalContentAlignment="Left" RenderTransformOrigin="0.5,0.5" Height="26" Grid.Column="1"/>
-        <ListView x:Name="TorrentResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
+        <ListView x:Name="ResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
-                    <GridViewColumn Width="Auto" Header="Seeds" DisplayMemberBinding="{Binding Seeds}"/>
-                    <GridViewColumn Width="Auto" Header="Leechs" DisplayMemberBinding="{Binding Leechs}"/>
-                    <GridViewColumn Width="Auto" Header="Time" DisplayMemberBinding="{Binding Time}"/>
-                    <GridViewColumn Width="Auto" Header="Size" DisplayMemberBinding="{Binding Size}"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <ListView x:Name="VimmResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
-                    <GridViewColumn Width="Auto" Header="System" DisplayMemberBinding="{Binding System}"/>
-                    <GridViewColumn Width="Auto" Header="Region" DisplayMemberBinding="{Binding Region}"/>
-                    <GridViewColumn Width="Auto" Header="Version" DisplayMemberBinding="{Binding Version}"/>
-                    <GridViewColumn Width="Auto" Header="Languages" DisplayMemberBinding="{Binding Languages}"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <ListView x:Name="FitGirlResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
-                    <GridViewColumn Width="Auto" Header="Size" DisplayMemberBinding="{Binding OriginalSize}"/>
-                    <GridViewColumn Width="Auto" Header="RepackSize" DisplayMemberBinding="{Binding RepackSize}"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <ListView x:Name="WowRomsResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
-                    <GridViewColumn Width="Auto" Header="Region" DisplayMemberBinding="{Binding Region}"/>
-                    <GridViewColumn Width="Auto" Header="Size" DisplayMemberBinding="{Binding Size}"/>
-                    <GridViewColumn Width="Auto" Header="Downloads" DisplayMemberBinding="{Binding Downloads}"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <ListView x:Name="RPGOnlyResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <ListView x:Name="HexRomResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <ListView x:Name="NxBrewResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <ListView x:Name="MangaWorldResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
-                    <GridViewColumn Width="Auto" Header="Type" DisplayMemberBinding="{Binding Type}"/>
-                    <GridViewColumn Width="Auto" Header="State" DisplayMemberBinding="{Binding State}"/>
-                    <GridViewColumn Width="Auto" Header="Authors" DisplayMemberBinding="{Binding Authors}"/>
-                    <GridViewColumn Width="Auto" Header="Artists" DisplayMemberBinding="{Binding Artists}"/>
-                    <GridViewColumn Width="Auto" Header="Genres" DisplayMemberBinding="{Binding Genres}"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <ListView x:Name="MangaFreakResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
-                    <GridViewColumn Width="Auto" Header="Chapters" DisplayMemberBinding="{Binding Chapters}"/>
-                    <GridViewColumn Width="Auto" Header="Type" DisplayMemberBinding="{Binding Type}"/>
-                    <GridViewColumn Width="Auto" Header="Genres" DisplayMemberBinding="{Binding Genres}"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <ListView x:Name="ZipertoResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                    <GridViewColumn Width="Auto" Header="Example" DisplayMemberBinding="{Binding Example}"/>
                 </GridView>
             </ListView.View>
         </ListView>
@@ -167,15 +83,7 @@
         <Label x:Name="OutputLabel" Content="Output" Margin="10,10,10,10" Grid.Row="2" Focusable="True" MaxWidth="600" Grid.ColumnSpan="2"/>
         <Button x:Name="CopyButton" Grid.Column="3" Content="Copy" Grid.Row="2" FontWeight="Bold" Width="auto" IsEnabled="False" Click="Copy" Margin="0,10,0,0"/>
         <ComboBox x:Name="WebsiteSource" HorizontalAlignment="Center" Width="120" Grid.Column="2" Height="26" VerticalAlignment="Top" ToolTip="Website Source" IsReadOnly="True" SelectedIndex="-1" SelectionChanged="SaveSelected" Margin="0,10,0,0">
-            <System:String>x1337</System:String>
-            <System:String>ThePirateBay</System:String>
-            <System:String>FitGirl</System:String>
-            <System:String>VimmsLair</System:String>
-            <System:String>NxBrew</System:String>
-            <System:String>RPGOnly</System:String>
-            <System:String>Ziperto</System:String>
-            <System:String>HexRom</System:String>
-            <System:String>WoWRoms</System:String>
+            <System:String>Example</System:String>
         </ComboBox>
         <Button x:Name="OpenInBrowserButton" Grid.Column="2" Content="Open In Browser" Margin="0,10,0,0" Grid.Row="2" FontWeight="Bold" IsEnabled="False" Click="OpenInBrowserButton_Click"/>
         <ComboBox x:Name="WebsiteSubSelector" Grid.Column="2" Margin="0,46,0,0" SelectionChanged="WebsiteSubSelector_SelectionChanged" HorizontalAlignment="Center" MinWidth="120" MaxHeight="20" VerticalAlignment="Top" Height="26" Width="120">

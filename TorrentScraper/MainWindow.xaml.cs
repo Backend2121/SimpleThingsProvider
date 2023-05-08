@@ -89,27 +89,20 @@ namespace SimpleThingsProvider
         }
         private void loadModules()
         {
-            // Here temporarly need to auto-import them
-            Assembly x1337Dll = Assembly.LoadFrom("./Modules/x1337Module.dll");
-            Type x1337DllType = x1337Dll.GetType("SimpleThingsProvider.x1337");
-
-            Assembly fitgirlDll = Assembly.LoadFrom("./Modules/FitGirlModule.dll");
-            Type fitgirlDllType = fitgirlDll.GetType("SimpleThingsProvider.FitGirl");
-            /*
-            IModule thePirateBay = new Modules.ThePirateBay(TorrentResultsList);
-            IModule rpgOnly = new Modules.RPGOnly(RPGOnlyResultsList);
-            IModule ziperto = new Modules.Ziperto(ZipertoResultsList);
-            IModule hexRoms = new Modules.HexRoms(HexRomResultsList);*/
-            IModule x1337 = (IModule)Activator.CreateInstance(x1337DllType, new object[] { TorrentResultsList });
-            IModule fitGirl = (IModule)Activator.CreateInstance(fitgirlDllType, new object[] { FitGirlResultsList });
-            /*IModule vimmsLair = new Modules.Vimmslair(VimmResultsList);
-            ImodulesList.Add(thePirateBay);
-            ImodulesList.Add(rpgOnly);
-            ImodulesList.Add(ziperto);
-            ImodulesList.Add(hexRoms);*/
-            ImodulesList.Add(x1337);
-            ImodulesList.Add(fitGirl);
-            /*ImodulesList.Add(vimmsLair);*/
+            Assembly dll;
+            Type dllType;
+            // Load all dlls found inside the "Modules" folder
+            string[] modules = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\Modules\\");
+            WebsiteSource.Items.Clear();
+            foreach (string module in modules)
+            {
+                Debug.WriteLine(module.Substring(module.LastIndexOf("\\") + 1, module.Length - module.LastIndexOf("\\") - 5));
+                dll = Assembly.LoadFrom(module);
+                dllType = dll.GetType("SimpleThingsProvider." + module.Substring(module.LastIndexOf("\\") + 1, module.Length - module.LastIndexOf("\\") - 5));
+                IModule m = (IModule)Activator.CreateInstance(dllType, new Object[] { });
+                ImodulesList.Add(m);
+                WebsiteSource.Items.Add(m.Name);
+            }
         }
         private void checkUpdate()
         {
@@ -119,7 +112,6 @@ namespace SimpleThingsProvider
             Stream stream = webClient.OpenRead(repoURL);
             StreamReader reader = new StreamReader(stream);
             String content = reader.ReadToEnd();
-
             var start = content.IndexOf("ApplicationVersion");
             var end = content.IndexOf("</Value>", start);
             var start2 = content.IndexOf("(Default)", start);
@@ -143,7 +135,7 @@ namespace SimpleThingsProvider
             OutputLabel.Content = motd[r.Next(0, motd.Length - 1)];
 
             // Hide all ResultsLists
-            TorrentResultsList.Visibility = Visibility.Hidden;
+            /*TorrentResultsList.Visibility = Visibility.Hidden;
             VimmResultsList.Visibility = Visibility.Hidden;
             FitGirlResultsList.Visibility = Visibility.Hidden;
             NxBrewResultsList.Visibility = Visibility.Hidden;
@@ -152,12 +144,13 @@ namespace SimpleThingsProvider
             RPGOnlyResultsList.Visibility = Visibility.Hidden;
             HexRomResultsList.Visibility = Visibility.Hidden;
             MangaFreakResultsList.Visibility = Visibility.Hidden;
-            MangaWorldResultsList.Visibility = Visibility.Hidden;
+            MangaWorldResultsList.Visibility = Visibility.Hidden;*/
             foreach (IModule m in ImodulesList)
             {
                 if (m.Name == WebsiteSource.Text)
                 {
                     module = m;
+                    Debug.WriteLine(ResultsList.View);
                 }
             }
 
@@ -232,7 +225,7 @@ namespace SimpleThingsProvider
             try
             {
                 string entry = "";
-                entry = module.getLink(module.listview.SelectedIndex);
+                entry = module.getLink(ResultsList.SelectedIndex);
                 Logger.Log($"Entry {entry} has been selected", "Main");
                 OutputLabel.Content = entry;
                 CopyButton.IsEnabled = true;
@@ -273,8 +266,6 @@ namespace SimpleThingsProvider
         private void SaveSelected(object sender, RoutedEventArgs e)
         {
             // Enables subselector for the next time it changes
-            Debug.WriteLine(WebsiteSource.Text);
-            Debug.WriteLine((sender as ComboBox).SelectedItem.ToString());
             Logger.Log("Saving settings", "Main");
             foreach(IModule m in ImodulesList)
             {
@@ -305,6 +296,10 @@ namespace SimpleThingsProvider
         public ComboBox getWebsiteSource()
         {
             return WebsiteSource;
+        }
+        public ListView getResultsList()
+        {
+            return ResultsList;
         }
     }
 }

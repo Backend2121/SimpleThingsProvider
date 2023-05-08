@@ -1,25 +1,75 @@
 ﻿using HtmlAgilityPack;
+using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace SimpleThingsProvider
 {
-    class x1337 : IModule
+    class x1337Module : IModule
     {
         public string Name { get { return "x1337"; } set { } }
         private List<string> _underlying;
-        public ListView listview { get; set; }
+        public MainWindow mainWindow { get { return (MainWindow)Application.Current.MainWindow; } }
         public HtmlDocument Doc { get; set; }
         public bool needsSubSelector { get { return false; } }
         public LinksWindow linksWindow { get { return new LinksWindow(); } }
 
-        public x1337(ListView lv) 
+        public x1337Module()
         {
-            listview = lv;
+
         }
+        public void buildListView()
+        {
+            GridView grid = new GridView();
+
+            GridViewColumn title = new GridViewColumn
+            {
+                Header = "Title",
+                DisplayMemberBinding = new Binding("Title"),
+                Width = Double.NaN,
+            };
+
+            GridViewColumn seeds = new GridViewColumn
+            {
+                Header = "Seeds",
+                DisplayMemberBinding = new Binding("Seeds"),
+                Width = Double.NaN,
+            };
+
+            GridViewColumn leechs = new GridViewColumn
+            {
+                Header = "Leechs",
+                DisplayMemberBinding = new Binding("Leechs"),
+                Width = Double.NaN,
+            };
+
+            GridViewColumn time = new GridViewColumn
+            {
+                Header = "Time",
+                DisplayMemberBinding = new Binding("Time"),
+                Width = Double.NaN,
+            };
+
+            GridViewColumn size = new GridViewColumn
+            {
+                Header = "Size",
+                DisplayMemberBinding = new Binding("Size"),
+                Width = Double.NaN,
+            };
+            grid.Columns.Clear();
+            grid.Columns.Add(title);
+            grid.Columns.Add(seeds);
+            grid.Columns.Add(leechs);
+            grid.Columns.Add(time);
+            grid.Columns.Add(size);
+            mainWindow.getResultsList().View = grid;
+        }
+
         public HttpStatusCode search(string toSearch)
         {
             HttpStatusCode code;
@@ -90,8 +140,9 @@ namespace SimpleThingsProvider
                     }
                 }
             }
-            listview.ItemsSource = results;
-            listview.Visibility = Visibility.Visible;
+            mainWindow.getResultsList().ItemsSource = results;
+            mainWindow.getResultsList().Visibility = Visibility.Visible;
+            buildListView();
             return _underlying;
         }
         public string getLink(int index)
@@ -104,7 +155,6 @@ namespace SimpleThingsProvider
         public string getLink(string gameURL) { return null; }
         private string buildString(string input)
         {
-            // Used by x1337
             string url = "https://1337xx.to/search/";
             var toSearch = url + input;
             toSearch = toSearch.Replace(" ", "%20");
