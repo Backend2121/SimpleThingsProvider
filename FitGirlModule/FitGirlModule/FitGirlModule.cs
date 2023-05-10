@@ -14,7 +14,7 @@ namespace SimpleThingsProvider
         public HtmlDocument Doc { get; set; }
 
         private List<string> _underlying;
-        public MainWindow mainWindow { get { return (MainWindow)Application.Current.MainWindow; } }
+        public MainWindow mainWindow { get { return (MainWindow)Application.Current.MainWindow; } set { } }
         public bool needsSubSelector { get { return false; } }
         public LinksWindow linksWindow { get { return new LinksWindow(); } }
         public FitGirlModule()

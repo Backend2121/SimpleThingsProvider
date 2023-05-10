@@ -16,7 +16,7 @@ namespace SimpleThingsProvider
         public string Name { get { return "RPGOnly"; } set { } }
         private List<string> _underlying;
         private string _toSearch;
-        public MainWindow mainWindow { get { return (MainWindow)Application.Current.MainWindow; } }
+        public MainWindow mainWindow { get { return (MainWindow)Application.Current.MainWindow; } set { } }
         public HtmlDocument Doc { get; set; }
         public bool needsSubSelector { get { return false; } }
         public LinksWindow linksWindow { get { return new LinksWindow(); } }

@@ -26,6 +26,8 @@ using MahApps;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Reflection.Metadata;
+using ControlzEx.Standard;
+using System.ComponentModel;
 
 namespace SimpleThingsProvider
 {
@@ -33,6 +35,8 @@ namespace SimpleThingsProvider
     {
         List<string> underlying;
         List<IModule> ImodulesList;
+        List<Result> results = new();
+        GridView grid;
         IModule module;
         Random r = new Random();
         string[] motd = {"Hi!", "Hello there!", "Hey!", "Honk!", "Whassup!", "I promise i won't hang", "What do you need?", "Here to help!", "How are you doing?", "Join the Discord!", "Praise the Sun!", "For science, you monster", "It's dangerous to go alone, use me!", "Stupid Shinigami", "Trust me i'm a dolphin!", "...", "Oh, it's you...", "The cake is a lie!", "FBI open up!", "You own the game, right?"};
@@ -133,29 +137,16 @@ namespace SimpleThingsProvider
             OpenInBrowserButton.IsEnabled = false;
             CopyButton.IsEnabled = false;
             OutputLabel.Content = motd[r.Next(0, motd.Length - 1)];
+            results.Clear();
 
-            // Hide all ResultsLists
-            /*TorrentResultsList.Visibility = Visibility.Hidden;
-            VimmResultsList.Visibility = Visibility.Hidden;
-            FitGirlResultsList.Visibility = Visibility.Hidden;
-            NxBrewResultsList.Visibility = Visibility.Hidden;
-            ZipertoResultsList.Visibility = Visibility.Hidden;
-            WowRomsResultsList.Visibility = Visibility.Hidden;
-            RPGOnlyResultsList.Visibility = Visibility.Hidden;
-            HexRomResultsList.Visibility = Visibility.Hidden;
-            MangaFreakResultsList.Visibility = Visibility.Hidden;
-            MangaWorldResultsList.Visibility = Visibility.Hidden;*/
             foreach (IModule m in ImodulesList)
             {
                 if (m.Name == WebsiteSource.Text)
                 {
                     module = m;
-                    Debug.WriteLine(ResultsList.View);
                 }
             }
-
             HttpStatusCode code = module.search(SearchTextBox.Text);
-           
             if (!Settings.Default.NSFWContent)
             {
                 foreach (string s in BannedWords.nsfwWords)
@@ -182,20 +173,61 @@ namespace SimpleThingsProvider
                 {
                     if (m.Name.Equals(WebsiteSource.Text))
                     {
-                        underlying = m.getResults(module.Doc);
+                        grid = new GridView();
+                        m.buildListView(grid);
+                        BackgroundWorker worker = new BackgroundWorker();
+                        worker.DoWork += Worker_DoWork;
+                        worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
+                        worker.RunWorkerAsync(m);
+                        /*
+                        Action<object> action = (object obj) =>
+                        {
+                            (results, underlying) = m.getResults(module.Doc);
+                        };
+                        Task t = Task.Factory.StartNew(action, "1");
+                        //t.Wait();
+                        if (underlying.Count <= 0)
+                        {
+                            Alert("No results found!", "STP: Warning");
+                            ResultsNumber.Content = "Results: 0";
+                            return;
+                        }
+                        else { ResultsNumber.Content = "Results: " + underlying.Count; }
+                        getResultsList().View = grid;
+                        getResultsList().ItemsSource = results;
+                        getResultsList().Visibility = Visibility.Visible;*/
+                        //underlying = m.getResults(module.Doc);
                     }
                 }
                 StatusCodeLabel.Content = "Status Code: " + code;
                 StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Green);
             }
+        }
+
+        private void Worker_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
+        {
             if (underlying.Count <= 0)
             {
                 Alert("No results found!", "STP: Warning");
                 ResultsNumber.Content = "Results: 0";
                 return;
             }
-            else{ ResultsNumber.Content = "Results: " + underlying.Count;}
+            else { ResultsNumber.Content = "Results: " + underlying.Count; }
+            getResultsList().View = grid;
+            getResultsList().ItemsSource = results;
+            getResultsList().Visibility = Visibility.Visible;
         }
+
+        private void Worker_DoWork(object? sender, DoWorkEventArgs e)
+        {
+            (results, underlying) = ((IModule)e.Argument).getResults(module.Doc);
+            foreach(Result r in results)
+            {
+                Debug.WriteLine(r);
+            }
+            //e.Result = Tuple.Create(results, underlying);
+        }
+
         public void Alert(string messageBoxText, string caption)
         {
             Logger.Log(messageBoxText, "Alert");

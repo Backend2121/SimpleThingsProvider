@@ -7,6 +7,7 @@ using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Threading;
 
 namespace SimpleThingsProvider
 {
@@ -14,7 +15,6 @@ namespace SimpleThingsProvider
     {
         public string Name { get { return "x1337"; } set { } }
         private List<string> _underlying;
-        public MainWindow mainWindow { get { return (MainWindow)Application.Current.MainWindow; } }
         public HtmlDocument Doc { get; set; }
         public bool needsSubSelector { get { return false; } }
         public LinksWindow linksWindow { get { return new LinksWindow(); } }
@@ -23,51 +23,48 @@ namespace SimpleThingsProvider
         {
 
         }
-        public void buildListView()
+        public void buildListView(GridView grid)
         {
-            GridView grid = new GridView();
+                GridViewColumn title = new GridViewColumn
+                {
+                    Header = "Title",
+                    DisplayMemberBinding = new Binding("Title"),
+                    Width = Double.NaN,
+                };
 
-            GridViewColumn title = new GridViewColumn
-            {
-                Header = "Title",
-                DisplayMemberBinding = new Binding("Title"),
-                Width = Double.NaN,
-            };
+                GridViewColumn seeds = new GridViewColumn
+                {
+                    Header = "Seeds",
+                    DisplayMemberBinding = new Binding("Seeds"),
+                    Width = Double.NaN,
+                };
 
-            GridViewColumn seeds = new GridViewColumn
-            {
-                Header = "Seeds",
-                DisplayMemberBinding = new Binding("Seeds"),
-                Width = Double.NaN,
-            };
+                GridViewColumn leechs = new GridViewColumn
+                {
+                    Header = "Leechs",
+                    DisplayMemberBinding = new Binding("Leechs"),
+                    Width = Double.NaN,
+                };
 
-            GridViewColumn leechs = new GridViewColumn
-            {
-                Header = "Leechs",
-                DisplayMemberBinding = new Binding("Leechs"),
-                Width = Double.NaN,
-            };
+                GridViewColumn time = new GridViewColumn
+                {
+                    Header = "Time",
+                    DisplayMemberBinding = new Binding("Time"),
+                    Width = Double.NaN,
+                };
 
-            GridViewColumn time = new GridViewColumn
-            {
-                Header = "Time",
-                DisplayMemberBinding = new Binding("Time"),
-                Width = Double.NaN,
-            };
-
-            GridViewColumn size = new GridViewColumn
-            {
-                Header = "Size",
-                DisplayMemberBinding = new Binding("Size"),
-                Width = Double.NaN,
-            };
-            grid.Columns.Clear();
-            grid.Columns.Add(title);
-            grid.Columns.Add(seeds);
-            grid.Columns.Add(leechs);
-            grid.Columns.Add(time);
-            grid.Columns.Add(size);
-            mainWindow.getResultsList().View = grid;
+                GridViewColumn size = new GridViewColumn
+                {
+                    Header = "Size",
+                    DisplayMemberBinding = new Binding("Size"),
+                    Width = Double.NaN,
+                };
+                grid.Columns.Clear();
+                grid.Columns.Add(title);
+                grid.Columns.Add(seeds);
+                grid.Columns.Add(leechs);
+                grid.Columns.Add(time);
+                grid.Columns.Add(size);
         }
 
         public HttpStatusCode search(string toSearch)
@@ -91,7 +88,7 @@ namespace SimpleThingsProvider
             code = web.StatusCode;
             return code;
         }
-        public List<string> getResults(HtmlDocument document)
+        public Tuple<List<Result>, List<string>> getResults(HtmlDocument document)
         {
             _underlying = new List<string>();
             List<Result> results = new();
@@ -101,7 +98,7 @@ namespace SimpleThingsProvider
             if (list == null)
             {
                 Logger.Log("No results found!", "Websites (getResults - x1337)");
-                return new List<string>();
+                return Tuple.Create(new List<Result>(), new List<string>());
             }
             Logger.Log($"Found {list.Count} results", "Websites (getResults - x1337)");
             foreach (HtmlNode node in list)
@@ -140,10 +137,7 @@ namespace SimpleThingsProvider
                     }
                 }
             }
-            mainWindow.getResultsList().ItemsSource = results;
-            mainWindow.getResultsList().Visibility = Visibility.Visible;
-            buildListView();
-            return _underlying;
+            return Tuple.Create(results, _underlying);
         }
         public string getLink(int index)
         {
