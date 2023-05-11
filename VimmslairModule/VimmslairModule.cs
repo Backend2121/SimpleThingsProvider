@@ -13,7 +13,6 @@ namespace SimpleThingsProvider
         public string Name { get { return "VimmsLair"; } set { } }
         public HtmlDocument Doc { get; set; }
         private List<string> _underlying;
-        public MainWindow mainWindow { get { return (MainWindow)Application.Current.MainWindow; } set { } }
         public bool needsSubSelector { get { return false; } }
         public LinksWindow linksWindow { get { return new LinksWindow(); } }
 
@@ -21,9 +20,8 @@ namespace SimpleThingsProvider
         {
             
         }
-        public void buildListView()
+        public void buildListView(GridView grid)
         {
-            GridView grid = new GridView();
             GridViewColumn title = new GridViewColumn();
             title.Header = "Title";
             title.DisplayMemberBinding = new Binding("Title");
@@ -49,7 +47,6 @@ namespace SimpleThingsProvider
             grid.Columns.Add(region);
             grid.Columns.Add(version);
             grid.Columns.Add(languages);
-            mainWindow.getResultsList().View = grid;
         }
         public string getLink(int index)
         {
@@ -59,9 +56,8 @@ namespace SimpleThingsProvider
         {
             return gameURL;
         }
-        public List<string> getResults(HtmlDocument document)
+        public Tuple<List<Result>, List<string>> getResults(HtmlDocument document)
         {
-            mainWindow.getResultsList().Visibility = Visibility.Visible;
             _underlying = new List<string>();
             List<Result> results = new();
             HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div[4]/div[2]/div/div[3]/table/tr");
@@ -79,7 +75,7 @@ namespace SimpleThingsProvider
                     results.Add(new Result() { System = tds[0].InnerText, Title = title, Region = tds[2].FirstChild.Attributes["title"].Value, Version = tds[3].InnerText, Languages = tds[4].InnerText });
                     _underlying.Add("https://vimm.net" + tds[1].FirstChild.Attributes["href"].Value);
                 }
-                catch (NullReferenceException) { Logger.Log("No results found!", "Websites (getResults - VimmsLair)"); return new List<string>(); }
+                catch (NullReferenceException) { Logger.Log("No results found!", "Websites (getResults - VimmsLair)"); return Tuple.Create(new List<Result>(), new List<string>()); }
             }
             if (!Settings.Default.NSFWContent)
             {
@@ -95,16 +91,13 @@ namespace SimpleThingsProvider
                     }
                 }
             }
-            mainWindow.getResultsList().ItemsSource = results;
             Logger.Log($"Found {_underlying.Count} entries", "Websites (getResults - VimmsLair)");
-            buildListView();
-            return _underlying;
+            return Tuple.Create(results, _underlying);
         }
         public HttpStatusCode search(string toSearch)
         {
             HttpStatusCode code;
             HtmlWeb web = new();
-            MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
             web.UserAgent = "SimpleThingsProvider";
 
             Logger.Log("Searching for: " + toSearch + " in: " + Name, "Website (Search)");
@@ -113,7 +106,7 @@ namespace SimpleThingsProvider
                 if (Settings.Default.ProxyEnabled) Doc = web.Load("https://vimm.net/vault/?p=list&q=" + toSearch.Replace(" ", "+"), Settings.Default.ProxyIP, Int32.Parse(Settings.Default.ProxyPort), string.Empty, string.Empty);
                 else Doc = web.Load("https://vimm.net/vault/?p=list&q=" + toSearch.Replace(" ", "+"));
             }
-            catch { Logger.Log($"Error code {HttpStatusCode.NotFound} for {mainWindow.getWebsiteSource().SelectedItem.ToString()}", "Website (Search)"); return HttpStatusCode.NotFound; }
+            catch { Logger.Log($"Error code {HttpStatusCode.NotFound}", "Website (Search)"); return HttpStatusCode.NotFound; }
 
             code = web.StatusCode;
             return code;

@@ -71,7 +71,6 @@ namespace SimpleThingsProvider
         {
             HttpStatusCode code;
             HtmlWeb web = new();
-            MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
             web.UserAgent = "SimpleThingsProvider";
 
             Logger.Log("Searching for: " + toSearch + " in: " + Name, "Website (Search)");
@@ -84,8 +83,9 @@ namespace SimpleThingsProvider
                 }
                 else { Doc = web.Load(buildString(toSearch)); }
             }
-            catch { Logger.Log($"Error code {HttpStatusCode.NotFound} for {mainWindow.getWebsiteSource().SelectedItem.ToString()}", "Website (Search)"); return HttpStatusCode.NotFound; }
+            catch { Logger.Log($"Error code {HttpStatusCode.NotFound} ", "Website (Search)"); return HttpStatusCode.NotFound; }
             code = web.StatusCode;
+            Debug.Write(code);
             return code;
         }
         public Tuple<List<Result>, List<string>> getResults(HtmlDocument document)
@@ -137,6 +137,7 @@ namespace SimpleThingsProvider
                     }
                 }
             }
+            System.Threading.Thread.Sleep(10000);
             return Tuple.Create(results, _underlying);
         }
         public string getLink(int index)

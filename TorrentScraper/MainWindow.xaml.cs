@@ -36,19 +36,21 @@ namespace SimpleThingsProvider
         List<string> underlying;
         List<IModule> ImodulesList;
         List<Result> results = new();
+        HttpStatusCode code = new HttpStatusCode();
         GridView grid;
         IModule module;
         Random r = new Random();
-        string[] motd = {"Hi!", "Hello there!", "Hey!", "Honk!", "Whassup!", "I promise i won't hang", "What do you need?", "Here to help!", "How are you doing?", "Join the Discord!", "Praise the Sun!", "For science, you monster", "It's dangerous to go alone, use me!", "Stupid Shinigami", "Trust me i'm a dolphin!", "...", "Oh, it's you...", "The cake is a lie!", "FBI open up!", "You own the game, right?"};
+        string[] motd = { "Hi!", "Hello there!", "Hey!", "Honk!", "Whassup!", "I promise i won't hang", "What do you need?", "Here to help!", "How are you doing?", "Join the Discord!", "Praise the Sun!", "For science, you monster", "It's dangerous to go alone, use me!", "Stupid Shinigami", "Trust me i'm a dolphin!", "...", "Oh, it's you...", "The cake is a lie!", "FBI open up!", "You own the game, right?" };
         public MainWindow()
         {
             InitializeComponent();
             Logger.Log("Loading modules", "Main");
             ImodulesList = new List<IModule>();
             loadModules();
+            StatusCodeLabel.Foreground = new SolidColorBrush(Colors.DarkGoldenrod);
             if (Settings.Default.SyncWithWindows) { ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncWithAppMode; }
             else { ThemeManager.Current.ChangeTheme(this, Settings.Default.MainTheme + "." + Settings.Default.SubTheme); }
-            
+
             ThemeManager.Current.SyncTheme();
             Application.Current.MainWindow = this;
             this.SizeToContent = SizeToContent.WidthAndHeight;
@@ -70,7 +72,7 @@ namespace SimpleThingsProvider
                     }
                 }
             }
-            catch(Exception ex) { Logger.Log(ex.ToString(), "Main"); }
+            catch (Exception ex) { Logger.Log(ex.ToString(), "Main"); }
             try
             {
                 Logger.Log("Searching for new updates", "Updater");
@@ -100,7 +102,6 @@ namespace SimpleThingsProvider
             WebsiteSource.Items.Clear();
             foreach (string module in modules)
             {
-                Debug.WriteLine(module.Substring(module.LastIndexOf("\\") + 1, module.Length - module.LastIndexOf("\\") - 5));
                 dll = Assembly.LoadFrom(module);
                 dllType = dll.GetType("SimpleThingsProvider." + module.Substring(module.LastIndexOf("\\") + 1, module.Length - module.LastIndexOf("\\") - 5));
                 IModule m = (IModule)Activator.CreateInstance(dllType, new Object[] { });
@@ -137,6 +138,8 @@ namespace SimpleThingsProvider
             OpenInBrowserButton.IsEnabled = false;
             CopyButton.IsEnabled = false;
             OutputLabel.Content = motd[r.Next(0, motd.Length - 1)];
+            StatusCodeLabel.Content = "Status Code: ";
+            StatusCodeLabel.Foreground = new SolidColorBrush(Colors.DarkGoldenrod);
             results.Clear();
 
             foreach (IModule m in ImodulesList)
@@ -146,7 +149,6 @@ namespace SimpleThingsProvider
                     module = m;
                 }
             }
-            HttpStatusCode code = module.search(SearchTextBox.Text);
             if (!Settings.Default.NSFWContent)
             {
                 foreach (string s in BannedWords.nsfwWords)
@@ -159,52 +161,19 @@ namespace SimpleThingsProvider
                     }
                 }
             }
-            
-            if (code != HttpStatusCode.OK) 
-            {
-                Alert("Received a non 200(OK) response!" + "\n" + code, "STP: Error");
-                StatusCodeLabel.Content = "Status Code: " + code;
-                StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Red);
-                return;
-            }
-            else
-            {
-                foreach (IModule m in ImodulesList)
-                {
-                    if (m.Name.Equals(WebsiteSource.Text))
-                    {
-                        grid = new GridView();
-                        m.buildListView(grid);
-                        BackgroundWorker worker = new BackgroundWorker();
-                        worker.DoWork += Worker_DoWork;
-                        worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
-                        worker.RunWorkerAsync(m);
-                        /*
-                        Action<object> action = (object obj) =>
-                        {
-                            (results, underlying) = m.getResults(module.Doc);
-                        };
-                        Task t = Task.Factory.StartNew(action, "1");
-                        //t.Wait();
-                        if (underlying.Count <= 0)
-                        {
-                            Alert("No results found!", "STP: Warning");
-                            ResultsNumber.Content = "Results: 0";
-                            return;
-                        }
-                        else { ResultsNumber.Content = "Results: " + underlying.Count; }
-                        getResultsList().View = grid;
-                        getResultsList().ItemsSource = results;
-                        getResultsList().Visibility = Visibility.Visible;*/
-                        //underlying = m.getResults(module.Doc);
-                    }
-                }
-                StatusCodeLabel.Content = "Status Code: " + code;
-                StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Green);
-            }
+            // Add background check
+            BackgroundWorker statusCodeWorker = new BackgroundWorker();
+            statusCodeWorker.DoWork += Worker_StatusCode;
+            statusCodeWorker.RunWorkerCompleted += Worker_StatusCodeCompleted;
+            statusCodeWorker.RunWorkerAsync(SearchTextBox.Text);
+            // Loading gif
+            LoadingGif.Visibility = Visibility.Visible;
         }
-
-        private void Worker_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
+        private void Worker_Search(object? sender, DoWorkEventArgs e)
+        {
+            (results, underlying) = ((IModule)e.Argument).getResults(module.Doc);
+        }
+        private void Worker_SearchCompleted(object? sender, RunWorkerCompletedEventArgs e)
         {
             if (underlying.Count <= 0)
             {
@@ -216,16 +185,41 @@ namespace SimpleThingsProvider
             getResultsList().View = grid;
             getResultsList().ItemsSource = results;
             getResultsList().Visibility = Visibility.Visible;
+            LoadingGif.Visibility = Visibility.Hidden;
+        }
+        private void Worker_StatusCode(object? sender, DoWorkEventArgs e)
+        {
+            code = module.search(e.Argument.ToString());
+            Debug.WriteLine(code);
         }
 
-        private void Worker_DoWork(object? sender, DoWorkEventArgs e)
+        private void Worker_StatusCodeCompleted(object? sender, RunWorkerCompletedEventArgs e)
         {
-            (results, underlying) = ((IModule)e.Argument).getResults(module.Doc);
-            foreach(Result r in results)
+            if (code != HttpStatusCode.OK)
             {
-                Debug.WriteLine(r);
+                //Alert("Received a non 200(OK) response!" + "\n" + code, "STP: Error");
+                StatusCodeLabel.Content = "Status Code: " + code;
+                StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Red);
+                return;
             }
-            //e.Result = Tuple.Create(results, underlying);
+            else
+            {
+                foreach (IModule m in ImodulesList)
+                {
+                    if (m.Name.Equals(WebsiteSource.Text))
+                    {
+                        // Start async thread to fetch results
+                        grid = new GridView();
+                        m.buildListView(grid);
+                        BackgroundWorker searchWorker = new BackgroundWorker();
+                        searchWorker.DoWork += Worker_Search;
+                        searchWorker.RunWorkerCompleted += Worker_SearchCompleted;
+                        searchWorker.RunWorkerAsync(m);
+                    }
+                }
+                StatusCodeLabel.Content = "Status Code: " + code;
+                StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Green);
+            }
         }
 
         public void Alert(string messageBoxText, string caption)

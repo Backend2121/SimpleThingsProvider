@@ -14,6 +14,7 @@
     <None Remove="data\Discord.png" />
     <None Remove="data\Github.png" />
     <None Remove="data\Icon.ico" />
+    <None Remove="data\Loading.gif" />
     <None Remove="data\MahApps.Metro.dll" />
     <None Remove="data\Microsoft.Xaml.Behaviors.dll" />
     <None Remove="data\NSFWWords.json" />
@@ -85,6 +86,8 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
     <PackageReference Include="MahApps.Metro" Version="2.4.9" />
     <PackageReference Include="wix" Version="3.11.2" />
+    <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
+    <PackageReference Include="XamlAnimatedGif" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -92,6 +95,7 @@
     <Resource Include="data\Discord.png" />
     <Resource Include="data\Github.png" />
     <Resource Include="data\Icon.ico" />
+    <Resource Include="data\Loading.gif" />
     <Resource Include="data\MahApps.Metro.dll" />
     <Resource Include="data\Microsoft.Xaml.Behaviors.dll" />
     <Resource Include="data\Patreon.png" />

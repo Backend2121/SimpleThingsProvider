@@ -12,7 +12,6 @@ namespace SimpleThingsProvider
     {
         public string Name { get { return "ThePirateBay"; } set { } }
         private List<string> _underlying;
-        public MainWindow mainWindow { get { return (MainWindow)Application.Current.MainWindow; } set { } }
         public HtmlDocument Doc { get; set; }
         public bool needsSubSelector { get { return false; } }
         public LinksWindow linksWindow { get { return new LinksWindow(); } }
@@ -20,10 +19,8 @@ namespace SimpleThingsProvider
         {
 
         }
-        public void buildListView()
+        public void buildListView(GridView grid)
         {
-            GridView grid = new GridView();
-
             GridViewColumn title = new GridViewColumn
             {
                 Header = "Title",
@@ -64,14 +61,12 @@ namespace SimpleThingsProvider
             grid.Columns.Add(leechs);
             grid.Columns.Add(time);
             grid.Columns.Add(size);
-            mainWindow.getResultsList().View = grid;
         }
 
         public HttpStatusCode search(string toSearch)
         {
             HttpStatusCode code;
             HtmlWeb web = new();
-            MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
             web.UserAgent = "SimpleThingsProvider";
 
             Logger.Log("Searching for: " + toSearch + " in: " + Name, "Website (Search)");
@@ -81,11 +76,11 @@ namespace SimpleThingsProvider
                 if (Settings.Default.ProxyEnabled) Doc = web.Load("https://tpb.party/search/" + toSearch, Settings.Default.ProxyIP, Int32.Parse(Settings.Default.ProxyPort), string.Empty, string.Empty);
                 else Doc = web.Load("https://tpb.party/search/" + toSearch);
             }
-            catch { Logger.Log($"Error code {HttpStatusCode.NotFound} for {mainWindow.getWebsiteSource().SelectedItem.ToString()}", "Website (Search)"); return HttpStatusCode.NotFound; }
+            catch { Logger.Log($"Error code {HttpStatusCode.NotFound}", "Website (Search)"); return HttpStatusCode.NotFound; }
 
             return web.StatusCode;
         }
-        public List<String> getResults(HtmlDocument document)
+        public Tuple<List<Result>, List<string>> getResults(HtmlDocument document)
         {
             _underlying = new List<string>();
             List<Result> results = new();
@@ -94,7 +89,7 @@ namespace SimpleThingsProvider
             if (trList == null)
             {
                 Logger.Log("No results found!", "Websites (getResults - ThePirateBay)");
-                return new List<string>();
+                return Tuple.Create(new List<Result>(), new List<string>());
             }
             Logger.Log($"Found {trList.Count} results", "Websites (getResults - ThePirateBay)");
             // Foreach tr find all the 4 td(s)
@@ -158,10 +153,7 @@ namespace SimpleThingsProvider
                     }
                 }
             }
-            mainWindow.getResultsList().ItemsSource = results;
-            mainWindow.getResultsList().Visibility = Visibility.Visible;
-            buildListView();
-            return _underlying;
+            return Tuple.Create(results, _underlying);
         }
         public String getLink(int index)
         {

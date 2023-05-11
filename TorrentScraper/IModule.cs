@@ -12,7 +12,6 @@ public interface IModule
     public HtmlDocument Doc { get; set; }
     public bool needsSubSelector { get; }
     public LinksWindow linksWindow { get; }
-    //public MainWindow mainWindow { get; set; }
     public Tuple<List<Result>, List<string>> getResults(HtmlDocument document);
     public string getLink(int index);
     public string getLink(string gameURL);

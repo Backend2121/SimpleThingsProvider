@@ -14,16 +14,14 @@ namespace SimpleThingsProvider
         public HtmlDocument Doc { get; set; }
 
         private List<string> _underlying;
-        public MainWindow mainWindow { get { return (MainWindow)Application.Current.MainWindow; } set { } }
         public bool needsSubSelector { get { return false; } }
         public LinksWindow linksWindow { get { return new LinksWindow(); } }
         public FitGirlModule()
         {
 
         }
-        public void buildListView()
+        public void buildListView(GridView grid)
         {
-            GridView grid = new GridView();
             GridViewColumn title = new GridViewColumn();
             title.Header = "Title";
             title.DisplayMemberBinding = new Binding("Title");
@@ -36,7 +34,6 @@ namespace SimpleThingsProvider
             grid.Columns.Add(title);
             grid.Columns.Add(size);
             grid.Columns.Add(repack);
-            mainWindow.getResultsList().View = grid;
         }
         public string getLink(int index)
         {
@@ -48,17 +45,16 @@ namespace SimpleThingsProvider
             LinksWindow linksWindow = new LinksWindow();
             linksWindow.Show();
             linksWindow.getLinksList().Visibility = Visibility.Visible;
-            mainWindow.getResultsList().Visibility = Visibility.Visible;
             List<Result> websites = new List<Result>();
             HtmlWeb web = new HtmlWeb();
             HtmlDocument doc = web.Load(gameURL);
             HtmlNodeCollection links = doc.DocumentNode.SelectNodes("/html/body/div/div/div[1]/div/article/div/ul[1]/li/a");
-            //Logger.Log($"Getting game page links", "Websites (getGamePage - FitGirl)");
+            Logger.Log($"Getting game page links", "Websites (getGamePage - FitGirl)");
             foreach (HtmlNode downloadlink in links)
             {
                 websites.Add(new Result() { Link = downloadlink.Attributes["href"].Value, Infos = downloadlink.InnerText });
             }
-            //Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - FitGirl)");
+            Logger.Log($"Found {websites.Count} game page links", "Websites (getGamePage - FitGirl)");
             if (!Settings.Default.NSFWContent)
             {
                 foreach (Result res in websites)
@@ -77,16 +73,15 @@ namespace SimpleThingsProvider
             return "";
         }
 
-        public List<string> getResults(HtmlDocument document)
+        public Tuple<List<Result>, List<string>> getResults(HtmlDocument document)
         {
-            mainWindow.getResultsList().Visibility = Visibility.Visible;
             _underlying = new List<string>();
             List<Result> results = new();
 
             HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div/div/section/div/article/div/p");
             try
             {
-                //Logger.Log($"Found {games.Count} results", "Websites (getResults - FitGirl)");
+                Logger.Log($"Found {games.Count} results", "Websites (getResults - FitGirl)");
                 foreach (HtmlNode game in games)
                 {
                     string p = game.InnerText;
@@ -118,11 +113,11 @@ namespace SimpleThingsProvider
             }
             catch (NullReferenceException)
             {
-                //Logger.Log("No results found!", "Websites (getResults - FitGirl)");
-                return new List<string>();
+                Logger.Log("No results found!", "Websites (getResults - FitGirl)");
+                return Tuple.Create(new List<Result>(), new List<string>());
             }
 
-            //Logger.Log($"Found {_underlying.Count} entries", "Websites (getResults - FitGirl)");
+            Logger.Log($"Found {_underlying.Count} entries", "Websites (getResults - FitGirl)");
             if (!Settings.Default.NSFWContent)
             {
                 foreach (Result res in results)
@@ -137,9 +132,7 @@ namespace SimpleThingsProvider
                     }
                 }
             }
-            mainWindow.getResultsList().ItemsSource = results;
-            buildListView();
-            return _underlying;
+            return Tuple.Create(results, _underlying);
         }
         public HttpStatusCode search(string toSearch)
         {
@@ -147,7 +140,7 @@ namespace SimpleThingsProvider
             HtmlWeb web = new();
             web.UserAgent = "SimpleThingsProvider";
 
-           //Logger.Log("Searching for: " + toSearch + " in: " + Name, "Website (Search)");
+            Logger.Log("Searching for: " + toSearch + " in: " + Name, "Website (Search)");
             try
             {
                 if (Settings.Default.ProxyEnabled) Doc = web.Load("https://fitgirl-repacks.site/?s=" + toSearch.Replace(" ", "+"), Settings.Default.ProxyIP, Int32.Parse(Settings.Default.ProxyPort), string.Empty, string.Empty);

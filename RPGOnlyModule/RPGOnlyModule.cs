@@ -16,27 +16,19 @@ namespace SimpleThingsProvider
         public string Name { get { return "RPGOnly"; } set { } }
         private List<string> _underlying;
         private string _toSearch;
-        public MainWindow mainWindow { get { return (MainWindow)Application.Current.MainWindow; } set { } }
         public HtmlDocument Doc { get; set; }
         public bool needsSubSelector { get { return false; } }
         public LinksWindow linksWindow { get { return new LinksWindow(); } }
         public RPGOnlyModule()
         {
-            GridView grid = new GridView();
-            GridViewColumn title = new GridViewColumn();
-            title.Header = "Title";
-            title.DisplayMemberBinding = new Binding("Title");
-            grid.Columns.Add(title);
-            mainWindow.getResultsList().View = grid;
+
         }
-        public void buildListView()
+        public void buildListView(GridView grid)
         {
-            GridView grid = new GridView();
             GridViewColumn title = new GridViewColumn();
             title.Header = "Title";
             title.DisplayMemberBinding = new Binding("Title");
             grid.Columns.Add(title);
-            mainWindow.getResultsList().View = grid;
         }
 
         public HttpStatusCode search(string toSearch)
@@ -44,7 +36,6 @@ namespace SimpleThingsProvider
             _toSearch = toSearch;
             HttpStatusCode code;
             HtmlWeb web = new();
-            MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
             web.UserAgent = "SimpleThingsProvider";
 
             Logger.Log("Searching for: " + toSearch + " in: " + Name, "Website (Search)");
@@ -53,13 +44,12 @@ namespace SimpleThingsProvider
                 if (Settings.Default.ProxyEnabled) Doc = web.Load("https://rpgonly.com/list-of-all-switch-games-nsp-xci/", Settings.Default.ProxyIP, Int32.Parse(Settings.Default.ProxyPort), string.Empty, string.Empty);
                 else Doc = web.Load("https://rpgonly.com/list-of-all-switch-games-nsp-xci/");
             }
-            catch { Logger.Log($"Error code {HttpStatusCode.NotFound} for {mainWindow.getWebsiteSource().SelectedItem.ToString()}", "Website (Search)"); return HttpStatusCode.NotFound; }
+            catch { Logger.Log($"Error code {HttpStatusCode.NotFound}", "Website (Search)"); return HttpStatusCode.NotFound; }
 
             return web.StatusCode;
         }
-        public List<string> getResults(HtmlDocument document)
+        public Tuple<List<Result>, List<string>> getResults(HtmlDocument document)
         {
-            mainWindow.getResultsList().Visibility = Visibility.Visible;
             _underlying = new List<string>();
             List<Result> results = new();
 
@@ -86,11 +76,11 @@ namespace SimpleThingsProvider
                         catch (NullReferenceException) { continue; }
                     }
                 }
-            }
+            } 
             catch (NullReferenceException)
             {
                 Logger.Log("No results found!", "Websites (getResults - RPGOnly)");
-                return new List<string>();
+                return Tuple.Create(new List<Result>(), new List<string>());
             }
             Logger.Log($"Found {_underlying.Count} entries", "Websites (getResults - RPGOnly)");
             if (!Settings.Default.NSFWContent)
@@ -107,9 +97,7 @@ namespace SimpleThingsProvider
                     }
                 }
             }
-            mainWindow.getResultsList().ItemsSource = results;
-            buildListView();
-            return _underlying;
+            return Tuple.Create(results, _underlying);
         }
         public string getLink(int index) {
             getLink(_underlying[index]);
@@ -130,7 +118,7 @@ namespace SimpleThingsProvider
             var link = "";
             foreach (HtmlNode descendant in entry.ChildNodes)
             {
-                //We are selected the trs
+                //We have selected the trs
                 bool firstTime = true;
                 foreach (HtmlNode node in descendant.ChildNodes)
                 {

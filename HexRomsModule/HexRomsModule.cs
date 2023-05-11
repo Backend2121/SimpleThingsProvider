@@ -13,26 +13,22 @@ namespace SimpleThingsProvider
         public string Name { get { return "HexRom"; } set { } }
         public HtmlDocument Doc { get; set; }
         private List<string> _underlying;
-        public MainWindow mainWindow { get { return (MainWindow)Application.Current.MainWindow; } set { } }
         public bool needsSubSelector { get { return false; } }
         public LinksWindow linksWindow { get { return new LinksWindow(); } }
         public HexRomsModule()
         {
             
         }
-        public void buildListView()
+        public void buildListView(GridView grid)
         {
-            GridView grid = new GridView();
             GridViewColumn title = new GridViewColumn();
             title.Header = "Title";
             title.DisplayMemberBinding = new Binding("Title");
             grid.Columns.Add(title);
-            mainWindow.getResultsList().View = grid;
         }
 
-        public List<string> getResults(HtmlDocument document)
+        public Tuple<List<Result>, List<string>> getResults(HtmlDocument document)
         {
-            mainWindow.getResultsList().Visibility = Visibility.Visible;
             _underlying = new List<string>();
             List<Result> results = new();
             HtmlNodeCollection alist = document.DocumentNode.SelectNodes("/html/body/div[2]/div[1]/div/div[1]/div/div/ul/li/a");
@@ -52,7 +48,7 @@ namespace SimpleThingsProvider
             catch (NullReferenceException)
             {
                 Logger.Log("No results found!", "Websites (getResults - HexRom)");
-                return new List<string>();
+                return Tuple.Create(new List<Result>(), new List<string>());
             }
 
             Logger.Log($"Found {_underlying.Count} entries", "Websites (getResults - HexRoms)");
@@ -70,9 +66,7 @@ namespace SimpleThingsProvider
                     }
                 }
             }
-            mainWindow.getResultsList().ItemsSource = results;
-            buildListView();
-            return _underlying;
+            return Tuple.Create(results, _underlying);
         }
         public string getLink(int index)
         {
@@ -123,7 +117,6 @@ namespace SimpleThingsProvider
         {
             HttpStatusCode code;
             HtmlWeb web = new();
-            MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
             web.UserAgent = "SimpleThingsProvider";
 
             Logger.Log("Searching for: " + toSearch + " in: " + Name, "Website (Search)");
@@ -132,7 +125,7 @@ namespace SimpleThingsProvider
                 if (Settings.Default.ProxyEnabled) Doc = web.Load("https://hexrom.com/roms/nintendo-3ds/?title=" + toSearch, Settings.Default.ProxyIP, Int32.Parse(Settings.Default.ProxyPort), string.Empty, string.Empty);
                 else Doc = web.Load("https://hexrom.com/roms/nintendo-3ds/?title=" + toSearch);
             }
-            catch { Logger.Log($"Error code {HttpStatusCode.NotFound} for {mainWindow.getWebsiteSource().SelectedItem.ToString()}", "Website (Search)"); return HttpStatusCode.NotFound; }
+            catch { Logger.Log($"Error code {HttpStatusCode.NotFound}", "Website (Search)"); return HttpStatusCode.NotFound; }
 
             code = web.StatusCode;
             return code;
