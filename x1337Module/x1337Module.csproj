@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="wix" Version="3.11.2" />
+    <PackageReference Include="wix" Version="3.10.4" />
   </ItemGroup>
 
   <ItemGroup>
