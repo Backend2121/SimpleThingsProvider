@@ -35,6 +35,7 @@ namespace SimpleThingsProvider
     {
         List<string> underlying;
         List<IModule> ImodulesList;
+        List<IExtension> IextensionsList;
         List<Result> results = new();
         HttpStatusCode code = new HttpStatusCode();
         GridView grid;
@@ -46,6 +47,7 @@ namespace SimpleThingsProvider
             InitializeComponent();
             Logger.Log("Loading modules", "Main");
             ImodulesList = new List<IModule>();
+            IextensionsList = new List<IExtension>();
             loadModules();
             StatusCodeLabel.Foreground = new SolidColorBrush(Colors.DarkGoldenrod);
             if (Settings.Default.SyncWithWindows) { ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncWithAppMode; }
@@ -108,6 +110,16 @@ namespace SimpleThingsProvider
                 ImodulesList.Add(m);
                 WebsiteSource.Items.Add(m.Name);
             }
+            // TODO LOAD ALL EXTENSIONS FOUND INSIDE "Extentions" FOLDER, ENABLE DOWNLOAD BUTTON FOR DOWNLOADER
+            string[] extensions = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\Extensions\\");
+            foreach (string extension in extensions)
+            {
+                dll = Assembly.LoadFrom(extension);
+                dllType = dll.GetType("SimpleThingsProvider." + extension.Substring(extension.LastIndexOf("\\") + 1, extension.Length - extension.LastIndexOf("\\") - 5));
+                Debug.WriteLine("SimpleThingsProvider." + extension.Substring(extension.LastIndexOf("\\") + 1, extension.Length - extension.LastIndexOf("\\") - 5));
+                IExtension e = (IExtension)Activator.CreateInstance(dllType, new Object[] { });
+                IextensionsList.Add(e);
+            }
         }
         private void checkUpdate()
         {
@@ -116,7 +128,7 @@ namespace SimpleThingsProvider
             WebClient webClient = new WebClient();
             Stream stream = webClient.OpenRead(repoURL);
             StreamReader reader = new StreamReader(stream);
-            String content = reader.ReadToEnd();
+            string content = reader.ReadToEnd();
             var start = content.IndexOf("ApplicationVersion");
             var end = content.IndexOf("</Value>", start);
             var start2 = content.IndexOf("(Default)", start);
@@ -192,7 +204,6 @@ namespace SimpleThingsProvider
             code = module.search(e.Argument.ToString());
             Debug.WriteLine(code);
         }
-
         private void Worker_StatusCodeCompleted(object? sender, RunWorkerCompletedEventArgs e)
         {
             if (code != HttpStatusCode.OK)
@@ -221,7 +232,6 @@ namespace SimpleThingsProvider
                 StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Green);
             }
         }
-
         public void Alert(string messageBoxText, string caption)
         {
             Logger.Log(messageBoxText, "Alert");
@@ -288,6 +298,20 @@ namespace SimpleThingsProvider
             SettingsWindow settingsWindow = new SettingsWindow();
             settingsWindow.Show();
             settingsWindow.Focus();
+        }
+        private void OpenDownloader(object sender, RoutedEventArgs e)
+        {
+            foreach (IExtension extension in IextensionsList)
+            {
+                if (extension.Name == "Downloader")
+                {
+                    extension.extentionWindow.Show();
+                    extension.extentionWindow.Focus();
+                    object[] args = { "antani", "https://stackoverflow.com/questions/22856745/wpf-get-parent-window" };
+                    extension.setParameters(args);
+                    extension.startFunction();
+                }
+            }
         }
         private void SaveSelected(object sender, RoutedEventArgs e)
         {

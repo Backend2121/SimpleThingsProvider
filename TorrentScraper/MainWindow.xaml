@@ -26,11 +26,13 @@
     <mah:MetroWindow.LeftWindowCommands>
         <mah:WindowCommands>
             <Button Click="OpenWebsiteStatus" Content="Websites Status"/>
+            <Button Click="OpenDownloader" Content="Downloader"/>
         </mah:WindowCommands>
     </mah:MetroWindow.LeftWindowCommands>
     <mah:MetroWindow.Resources>
         <RoutedCommand x:Key="Search"/>
         <RoutedCommand x:Key="WebsiteStatus"/>
+        <RoutedCommand x:Key="Downloader"/>
         <RoutedCommand x:Key="About"/>
         <RoutedCommand x:Key="Settings"/>
         <RoutedCommand x:Key="Help"/>
@@ -38,6 +40,7 @@
     <mah:MetroWindow.CommandBindings>
         <CommandBinding Command="{StaticResource Search}" Executed="Search"/>
         <CommandBinding Command="{StaticResource WebsiteStatus}" Executed="OpenWebsiteStatus"/>
+        <CommandBinding Command="{StaticResource Downloader}" Executed="OpenDownloader"/>
         <CommandBinding Command="{StaticResource About}" Executed="OpenAboutWindow"/>
         <CommandBinding Command="{StaticResource Settings}" Executed="OpenSettingsWindow"/>
         <CommandBinding Command="{StaticResource Help}" Executed="OpenHelpWindow"/>
@@ -144,6 +147,6 @@
             <System:String>MAME 0.37b5</System:String>
             <System:String>AMSTRAD CPC</System:String>
         </ComboBox>
-        <Label Content="SearchBar" Height="26" VerticalAlignment="Top" Margin="10,10,10,0"/>
+        <Label Content="Search Bar:" Height="26" VerticalAlignment="Top" Margin="10,10,10,0"/>
     </Grid>
 </mah:MetroWindow>

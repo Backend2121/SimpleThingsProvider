@@ -98,7 +98,6 @@ namespace SimpleThingsProvider
                     string size = p.Substring(sizeStart, sizeEnd - sizeStart);
                     size = size.Replace("Original Size:", "");
 
-
                     // repackSize section
                     var repacksizeStart = p.IndexOf("Repack Size:");
                     var repacksizeEnd = p.IndexOf("Download Mirrors");

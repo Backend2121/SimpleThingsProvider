@@ -85,7 +85,7 @@
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
     <PackageReference Include="MahApps.Metro" Version="2.4.9" />
-    <PackageReference Include="wix" Version="3.11.2" />
+    <PackageReference Include="wix" Version="3.10.4" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
     <PackageReference Include="XamlAnimatedGif" Version="2.1.1" />
   </ItemGroup>
