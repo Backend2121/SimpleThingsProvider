@@ -365,15 +365,18 @@ namespace SimpleThingsProvider
         private void DownloadButton_Click(object sender, RoutedEventArgs e)
         {
             Logger.Log($"Adding {OutputLabel.Content.ToString()} to the downloader", "Main");
+            // Find Downloader's extension
             foreach (IExtension extension in IextensionsList)
             {
                 if (extension.Name == "Downloader")
                 {
+                    // Append to downloader's memory file the new download
                     extension.extensionWindow.Show();
                     extension.extensionWindow.Focus();
-                    object[] args = { "TITLE HERE", OutputLabel.Content.ToString() };
+                    // Maybe we don't need this
+                    /*object[] args = { "TITLE HERE", OutputLabel.Content.ToString() };
                     extension.setParameters(args);
-                    extension.startFunction();
+                    extension.startFunction();*/
                 }
             }
         }

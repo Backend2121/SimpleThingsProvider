@@ -63,12 +63,12 @@ namespace SimpleThingsProvider
         {
             startDownload(fileName, uri);
         }
-        void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             //((DownloaderWindow.DownloaderWindow)extensionWindow).Progress.Value = e.ProgressPercentage;
             //((DownloaderWindow.DownloaderWindow)extensionWindow).Percentage.Content = e.ProgressPercentage + "%";
         }
-        void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        private void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
             //((DownloaderWindow.DownloaderWindow)extensionWindow).Progress.Value = 100;
             //((DownloaderWindow.DownloaderWindow)extensionWindow).Percentage.Content = "100%";

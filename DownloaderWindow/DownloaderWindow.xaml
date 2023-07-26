@@ -7,25 +7,6 @@
         mc:Ignorable="d"
         Title="DownloaderWindow" Height="450" Width="800">
     <Grid>
-        <StackPanel x:Name="sp">
-            <DockPanel x:Name="Name" Margin="10,10,10,10" Visibility="Visible">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="75*"/>
-                        <ColumnDefinition Width="99*"/>
-                        <ColumnDefinition Width="70*"/>
-                        <ColumnDefinition Width="402*"/>
-                        <ColumnDefinition Width="67*"/>
-                        <ColumnDefinition Width="67*"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Content="Title" Margin="0,0,10,0" Grid.Column="0"/>
-                    <Label Content="ETA" Margin="10,0,10,0" Grid.Column="1"/>
-                    <Label Content="%" Margin="10,0,10,0" Grid.Column="2" />
-                    <ProgressBar MinWidth="100" Margin="10,0,10,0" Grid.Column="3"/>
-                    <Button Content="Pause" Grid.Column="4" Margin="10,0,10,0"/>
-                    <Button Content="Stop" Grid.Column="5" Margin="10,0,10,0"/>
-                </Grid>
-            </DockPanel>
-        </StackPanel>
+        <StackPanel x:Name="sp"/>
     </Grid>
 </Window>
