@@ -116,9 +116,18 @@ namespace SimpleThingsProvider
             {
                 dll = Assembly.LoadFrom(extension);
                 dllType = dll.GetType("SimpleThingsProvider." + extension.Substring(extension.LastIndexOf("\\") + 1, extension.Length - extension.LastIndexOf("\\") - 5));
-                Debug.WriteLine("SimpleThingsProvider." + extension.Substring(extension.LastIndexOf("\\") + 1, extension.Length - extension.LastIndexOf("\\") - 5));
                 IExtension e = (IExtension)Activator.CreateInstance(dllType, new Object[] { });
                 IextensionsList.Add(e);
+            }
+            // Check if downloader is installed
+            foreach (IExtension extension in IextensionsList)
+            {
+                if (extension.Name == "Downloader")
+                {
+                    // Add "download" button and "downloader" shortcut on top
+                    DownloadButton.Visibility = Visibility.Visible;
+                    DownloaderMenuButton.Visibility = Visibility.Visible;
+                }
             }
         }
         private void checkUpdate()
@@ -202,7 +211,6 @@ namespace SimpleThingsProvider
         private void Worker_StatusCode(object? sender, DoWorkEventArgs e)
         {
             code = module.search(e.Argument.ToString());
-            Debug.WriteLine(code);
         }
         private void Worker_StatusCodeCompleted(object? sender, RunWorkerCompletedEventArgs e)
         {
@@ -266,9 +274,10 @@ namespace SimpleThingsProvider
                 OutputLabel.Content = entry;
                 CopyButton.IsEnabled = true;
                 OpenInBrowserButton.IsEnabled = true;
+                DownloadButton.IsEnabled = true;
                 return;
             }
-            catch (ArgumentOutOfRangeException) { CopyButton.IsEnabled = true; OpenInBrowserButton.IsEnabled = false; OutputLabel.Content = "Error "; return; }
+            catch (ArgumentOutOfRangeException) { CopyButton.IsEnabled = true; OpenInBrowserButton.IsEnabled = false; DownloadButton.IsEnabled = false; OutputLabel.Content = "Error "; return; }
         }
         private void Copy(object sender, RoutedEventArgs e)
         {
@@ -305,11 +314,12 @@ namespace SimpleThingsProvider
             {
                 if (extension.Name == "Downloader")
                 {
-                    extension.extentionWindow.Show();
-                    extension.extentionWindow.Focus();
-                    object[] args = { "antani", "https://stackoverflow.com/questions/22856745/wpf-get-parent-window" };
+                    var w = extension.getExtensionWindow();
+                    w.Show();
+                    w.Focus();
+                    /*object[] args = { "antani", "https://stackoverflow.com/questions/22856745/wpf-get-parent-window" };
                     extension.setParameters(args);
-                    extension.startFunction();
+                    extension.startFunction();*/
                 }
             }
         }
@@ -350,6 +360,22 @@ namespace SimpleThingsProvider
         public ListView getResultsList()
         {
             return ResultsList;
+        }
+
+        private void DownloadButton_Click(object sender, RoutedEventArgs e)
+        {
+            Logger.Log($"Adding {OutputLabel.Content.ToString()} to the downloader", "Main");
+            foreach (IExtension extension in IextensionsList)
+            {
+                if (extension.Name == "Downloader")
+                {
+                    extension.extensionWindow.Show();
+                    extension.extensionWindow.Focus();
+                    object[] args = { "TITLE HERE", OutputLabel.Content.ToString() };
+                    extension.setParameters(args);
+                    extension.startFunction();
+                }
+            }
         }
     }
 }

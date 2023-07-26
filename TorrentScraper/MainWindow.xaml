@@ -26,7 +26,7 @@
     <mah:MetroWindow.LeftWindowCommands>
         <mah:WindowCommands>
             <Button Click="OpenWebsiteStatus" Content="Websites Status"/>
-            <Button Click="OpenDownloader" Content="Downloader"/>
+            <Button x:Name="DownloaderMenuButton" Click="OpenDownloader" Content="Downloader" Visibility="Collapsed"/>
         </mah:WindowCommands>
     </mah:MetroWindow.LeftWindowCommands>
     <mah:MetroWindow.Resources>
@@ -60,11 +60,12 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="133*"/>
-            <ColumnDefinition Width="432*"/>
-            <ColumnDefinition Width="133*"/>
-            <ColumnDefinition Width="102*"/>
+            <ColumnDefinition Width="311*"/>
+            <ColumnDefinition Width="118*"/>
+            <ColumnDefinition Width="118*"/>
+            <ColumnDefinition Width="118*"/>
         </Grid.ColumnDefinitions>
-        <Button x:Name="CallButton" Margin="10,10,10,0" VerticalAlignment="Top" Command="{StaticResource Search}" Grid.Column="3" Height="30">
+        <Button x:Name="CallButton" Margin="10,10,10,0" VerticalAlignment="Top" Command="{StaticResource Search}" Grid.Column="4" Height="30">
             <DockPanel>
                 <Image Width="15" Height="15">
                     <Image.Source>
@@ -74,24 +75,25 @@
                 <TextBlock Text="Search" Margin="10,0,0,0"/>
             </DockPanel>
         </Button>
-        <Label x:Name="StatusCodeLabel" Content="Status Code:" Margin="10,50,10,10" FontWeight="Bold" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="SearchTextBox" Margin="10,10,10,0" TextWrapping="Wrap" VerticalAlignment="Top" AutomationProperties.HelpText="Search Bar" ToolTip="Search Bar" HorizontalContentAlignment="Left" RenderTransformOrigin="0.5,0.5" Height="26" Grid.Column="1"/>
+        <Label x:Name="StatusCodeLabel" Content="Status Code:" Margin="10,50,10,10" FontWeight="Bold" Grid.ColumnSpan="3"/>
+        <TextBox x:Name="SearchTextBox" Margin="10,10,10,0" TextWrapping="Wrap" VerticalAlignment="Top" AutomationProperties.HelpText="Search Bar" ToolTip="Search Bar" HorizontalContentAlignment="Left" RenderTransformOrigin="0.5,0.5" Height="26" Grid.Column="1" Grid.ColumnSpan="2"/>
         <Image x:Name="LoadingGif" gif:ImageBehavior.AnimatedSource="Data/Loading.gif" Margin="10,79,10,8" Visibility="Hidden" />
-        <ListView x:Name="ResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
+        <ListView x:Name="ResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="5" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="Auto" Header="Example" DisplayMemberBinding="{Binding Example}"/>
                 </GridView>
             </ListView.View>
         </ListView>
-        <Label x:Name="ResultsNumber" Content="Results: " Margin="10,47,10,20" Grid.Column="3"/>
+        <Label x:Name="ResultsNumber" Content="Results: " Margin="10,47,10,20" Grid.Column="4"/>
         <Label x:Name="OutputLabel" Content="Output" Margin="10,10,10,10" Grid.Row="2" Focusable="True" MaxWidth="600" Grid.ColumnSpan="2"/>
-        <Button x:Name="CopyButton" Grid.Column="3" Content="Copy" Grid.Row="2" FontWeight="Bold" Width="auto" IsEnabled="False" Click="Copy" Margin="0,10,0,0"/>
-        <ComboBox x:Name="WebsiteSource" HorizontalAlignment="Center" Width="120" Grid.Column="2" Height="26" VerticalAlignment="Top" ToolTip="Website Source" IsReadOnly="True" SelectedIndex="-1" SelectionChanged="SaveSelected" Margin="0,10,0,0">
+        <Button x:Name="CopyButton" Grid.Column="4" Content="Copy" Grid.Row="2" FontWeight="Bold" Width="auto" IsEnabled="False" Click="Copy" Margin="10,10,10,10"/>
+        <ComboBox x:Name="WebsiteSource" Grid.Column="3" Height="26" VerticalAlignment="Top" ToolTip="Website Source" IsReadOnly="True" SelectedIndex="-1" SelectionChanged="SaveSelected" Margin="10,10,10,0">
             <System:String>Example</System:String>
         </ComboBox>
-        <Button x:Name="OpenInBrowserButton" Grid.Column="2" Content="Open In Browser" Margin="0,10,0,0" Grid.Row="2" FontWeight="Bold" IsEnabled="False" Click="OpenInBrowserButton_Click"/>
-        <ComboBox x:Name="WebsiteSubSelector" Grid.Column="2" Margin="0,46,0,0" SelectionChanged="WebsiteSubSelector_SelectionChanged" HorizontalAlignment="Center" MinWidth="120" MaxHeight="20" VerticalAlignment="Top" Height="26" Width="120">
+        <Button x:Name="OpenInBrowserButton" Grid.Column="3" Content="Open" Margin="10,10,10,10" Grid.Row="2" FontWeight="Bold" IsEnabled="False" Click="OpenInBrowserButton_Click"/>
+        <Button x:Name="DownloadButton" Grid.Column="2" Content="Download" Margin="10,10,10,10" Grid.Row="2" FontWeight="Bold" IsEnabled="False" Click="DownloadButton_Click" Visibility="Collapsed"/>
+        <ComboBox x:Name="WebsiteSubSelector" Grid.Column="3" Margin="0,46,0,0" SelectionChanged="WebsiteSubSelector_SelectionChanged" HorizontalAlignment="Center" MinWidth="0" MaxHeight="20" VerticalAlignment="Top" Height="26" Width="99">
             <System:String>MAME 0.139u1</System:String>
             <System:String>Nintendo Gameboy Color</System:String>
             <System:String>Playstation</System:String>

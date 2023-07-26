@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Policy;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,26 +18,41 @@ namespace SimpleThingsProvider
     {
         private string fileName;
         private string uri;
+        private Regex extensionExpression = new("(\\.)+(.{2,4})(?!.*\\1)");
         public string Name { get { return "Downloader"; } set { } }
-        public Window extentionWindow { get; set; }
+        public Window extensionWindow { get; set; }
         public DownloaderExtension()
         {
-            extentionWindow = new DownloaderWindow.DownloaderWindow();
+            extensionWindow = new DownloaderWindow.DownloaderWindow();
+        }
+        public Window getExtensionWindow() 
+        {
+            // Reload previous state
+            DownloaderWindow.DownloaderWindow w = new DownloaderWindow.DownloaderWindow();
+            return w;
         }
         public void startDownload(string name, string url)
         {
-            using (WebClient client = new WebClient())
+            Match match = extensionExpression.Match(url);
+            if (match.Success)
             {
-                client.DownloadProgressChanged += client_DownloadProgressChanged;
-                client.DownloadFileCompleted += client_DownloadFileCompleted;
-                client.DownloadFileAsync(
-                    // Param1 = Link of file
-                    new System.Uri("https://dl2.hexrom.com/rom/3ds/Mario%20Party%20-%20The%20Top%20100%20(Europe)%20(En_Fr_De_Es_It_Nl)6130_hexrom.com_.zip"),
-                    // Param2 = Path to save
-                    "C:\\Users\\alexi\\Desktop\\mario.zip"
-                );
+                using (WebClient client = new WebClient())
+                {
+                    client.DownloadProgressChanged += client_DownloadProgressChanged;
+                    client.DownloadFileCompleted += client_DownloadFileCompleted;
+                    client.DownloadFileAsync(
+                        // Param1 = Link of file
+                        new System.Uri(url),
+                        // Param2 = Path to save
+                        "C:\\Users\\alexi\\Desktop\\" + name + match.Value
+                    );
+                }
+                //((DownloaderWindow.DownloaderWindow)extensionWindow).FileName.Content = name;
             }
-            ((DownloaderWindow.DownloaderWindow)extentionWindow).FileName.Content = name;
+            else
+            {
+                //Regex match not found, notify user
+            }
         }
         public void setParameters(object[] args)
         {
@@ -49,13 +65,13 @@ namespace SimpleThingsProvider
         }
         void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            ((DownloaderWindow.DownloaderWindow)extentionWindow).Progress.Value = e.ProgressPercentage;
-            ((DownloaderWindow.DownloaderWindow)extentionWindow).Percentage.Content = e.ProgressPercentage + "%";
+            //((DownloaderWindow.DownloaderWindow)extensionWindow).Progress.Value = e.ProgressPercentage;
+            //((DownloaderWindow.DownloaderWindow)extensionWindow).Percentage.Content = e.ProgressPercentage + "%";
         }
         void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            ((DownloaderWindow.DownloaderWindow)extentionWindow).Progress.Value = 100;
-            ((DownloaderWindow.DownloaderWindow)extentionWindow).Percentage.Content = "100%";
+            //((DownloaderWindow.DownloaderWindow)extensionWindow).Progress.Value = 100;
+            //((DownloaderWindow.DownloaderWindow)extensionWindow).Percentage.Content = "100%";
         }
     }
 }
