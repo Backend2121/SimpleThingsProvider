@@ -6,8 +6,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,12 +20,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace DownloaderWindow
+namespace DownloaderExtension
 {
     public class DownloaderTemplate
     {
         public DockPanel e;
-        public DownloaderTemplate(int i) 
+        public DownloaderTemplate(int i, string t, string u) 
         {
             e = new DockPanel();
             // Grid definitions
@@ -51,9 +53,9 @@ namespace DownloaderWindow
             Label ETALabel = new Label();
             Label percentageLabel = new Label();
             Label urlLabel = new Label();
-            titleLabel.Content = "Title";
+            titleLabel.Content = t;
             titleLabel.Name = "titleLabel" + i.ToString();
-            urlLabel.Content = "URL";
+            urlLabel.Content = u;
             urlLabel.Name = "urlLabel" + i.ToString();
             urlLabel.Visibility = Visibility.Collapsed;
             ETALabel.Content = "NULL";
@@ -94,45 +96,99 @@ namespace DownloaderWindow
     }
     public partial class DownloaderWindow : Window
     {
+        private int downloadNumber = 0;
+        private Regex extensionExpression = new("(\\.)+(.{2,4})(?!.*\\1)");
+        private ProgressBar progress;
+        private Label percentage;
         public DownloaderWindow()
         {
             InitializeComponent();
             int childCounter = 0;
             string json = "{\"Downloads\":{";
             // Read from file how many downloads needs to be instantiated
-            
-            for (int i = 0; i < 5; i++)
-            {
-                sp.Children.Add(new DownloaderTemplate(i).e);
-            }
+            //downloadNumber = READ_DOWNLOADS;
+            downloadNumber = 1;
+
             // Serializer
+            // Serialize only if download number is grater than 0
+            if (sp.Children.Count > 0 )
+            {
+                foreach (DockPanel dock in sp.Children)
+                {
+                    foreach (Grid grid in dock.Children)
+                    {
+                        UIElementCollection elements = grid.Children;
+                        Label titlelabel = (Label)elements[0];
+                        Label urllabel = (Label)elements[1];
+                        // Serialize child element
+                        json += "\"" + childCounter.ToString() + "\":{\"url\":\"" + urllabel.Content + "\",\"name\":\"" + titlelabel.Content + "\"},";
+                    }
+                    childCounter++;
+                }
+                json = json.Remove(json.Length - 1);
+                json += "}}";
+                File.WriteAllText(".\\downloads.json", json);
+            }
+        }
+        public void addDownload(string title, string url)
+        {
+            downloadNumber++;
+            sp.Children.Add(new DownloaderTemplate(downloadNumber, title, url).e);
+            startDownload();
+        }
+        public void startDownload()
+        {
+            string url = string.Empty;
+            string name = string.Empty;
+            // Read from existing downloads informations needed to start them
             foreach (DockPanel dock in sp.Children)
             {
                 foreach (Grid grid in dock.Children)
                 {
-                    UIElementCollection elements = grid.Children;
-                    Label titlelabel =  (Label)elements[0];
-                    Label urllabel = (Label)elements[1];
-                    // Serialize child element
-                    json += "\"" + childCounter.ToString() + "\":{\"url\":\"" + urllabel.Content + "\",\"name\":\"" + titlelabel.Content + "\"},";
+                    UIElementCollection col = grid.Children;
+                    name = ((Label)col[0]).Content.ToString();
+                    Debug.WriteLine(name);
+                    url = ((Label)col[1]).Content.ToString();
+                    Debug.WriteLine(url);
+                    progress = ((ProgressBar)col[4]);
+                    percentage = ((Label)col[3]);
+                    Match match = extensionExpression.Match(url);
+                    if (match.Success)
+                    {
+                        using (WebClient client = new WebClient())
+                        {
+                            client.DownloadProgressChanged += client_DownloadProgressChanged;
+                            client.DownloadFileCompleted += client_DownloadFileCompleted;
+                            client.DownloadFileAsync(
+                                // Param1 = Link of file
+                                new System.Uri(url),
+                                // Param2 = Path to save, need to have this in Settings
+                                "C:\\Users\\alexi\\Desktop\\" + name + match.Value
+                            );
+                        }
+                        //((DownloaderWindow.DownloaderWindow)extensionWindow).FileName.Content = name;
+                    }
+                    else
+                    {
+                        //Regex match not found, notify user
+                    }
                 }
-                childCounter++;
             }
-            json = json.Remove(json.Length - 1);
-            json += "}}";
-            File.WriteAllText(".\\downloads.json", json);
         }
-
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            //Save current state
-            foreach (DockPanel dock in sp.Children)
-            {
-                foreach (Grid grid in dock.Children)
-                    // Serialize child element
-                    Debug.WriteLine(JsonSerializer.Serialize(grid));
-            }
-            Debug.WriteLine("Hello");
+            e.Cancel = true;
+            this.Visibility = Visibility.Hidden;
+        }
+        private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            progress.Value = e.ProgressPercentage;
+            percentage.Content = e.ProgressPercentage + "%";
+        }
+        private void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+            progress.Value = 100;
+            percentage.Content = "100%";
         }
     }
 }

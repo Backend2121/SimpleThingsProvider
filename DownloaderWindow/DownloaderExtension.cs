@@ -1,4 +1,4 @@
-﻿using DownloaderWindow;
+﻿using DownloaderExtension;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,62 +16,37 @@ namespace SimpleThingsProvider
 {
     internal class DownloaderExtension : IExtension
     {
-        private string fileName;
-        private string uri;
-        private Regex extensionExpression = new("(\\.)+(.{2,4})(?!.*\\1)");
         public string Name { get { return "Downloader"; } set { } }
         public Window extensionWindow { get; set; }
+        private global::DownloaderExtension.DownloaderWindow dw;
         public DownloaderExtension()
         {
-            extensionWindow = new DownloaderWindow.DownloaderWindow();
+            extensionWindow = new global::DownloaderExtension.DownloaderWindow();
+            dw = (global::DownloaderExtension.DownloaderWindow)extensionWindow;
         }
         public Window getExtensionWindow() 
         {
             // Reload previous state
-            DownloaderWindow.DownloaderWindow w = new DownloaderWindow.DownloaderWindow();
-            return w;
-        }
-        public void startDownload(string name, string url)
-        {
-            Match match = extensionExpression.Match(url);
-            if (match.Success)
+            if (dw == null)
             {
-                using (WebClient client = new WebClient())
+                dw = new global::DownloaderExtension.DownloaderWindow();
+            }
+            return dw;
+        }
+        /// <summary>
+        /// args[0] string
+        /// args[1] string
+        /// </summary>
+        public void startFunction(object[] args)
+        {
+            // Check if args is empty
+            if (args.Length > 1)
+            {
+                if (args[0] != null && args[1] != null)
                 {
-                    client.DownloadProgressChanged += client_DownloadProgressChanged;
-                    client.DownloadFileCompleted += client_DownloadFileCompleted;
-                    client.DownloadFileAsync(
-                        // Param1 = Link of file
-                        new System.Uri(url),
-                        // Param2 = Path to save
-                        "C:\\Users\\alexi\\Desktop\\" + name + match.Value
-                    );
+                    dw.addDownload(args[0].ToString(), args[1].ToString());
                 }
-                //((DownloaderWindow.DownloaderWindow)extensionWindow).FileName.Content = name;
             }
-            else
-            {
-                //Regex match not found, notify user
-            }
-        }
-        public void setParameters(object[] args)
-        {
-            fileName = (string)args[0];
-            uri = args[1].ToString();
-        }
-        public void startFunction()
-        {
-            startDownload(fileName, uri);
-        }
-        private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-        {
-            //((DownloaderWindow.DownloaderWindow)extensionWindow).Progress.Value = e.ProgressPercentage;
-            //((DownloaderWindow.DownloaderWindow)extensionWindow).Percentage.Content = e.ProgressPercentage + "%";
-        }
-        private void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
-        {
-            //((DownloaderWindow.DownloaderWindow)extensionWindow).Progress.Value = 100;
-            //((DownloaderWindow.DownloaderWindow)extensionWindow).Percentage.Content = "100%";
         }
     }
 }

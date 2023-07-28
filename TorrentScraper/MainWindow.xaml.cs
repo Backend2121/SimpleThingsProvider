@@ -124,7 +124,7 @@ namespace SimpleThingsProvider
             {
                 if (extension.Name == "Downloader")
                 {
-                    // Add "download" button and "downloader" shortcut on top
+                    // Add "download" button and "downloader" shortcut on top theoretically this needs to be done inside the extension
                     DownloadButton.Visibility = Visibility.Visible;
                     DownloaderMenuButton.Visibility = Visibility.Visible;
                 }
@@ -317,9 +317,8 @@ namespace SimpleThingsProvider
                     var w = extension.getExtensionWindow();
                     w.Show();
                     w.Focus();
-                    /*object[] args = { "antani", "https://stackoverflow.com/questions/22856745/wpf-get-parent-window" };
-                    extension.setParameters(args);
-                    extension.startFunction();*/
+                    object[] args = Array.Empty<object>();
+                    extension.startFunction(args);
                 }
             }
         }
@@ -361,7 +360,6 @@ namespace SimpleThingsProvider
         {
             return ResultsList;
         }
-
         private void DownloadButton_Click(object sender, RoutedEventArgs e)
         {
             Logger.Log($"Adding {OutputLabel.Content.ToString()} to the downloader", "Main");
@@ -371,12 +369,11 @@ namespace SimpleThingsProvider
                 if (extension.Name == "Downloader")
                 {
                     // Append to downloader's memory file the new download
-                    extension.extensionWindow.Show();
-                    extension.extensionWindow.Focus();
-                    // Maybe we don't need this
-                    /*object[] args = { "TITLE HERE", OutputLabel.Content.ToString() };
-                    extension.setParameters(args);
-                    extension.startFunction();*/
+                    extension.getExtensionWindow().Show();
+                    extension.getExtensionWindow().Focus();
+                    // We need this
+                    object[] args = { "TITLE HERE", OutputLabel.Content.ToString() };
+                    extension.startFunction(args);
                 }
             }
         }
