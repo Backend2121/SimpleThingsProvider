@@ -269,12 +269,15 @@ namespace SimpleThingsProvider
             try
             {
                 string entry = "";
-                entry = module.getLink(ResultsList.SelectedIndex);
-                Logger.Log($"Entry {entry} has been selected", "Main");
-                OutputLabel.Content = entry;
-                CopyButton.IsEnabled = true;
-                OpenInBrowserButton.IsEnabled = true;
-                DownloadButton.IsEnabled = true;
+                if (ResultsList.SelectedIndex != null)
+                {
+                    entry = module.getLink(ResultsList.SelectedIndex);
+                    Logger.Log($"Entry {entry} has been selected", "Main");
+                    OutputLabel.Content = entry;
+                    CopyButton.IsEnabled = true;
+                    OpenInBrowserButton.IsEnabled = true;
+                    DownloadButton.IsEnabled = true;
+                }
                 return;
             }
             catch (ArgumentOutOfRangeException) { CopyButton.IsEnabled = true; OpenInBrowserButton.IsEnabled = false; DownloadButton.IsEnabled = false; OutputLabel.Content = "Error "; return; }
@@ -372,7 +375,7 @@ namespace SimpleThingsProvider
                     extension.getExtensionWindow().Show();
                     extension.getExtensionWindow().Focus();
                     // We need this
-                    object[] args = { "TITLE HERE", OutputLabel.Content.ToString() };
+                    object[] args = { ((Result)ResultsList.SelectedItem).Title, OutputLabel.Content.ToString() };
                     extension.startFunction(args);
                 }
             }
