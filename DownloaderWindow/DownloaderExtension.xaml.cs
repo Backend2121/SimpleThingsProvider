@@ -36,15 +36,17 @@ namespace DownloaderExtension
     public class HttpClientPair
     {
         public CancellationTokenSource cancellation { get; set; }
-        public string stopName { get; }
-        public string pauseName { get; }
+        public Button stopButton { get; }
+        public Button pauseButton { get; }
         public IsPaused isPaused { get; set; }
-        public HttpClientPair(CancellationTokenSource c, string sn, string pn, IsPaused p) 
+        public Label percentageLabel { get; }
+        public HttpClientPair(CancellationTokenSource c, Button sn, Button pn, IsPaused p, Label pl) 
         {
             cancellation = c;
-            stopName = sn;
-            pauseName = pn;
+            stopButton = sn;
+            pauseButton = pn;
             isPaused = p;
+            percentageLabel = pl;
         }
     }
     public class DownloaderTemplate
@@ -61,12 +63,12 @@ namespace DownloaderExtension
             ColumnDefinition columnDefinition4 = new ColumnDefinition();
             ColumnDefinition columnDefinition5 = new ColumnDefinition();
             ColumnDefinition columnDefinition6 = new ColumnDefinition();
-            columnDefinition1.Width = new GridLength(75, GridUnitType.Star);
-            columnDefinition2.Width = new GridLength(100, GridUnitType.Star);
-            columnDefinition3.Width = new GridLength(70, GridUnitType.Star);
-            columnDefinition4.Width = new GridLength(400, GridUnitType.Star);
-            columnDefinition5.Width = new GridLength(67, GridUnitType.Star);
-            columnDefinition6.Width = new GridLength(67, GridUnitType.Star);
+            columnDefinition1.Width = new GridLength(200, GridUnitType.Star);
+            columnDefinition2.Width = new GridLength(50, GridUnitType.Star);
+            columnDefinition3.Width = new GridLength(50, GridUnitType.Star);
+            columnDefinition4.Width = new GridLength(300, GridUnitType.Star);
+            columnDefinition5.Width = new GridLength(50, GridUnitType.Star);
+            columnDefinition6.Width = new GridLength(50, GridUnitType.Star);
             grid.ColumnDefinitions.Add(columnDefinition1);
             grid.ColumnDefinitions.Add(columnDefinition2);
             grid.ColumnDefinitions.Add(columnDefinition3);
@@ -166,6 +168,9 @@ namespace DownloaderExtension
                 UIElementCollection col = grid.Children;
                 name = ((Label)col[0]).Content.ToString();
                 url = ((Label)col[1]).Content.ToString();
+                // Give a name to the percentage label
+                Label percentageLabel = (Label)col[3];
+                percentageLabel.Name = "PercentageLabel_" + downloadNumber.ToString();
                 // Pause/Resume button: name and function
                 Button pauseBtn = (Button)col[5];
                 pauseBtn.Name = "PauseButton_" + downloadNumber.ToString();
@@ -187,17 +192,11 @@ namespace DownloaderExtension
                     Stream response = await HttpClientSingleton.client.GetStreamAsync(url);
                     CancellationTokenSource cancellationToken = new CancellationTokenSource();
                     IsPaused p = new IsPaused(false);
-                    cancellationTokens.Add(new HttpClientPair(cancellationToken, "DownloadButton_" + downloadNumber.ToString(), "PauseButton_" + downloadNumber.ToString(), p));
+                    cancellationTokens.Add(new HttpClientPair(cancellationToken, stopBtn, pauseBtn, p, percentageLabel));
                     await HttpClientSingleton.DownloadAsync(HttpClientSingleton.client, url, file, new Progress(progress, percentage), cancellationToken.Token, p);
                 }
             }
         }
-
-        private void PauseBtn_Click(object sender, RoutedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             e.Cancel = true;
@@ -207,11 +206,16 @@ namespace DownloaderExtension
         {
             foreach(HttpClientPair pair in cancellationTokens)
             {
-
-                if (pair.stopName.Equals(((Button)sender).Name))
+                if (pair.stopButton.Name.Equals(((Button)sender).Name))
                 {
                     pair.cancellation.Cancel();
                     cancellationTokens.Remove(pair);
+                    Thread.Sleep(200);
+                    if (pair.percentageLabel.Content.ToString().Contains("0%"))
+                    {
+                        pair.percentageLabel.Content = "Aborted";
+                    }
+                    pair.pauseButton.IsEnabled = false;                    
                     break;
                 }
             }
@@ -220,15 +224,21 @@ namespace DownloaderExtension
         {
             foreach (HttpClientPair pair in cancellationTokens)
             {
-                if (pair.pauseName.Equals(((Button)sender).Name))
+                if (pair.pauseButton.Name.Equals(((Button)sender).Name))
                 {
                     if (pair.isPaused.pause)
                     {
                         pair.isPaused.pause = false;
+                        Thread.Sleep(200);
+                        pair.percentageLabel.Content = "Resuming";
+                        ((Button)sender).Content = "P";
                     }
                     else
                     {
                         pair.isPaused.pause = true;
+                        Thread.Sleep(200);
+                        pair.percentageLabel.Content = "Paused";
+                        ((Button)sender).Content = "R";
                     }
                 }
             }

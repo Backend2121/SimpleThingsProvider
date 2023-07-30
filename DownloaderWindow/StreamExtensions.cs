@@ -59,6 +59,22 @@ namespace SimpleThingsProvider
                 }
                 return;
             }
+            catch(OperationCanceledException e)
+            {
+                if (destination is FileStream fileStream)
+                {
+                    try
+                    {
+                        // Delete the file
+                        destination.Close();
+                        Debug.WriteLine(fileStream.Name);
+                        File.Delete(fileStream.Name);
+                        return;
+                    }
+                    catch (Exception c) { Debug.WriteLine(c); }
+                }
+                return;
+            }
             
         }
     }
