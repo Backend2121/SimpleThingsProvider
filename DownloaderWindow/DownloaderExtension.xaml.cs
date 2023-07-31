@@ -137,10 +137,11 @@ namespace DownloaderExtension
     }
     public partial class DownloaderWindow : Window
     {
-        private int downloadNumber = 0;
-        private Regex extensionExpression = new("(\\.)+(.{2,4})(?!.*\\1)");
-        private ProgressBar progress;
-        private Label percentage;
+        private int _downloadNumber = 0;
+        private Regex _extensionExpression = new("(\\.)(jpg|JPG|gif|GIF|doc|DOC|pdf|PDF|zip|ZIP|rar|RAR|7z|7Z)$");
+
+        private ProgressBar _progress;
+        private Label _percentage;
         public List<HttpClientPair> cancellationTokens = new List<HttpClientPair>();
         public DownloaderWindow()
         {
@@ -148,8 +149,8 @@ namespace DownloaderExtension
         }
         public void addDownload(string title, string url)
         {
-            downloadNumber++;
-            sp.Children.Add(new DownloaderTemplate(downloadNumber, title, url).e);
+            _downloadNumber++;
+            sp.Children.Add(new DownloaderTemplate(_downloadNumber, title, url).e);
             startDownload();
         }
         public async void startDownload()
@@ -170,20 +171,22 @@ namespace DownloaderExtension
                 url = ((Label)col[1]).Content.ToString();
                 // Give a name to the percentage label
                 Label percentageLabel = (Label)col[3];
-                percentageLabel.Name = "PercentageLabel_" + downloadNumber.ToString();
+                percentageLabel.Name = "PercentageLabel_" + _downloadNumber.ToString();
                 // Pause/Resume button: name and function
                 Button pauseBtn = (Button)col[5];
-                pauseBtn.Name = "PauseButton_" + downloadNumber.ToString();
+                pauseBtn.Name = "PauseButton_" + _downloadNumber.ToString();
                 pauseBtn.Click += PauseButton_Click;
                 // Stop button: name and function
                 Button stopBtn = (Button)col[6];
-                stopBtn.Name = "DownloadButton_" + downloadNumber.ToString();
+                stopBtn.Name = "DownloadButton_" + _downloadNumber.ToString();
                 stopBtn.Click += StopButton_Click;
 
-                progress = (ProgressBar)col[4];
-                percentage = (Label)col[3];
+                _progress = (ProgressBar)col[4];
+                _percentage = (Label)col[3];
                 // Find a match in the regex expression
-                Match match = extensionExpression.Match(url);
+                Match match = _extensionExpression.Match(url);
+                Debug.WriteLine(match.Success);
+                Debug.WriteLine(url);
                 // If match is found
                 if (match.Success)
                 {
@@ -193,7 +196,7 @@ namespace DownloaderExtension
                     CancellationTokenSource cancellationToken = new CancellationTokenSource();
                     IsPaused p = new IsPaused(false);
                     cancellationTokens.Add(new HttpClientPair(cancellationToken, stopBtn, pauseBtn, p, percentageLabel));
-                    await HttpClientSingleton.DownloadAsync(HttpClientSingleton.client, url, file, new Progress(progress, percentage), cancellationToken.Token, p);
+                    await HttpClientSingleton.DownloadAsync(HttpClientSingleton.client, url, file, new Progress(_progress, _percentage), cancellationToken.Token, p);
                 }
             }
         }

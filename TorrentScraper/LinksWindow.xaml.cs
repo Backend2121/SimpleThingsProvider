@@ -19,7 +19,6 @@ namespace SimpleThingsProvider
             ThemeManager.Current.SyncTheme();
             // Hide all linkslists
             LinksList.Visibility = Visibility.Visible;
-            HexRomsLinksList.Visibility = Visibility.Hidden;
             Topmost = true;
         }
         private void SelectionChanged(object sender, RoutedEventArgs e)
@@ -29,10 +28,6 @@ namespace SimpleThingsProvider
             if (LinksList.Visibility == Visibility.Visible)
             {
                 link = ((Result)LinksList.SelectedValue).Link;
-            }
-            else if (HexRomsLinksList.Visibility == Visibility.Visible)
-            {
-                link = ((Result)HexRomsLinksList.SelectedValue).Link;
             }
             mainWindow.OutputLabel.Content = link;
             if (link != "") { Close(); }

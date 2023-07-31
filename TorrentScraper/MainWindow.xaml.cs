@@ -28,6 +28,7 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using ControlzEx.Standard;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 
 namespace SimpleThingsProvider
 {
@@ -42,6 +43,7 @@ namespace SimpleThingsProvider
         IModule module;
         Random r = new Random();
         string[] motd = { "Hi!", "Hello there!", "Hey!", "Honk!", "Whassup!", "I promise i won't hang", "What do you need?", "Here to help!", "How are you doing?", "Join the Discord!", "Praise the Sun!", "For science, you monster", "It's dangerous to go alone, use me!", "Stupid Shinigami", "Trust me i'm a dolphin!", "...", "Oh, it's you...", "The cake is a lie!", "FBI open up!", "You own the game, right?" };
+        private bool extensionsMenu_FIX = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -110,7 +112,6 @@ namespace SimpleThingsProvider
                 ImodulesList.Add(m);
                 WebsiteSource.Items.Add(m.Name);
             }
-            // TODO LOAD ALL EXTENSIONS FOUND INSIDE "Extentions" FOLDER, ENABLE DOWNLOAD BUTTON FOR DOWNLOADER
             string[] extensions = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\Extensions\\");
             foreach (string extension in extensions)
             {
@@ -118,16 +119,31 @@ namespace SimpleThingsProvider
                 dllType = dll.GetType("SimpleThingsProvider." + extension.Substring(extension.LastIndexOf("\\") + 1, extension.Length - extension.LastIndexOf("\\") - 5));
                 IExtension e = (IExtension)Activator.CreateInstance(dllType, new Object[] { });
                 IextensionsList.Add(e);
+                addUIElements(e);
+                ExtensionsMenu.Items.Add(e.name);
+                e.disableButton();
             }
-            // Check if downloader is installed
-            foreach (IExtension extension in IextensionsList)
+        }
+        private void addUIElements(IExtension extension)
+        {
+            // Check available spaces for the SINGLE button an extension can provide, if any
+            Button eButton = (Button)extension.getElements(ResultsList, OutputLabel).ToArray()[0];
+            int currentColumn = 0;
+            int currentRow = 0;
+            if (eButton != null)
             {
-                if (extension.Name == "Downloader")
+                Grid.SetColumn(eButton, currentColumn++);
+                Grid.SetRow(eButton, currentRow);
+                if (currentColumn <= 0)
                 {
-                    // Add "download" button and "downloader" shortcut on top theoretically this needs to be done inside the extension
-                    DownloadButton.Visibility = Visibility.Visible;
-                    DownloaderMenuButton.Visibility = Visibility.Visible;
+                    currentColumn = 2;
+                    currentRow++;
                 }
+                ButtonGrid.Children.Add(eButton);
+            }
+            else
+            {
+                Logger.Log("No button provided by " + extension.name, "Main");
             }
         }
         private void checkUpdate()
@@ -158,6 +174,10 @@ namespace SimpleThingsProvider
             // Reset to default
             OpenInBrowserButton.IsEnabled = false;
             CopyButton.IsEnabled = false;
+            foreach (IExtension ex in IextensionsList)
+            {
+                ex.disableButton();
+            }
             OutputLabel.Content = motd[r.Next(0, motd.Length - 1)];
             StatusCodeLabel.Content = "Status Code: ";
             StatusCodeLabel.Foreground = new SolidColorBrush(Colors.DarkGoldenrod);
@@ -265,7 +285,6 @@ namespace SimpleThingsProvider
         }
         private void ResultsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            HtmlWeb web = new HtmlWeb();
             try
             {
                 string entry = "";
@@ -276,11 +295,24 @@ namespace SimpleThingsProvider
                     OutputLabel.Content = entry;
                     CopyButton.IsEnabled = true;
                     OpenInBrowserButton.IsEnabled = true;
-                    DownloadButton.IsEnabled = true;
+                    foreach (IExtension ex in IextensionsList)
+                    {
+                        ex.enableButton();
+                    }
                 }
                 return;
             }
-            catch (ArgumentOutOfRangeException) { CopyButton.IsEnabled = true; OpenInBrowserButton.IsEnabled = false; DownloadButton.IsEnabled = false; OutputLabel.Content = "Error "; return; }
+            catch (ArgumentOutOfRangeException)
+            {
+                CopyButton.IsEnabled = true;
+                OpenInBrowserButton.IsEnabled = false;
+                foreach (IExtension ex in IextensionsList)
+                {
+                    ex.disableButton();
+                }
+                OutputLabel.Content = "Error ";
+                return;
+            }
         }
         private void Copy(object sender, RoutedEventArgs e)
         {
@@ -315,7 +347,7 @@ namespace SimpleThingsProvider
         {
             foreach (IExtension extension in IextensionsList)
             {
-                if (extension.Name == "Downloader")
+                if (extension.name == "Downloader")
                 {
                     var w = extension.getExtensionWindow();
                     w.Show();
@@ -363,20 +395,31 @@ namespace SimpleThingsProvider
         {
             return ResultsList;
         }
-        private void DownloadButton_Click(object sender, RoutedEventArgs e)
+        private void ExtensionsMenu_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Logger.Log($"Adding {OutputLabel.Content.ToString()} to the downloader", "Main");
-            // Find Downloader's extension
-            foreach (IExtension extension in IextensionsList)
+            if (!extensionsMenu_FIX)
             {
-                if (extension.Name == "Downloader")
+                extensionsMenu_FIX = true;
+            }
+            else
+            {
+                // Iterate through extensions list and find the selected one, then open it's corresponding window
+                foreach (IExtension ex in IextensionsList)
                 {
-                    // Append to downloader's memory file the new download
-                    extension.getExtensionWindow().Show();
-                    extension.getExtensionWindow().Focus();
-                    // We need this
-                    object[] args = { ((Result)ResultsList.SelectedItem).Title, OutputLabel.Content.ToString() };
-                    extension.startFunction(args);
+                    if (ex.name.Equals(ExtensionsMenu.SelectedItem))
+                    {
+                        ex.showWindow();
+                    }
+                }
+            }
+        }
+        public void ExtensionsMenu_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (IExtension ex in IextensionsList)
+            {
+                if (ex.name.Equals(ExtensionsMenu.SelectedItem))
+                {
+                    ex.showWindow();
                 }
             }
         }

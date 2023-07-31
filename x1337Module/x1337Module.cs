@@ -143,9 +143,23 @@ namespace SimpleThingsProvider
         public string getLink(int index)
         {
             HtmlWeb web = new HtmlWeb();
-            HtmlDocument doc = web.Load(_underlying[index]);
-            HtmlNode node = doc.DocumentNode.SelectSingleNode("/html/body/main/div/div/div/div[2]/div[1]/ul[1]/li[1]/a");
-            return node.Attributes["href"].Value;
+            if (_underlying[index] != string.Empty)
+            {
+                HtmlDocument doc = web.Load(_underlying[index]);
+                HtmlNode node = doc.DocumentNode.SelectSingleNode("/html/body/main/div/div/div/div[2]/div[1]/ul[1]/li[1]/a");
+                Debug.WriteLine(_underlying[index]);
+                Debug.WriteLine(node.Attributes["href"].Value);
+                if (node.Attributes["href"].Value.Contains("magnet:?"))
+                {
+                    return node.Attributes["href"].Value;
+                }
+                else
+                {
+                    return _underlying[index];
+                }
+            }
+            
+            return string.Empty;
         }
         public string getLink(string gameURL) { return null; }
         private string buildString(string input)

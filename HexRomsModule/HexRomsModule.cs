@@ -83,7 +83,6 @@ namespace SimpleThingsProvider
             List<Result> websites = new List<Result>();
             var title = "";
             var link = "";
-            //html/body/div[3]/div[1]/div/div/div/div[2]/div/table/tbody/tr/td/a
             HtmlNodeCollection links = doc.DocumentNode.SelectNodes("/html/body/div[2]/div[1]/div/div/div/div[2]/div/table/tbody/tr/td/a");
             System.Diagnostics.Debug.Write(links.Count);
             if (links == null) { return ""; }
