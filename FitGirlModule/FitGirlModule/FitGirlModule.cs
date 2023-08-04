@@ -12,7 +12,6 @@ namespace SimpleThingsProvider
     {
         public string Name { get { return "FitGirl"; } set { } }
         public HtmlDocument Doc { get; set; }
-
         private List<string> _underlying;
         public bool needsSubSelector { get { return false; } }
         public LinksWindow linksWindow { get { return new LinksWindow(); } }

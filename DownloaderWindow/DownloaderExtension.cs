@@ -17,10 +17,12 @@ namespace SimpleThingsProvider
     internal class DownloaderExtension : IExtension
     {
         public string name { get { return "Downloader"; } set { } }
+        private Regex _extensionExpression = new("(\\.)(jpg|JPG|gif|GIF|doc|DOC|pdf|PDF|zip|ZIP|rar|RAR|7z|7Z)$");
         public Window extensionWindow { get; set; }
         private DownloaderWindow dw;
         private Button downloadButton;
         private ListView lv;
+        private ListView lv2;
         private Label ol;
         public DownloaderExtension()
         {
@@ -47,8 +49,6 @@ namespace SimpleThingsProvider
             {
                 if (args[0] != null && args[1] != null && args[1].ToString().Contains("http"))
                 {
-                    Debug.WriteLine("Title: " + args[0]);
-                    Debug.WriteLine("URL: " + args[0]);
                     dw.addDownload(args[0].ToString(), args[1].ToString());
                     return true;
                 }
@@ -70,12 +70,19 @@ namespace SimpleThingsProvider
             result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.OK);
         }
 
-        public void enableButton()
+        public void enableButton(Label ol)
         {
-            downloadButton.IsEnabled = true;
+            if (_extensionExpression.Match(ol.Content.ToString()).Success)
+            {
+                downloadButton.IsEnabled = true;
+            }
+            else
+            {
+                downloadButton.IsEnabled = false;
+            }
         }
 
-        public void disableButton()
+        public void disableButton(Label ol)
         {
             downloadButton.IsEnabled = false;
         }
@@ -93,7 +100,6 @@ namespace SimpleThingsProvider
             downloadButton.Click += DownloadButton_Click;
 
             // Menu entry
-
             list.Add(downloadButton);
             return list;
         }

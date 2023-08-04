@@ -14,6 +14,6 @@ public interface IExtension
     public bool startFunction(object[] args);
     public List<UIElement> getElements(ListView lv, Label ol);
     public void showWindow();
-    public void enableButton();
-    public void disableButton();
+    public void enableButton(Label outputLabel);
+    public void disableButton(Label outputLabel);
 }

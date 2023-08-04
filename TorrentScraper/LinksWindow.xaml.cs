@@ -1,5 +1,4 @@
 ﻿using ControlzEx.Theming;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -10,7 +9,6 @@ namespace SimpleThingsProvider
     /// </summary>
     public partial class LinksWindow : Window
     {
-        public LinksWindow linkWindow { get { return this; } }
         public LinksWindow()
         {
             InitializeComponent();

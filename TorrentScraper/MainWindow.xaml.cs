@@ -121,7 +121,7 @@ namespace SimpleThingsProvider
                 IextensionsList.Add(e);
                 addUIElements(e);
                 ExtensionsMenu.Items.Add(e.name);
-                e.disableButton();
+                e.disableButton(OutputLabel);
             }
         }
         private void addUIElements(IExtension extension)
@@ -176,7 +176,7 @@ namespace SimpleThingsProvider
             CopyButton.IsEnabled = false;
             foreach (IExtension ex in IextensionsList)
             {
-                ex.disableButton();
+                ex.disableButton(OutputLabel);
             }
             OutputLabel.Content = motd[r.Next(0, motd.Length - 1)];
             StatusCodeLabel.Content = "Status Code: ";
@@ -297,7 +297,7 @@ namespace SimpleThingsProvider
                     OpenInBrowserButton.IsEnabled = true;
                     foreach (IExtension ex in IextensionsList)
                     {
-                        ex.enableButton();
+                        ex.enableButton(OutputLabel);
                     }
                 }
                 return;
@@ -308,7 +308,7 @@ namespace SimpleThingsProvider
                 OpenInBrowserButton.IsEnabled = false;
                 foreach (IExtension ex in IextensionsList)
                 {
-                    ex.disableButton();
+                    ex.disableButton(OutputLabel);
                 }
                 OutputLabel.Content = "Error ";
                 return;

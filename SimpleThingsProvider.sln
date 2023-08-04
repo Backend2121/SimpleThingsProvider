@@ -21,7 +21,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RPGOnlyModule", "RPGOnlyMod
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HexRomsModule", "HexRomsModule\HexRomsModule.csproj", "{18669857-1A4C-4B9C-9B8E-055FA1915528}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DownloaderExtension", "DownloaderWindow\DownloaderExtension.csproj", "{853FA666-7CDC-47A2-9015-B9D2DFD2EEDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DownloaderExtension", "DownloaderWindow\DownloaderExtension.csproj", "{853FA666-7CDC-47A2-9015-B9D2DFD2EEDC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElAmigosModule", "ElEmigosModule\ElAmigosModule.csproj", "{6C5FDDAC-A936-4067-A284-92CDA1B76B4C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{81409BD9-3D58-4BEE-B5D4-906F232C2581} = {81409BD9-3D58-4BEE-B5D4-906F232C2581}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -153,6 +158,18 @@ Global
 		{853FA666-7CDC-47A2-9015-B9D2DFD2EEDC}.Release|x64.Build.0 = Release|Any CPU
 		{853FA666-7CDC-47A2-9015-B9D2DFD2EEDC}.Release|x86.ActiveCfg = Release|Any CPU
 		{853FA666-7CDC-47A2-9015-B9D2DFD2EEDC}.Release|x86.Build.0 = Release|Any CPU
+		{6C5FDDAC-A936-4067-A284-92CDA1B76B4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C5FDDAC-A936-4067-A284-92CDA1B76B4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C5FDDAC-A936-4067-A284-92CDA1B76B4C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6C5FDDAC-A936-4067-A284-92CDA1B76B4C}.Debug|x64.Build.0 = Debug|Any CPU
+		{6C5FDDAC-A936-4067-A284-92CDA1B76B4C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6C5FDDAC-A936-4067-A284-92CDA1B76B4C}.Debug|x86.Build.0 = Debug|Any CPU
+		{6C5FDDAC-A936-4067-A284-92CDA1B76B4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C5FDDAC-A936-4067-A284-92CDA1B76B4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C5FDDAC-A936-4067-A284-92CDA1B76B4C}.Release|x64.ActiveCfg = Release|Any CPU
+		{6C5FDDAC-A936-4067-A284-92CDA1B76B4C}.Release|x64.Build.0 = Release|Any CPU
+		{6C5FDDAC-A936-4067-A284-92CDA1B76B4C}.Release|x86.ActiveCfg = Release|Any CPU
+		{6C5FDDAC-A936-4067-A284-92CDA1B76B4C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
