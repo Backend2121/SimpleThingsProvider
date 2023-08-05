@@ -52,7 +52,7 @@ namespace DownloaderExtension
     public class DownloaderTemplate
     {
         public DockPanel e;
-        public DownloaderTemplate(int i, string t, string u) 
+        public DownloaderTemplate(int i, string t, string u)
         {
             e = new DockPanel();
             // Grid definitions
@@ -139,6 +139,7 @@ namespace DownloaderExtension
     {
         private int _downloadNumber = 0;
         private Regex _extensionExpression = new("(\\.)(jpg|JPG|gif|GIF|doc|DOC|pdf|PDF|zip|ZIP|rar|RAR|7z|7Z)$");
+        public List<string> formats;
 
         private ProgressBar _progress;
         private Label _percentage;

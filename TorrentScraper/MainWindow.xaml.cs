@@ -115,31 +115,39 @@ namespace SimpleThingsProvider
             string[] extensions = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\Extensions\\");
             foreach (string extension in extensions)
             {
-                dll = Assembly.LoadFrom(extension);
-                dllType = dll.GetType("SimpleThingsProvider." + extension.Substring(extension.LastIndexOf("\\") + 1, extension.Length - extension.LastIndexOf("\\") - 5));
-                IExtension e = (IExtension)Activator.CreateInstance(dllType, new Object[] { });
-                IextensionsList.Add(e);
-                addUIElements(e);
-                ExtensionsMenu.Items.Add(e.name);
-                e.disableButton(OutputLabel);
+                if (extension.Contains("Extension.dll"))
+                {
+                    dll = Assembly.LoadFrom(extension);
+                    dllType = dll.GetType("SimpleThingsProvider." + extension.Substring(extension.LastIndexOf("\\") + 1, extension.Length - extension.LastIndexOf("\\") - 5));
+                    IExtension e = (IExtension)Activator.CreateInstance(dllType, new Object[] { });
+                    IextensionsList.Add(e);
+                    addUIElements(e);
+                    ExtensionsMenu.Items.Add(e.name);
+                    e.disableButton(OutputLabel);
+                }   
             }
         }
         private void addUIElements(IExtension extension)
         {
             // Check available spaces for the SINGLE button an extension can provide, if any
-            Button eButton = (Button)extension.getElements(ResultsList, OutputLabel).ToArray()[0];
-            int currentColumn = 0;
-            int currentRow = 0;
-            if (eButton != null)
+            List<UIElement> uIElements = new List<UIElement>();
+            uIElements = extension.getElements(ResultsList, OutputLabel);
+            if (uIElements.Count > 0)
             {
-                Grid.SetColumn(eButton, currentColumn++);
-                Grid.SetRow(eButton, currentRow);
-                if (currentColumn <= 0)
+                Button eButton = (Button)uIElements[0];
+                int currentColumn = 0;
+                int currentRow = 0;
+                if (eButton != null)
                 {
-                    currentColumn = 2;
-                    currentRow++;
+                    Grid.SetColumn(eButton, currentColumn++);
+                    Grid.SetRow(eButton, currentRow);
+                    if (currentColumn <= 0)
+                    {
+                        currentColumn = 2;
+                        currentRow++;
+                    }
+                    ButtonGrid.Children.Add(eButton);
                 }
-                ButtonGrid.Children.Add(eButton);
             }
             else
             {
@@ -339,7 +347,7 @@ namespace SimpleThingsProvider
         }
         private void OpenSettingsWindow(object sender, RoutedEventArgs e)
         {
-            SettingsWindow settingsWindow = new SettingsWindow();
+            SettingsWindow settingsWindow = new SettingsWindow(IextensionsList);
             settingsWindow.Show();
             settingsWindow.Focus();
         }

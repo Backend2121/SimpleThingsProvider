@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using HtmlAgilityPack;
 using System.Net.Http;
 using ControlzEx.Theming;
+using System.Diagnostics;
 
 namespace SimpleThingsProvider
 {
@@ -22,14 +23,21 @@ namespace SimpleThingsProvider
     /// </summary>
     public partial class SettingsWindow
     {
-        public SettingsWindow()
+        private List<IExtension> extensions;
+        public SettingsWindow(List<IExtension> e)
         {
             InitializeComponent();
+            extensions = e;
             if (Settings.Default.SyncWithWindows) { ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncWithAppMode; }
             else { ThemeManager.Current.ChangeTheme(this, Settings.Default.MainTheme + "." + Settings.Default.SubTheme); }
 
             ThemeManager.Current.SyncTheme();
             Logger.Log("Initialized Proxy Window", "Proxy");
+            foreach (IExtension extension in extensions)
+            {
+                ExtensionsListView.Items.Add(extension.name);
+                // Get all extension's settings
+            }
             getSettings();
         }
         public void Alert(string messageBoxText, string caption)
@@ -52,12 +60,12 @@ namespace SimpleThingsProvider
             SyncWithWindowsCheckBox.IsChecked = Settings.Default.SyncWithWindows;
             NSFWContentCheckBox.IsChecked = Settings.Default.NSFWContent;
             if (Settings.Default.SyncWithWindows) { MainThemeComboBox.IsEnabled = false; SubThemeComboBox.IsEnabled = false; }
-
             Logger.Log($"Loaded previous settings for Proxy IP:{IPTextBox.Text} PORT:{PortTextBox.Text} ENABLED:{ProxyEnabledCheckBox.IsChecked}", "Proxy");
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            // Save STP's settings the old way
             Settings.Default.NSFWContent = NSFWContentCheckBox.IsChecked.Value;
             Logger.Log("Testing new proxy configuration", "Proxy");
             if (ProxyEnabledCheckBox.IsChecked.Value)
@@ -95,7 +103,39 @@ namespace SimpleThingsProvider
             else { ThemeManager.Current.ChangeTheme(this, Settings.Default.MainTheme + "." + Settings.Default.SubTheme); }
             ThemeManager.Current.SyncTheme();
             Settings.Default.Save();
+            // Save the extensions's settings
+            foreach (IExtension extension in extensions)
+            {
+                extension.saveSettings();
+            }
             Close();
+        }
+
+        private void extensionsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ExtensionsListView.SelectedItem.Equals("Simple Things Provider"))
+            {
+                STPSettingsGrid.Visibility = Visibility.Visible;
+                SettingsGrid.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                STPSettingsGrid.Visibility = Visibility.Hidden;
+                SettingsGrid.Visibility = Visibility.Visible;
+            }
+            // Load new grid got from the extension getSettings function
+            foreach (IExtension extension in extensions)
+            {
+                if (extension.name.Equals(ExtensionsListView.SelectedItem))
+                {
+                    List<DockPanel> docks = extension.getSettings();
+                    SettingsGridSP.Children.Clear();
+                    foreach (DockPanel dock in docks)
+                    {
+                        SettingsGridSP.Children.Add(dock);
+                    }
+                }
+            }
         }
     }
 }

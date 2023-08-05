@@ -122,5 +122,15 @@ namespace SimpleThingsProvider
             dw.Show();
             dw.Focus();
         }
+
+        public List<DockPanel> getSettings()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void saveSettings()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
