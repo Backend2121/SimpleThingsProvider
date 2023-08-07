@@ -106,7 +106,15 @@ namespace SimpleThingsProvider
             // Save the extensions's settings
             foreach (IExtension extension in extensions)
             {
-                extension.saveSettings();
+                try
+                {
+                    extension.saveSettings();
+                }
+                catch(NullReferenceException ex)
+                {
+                    continue;
+                }
+                
             }
             Close();
         }

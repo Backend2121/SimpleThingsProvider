@@ -1,4 +1,6 @@
 ﻿using ControlzEx.Theming;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -28,6 +30,10 @@ namespace SimpleThingsProvider
                 link = ((Result)LinksList.SelectedValue).Link;
             }
             mainWindow.OutputLabel.Content = link;
+            foreach (IExtension ex in mainWindow.getExtensions())
+            {
+                ex.enableButton(mainWindow.OutputLabel);
+            }
             if (link != "") { Close(); }
         }
         public ListView getLinksList()

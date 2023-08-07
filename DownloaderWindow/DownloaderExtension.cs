@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 
 namespace SimpleThingsProvider
 {
@@ -18,12 +19,14 @@ namespace SimpleThingsProvider
     {
         public string name { get { return "Downloader"; } set { } }
         private Regex _extensionExpression = new("(\\.)(jpg|JPG|gif|GIF|doc|DOC|pdf|PDF|zip|ZIP|rar|RAR|7z|7Z)$");
+        private string _configFileName = "Downloader_Config";
+        private System.Windows.Controls.TextBox downloadPathTB;
         public Window extensionWindow { get; set; }
         private DownloaderWindow dw;
-        private Button downloadButton;
-        private ListView lv;
-        private ListView lv2;
-        private Label ol;
+        private System.Windows.Controls.Button downloadButton;
+        private System.Windows.Controls.ListView lv;
+        private System.Windows.Controls.ListView lv2;
+        private System.Windows.Controls.Label ol;
         public DownloaderExtension()
         {
             extensionWindow = new DownloaderWindow();
@@ -67,33 +70,34 @@ namespace SimpleThingsProvider
             MessageBoxImage icon = MessageBoxImage.Error;
             MessageBoxResult result;
 
-            result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.OK);
+            result = System.Windows.MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.OK);
         }
 
-        public void enableButton(Label ol)
+        public void enableButton(System.Windows.Controls.Label outputLabel)
         {
-            if (_extensionExpression.Match(ol.Content.ToString()).Success)
+            if (_extensionExpression.Match(outputLabel.Content.ToString()).Success)
             {
                 downloadButton.IsEnabled = true;
             }
             else
             {
+                Debug.WriteLine(outputLabel.Content.ToString());
                 downloadButton.IsEnabled = false;
             }
         }
 
-        public void disableButton(Label ol)
+        public void disableButton(System.Windows.Controls.Label outputLabel)
         {
             downloadButton.IsEnabled = false;
         }
 
-        public List<UIElement> getElements(ListView listView, Label label)
+        public List<UIElement> getElements(System.Windows.Controls.ListView listView, System.Windows.Controls.Label label)
         {
             lv = listView;
             ol = label;
             List<UIElement> list = new List<UIElement>();
             // Button
-            downloadButton = new Button();
+            downloadButton = new System.Windows.Controls.Button();
             downloadButton.Content = "Download";
             downloadButton.IsEnabled = false;
             downloadButton.Margin = new Thickness(10, 2, 10, 2);
@@ -125,12 +129,85 @@ namespace SimpleThingsProvider
 
         public List<DockPanel> getSettings()
         {
-            throw new NotImplementedException();
+            Dictionary<string, string> settings = new Dictionary<string, string>();
+            JsonSettings jsonSettings = new JsonSettings("Configs", _configFileName, settings);
+            settings = jsonSettings.loadFromJson();
+            List<DockPanel> dockPanels = new List<DockPanel>();
+            DockPanel row1 = new DockPanel();
+            DockPanel row2 = new DockPanel();
+            Grid grid1 = new Grid();
+            ColumnDefinition column1Definition1 = new ColumnDefinition();
+            ColumnDefinition column1Definition2 = new ColumnDefinition();
+            ColumnDefinition column1Definition3 = new ColumnDefinition();
+            column1Definition1.Width = new GridLength(1, GridUnitType.Star);
+            column1Definition2.Width = new GridLength(3, GridUnitType.Star);
+            column1Definition3.Width = new GridLength(1, GridUnitType.Star);
+            grid1.ColumnDefinitions.Add(column1Definition1);
+            grid1.ColumnDefinitions.Add(column1Definition2);
+            grid1.ColumnDefinitions.Add(column1Definition3);
+
+            // Labels
+            System.Windows.Controls.Label downloadPathLabel = new System.Windows.Controls.Label();
+            System.Windows.Controls.Label tempDownloadPathLabel = new System.Windows.Controls.Label();
+            downloadPathLabel.Content = "Download path: ";
+            downloadPathLabel.Margin = new Thickness(10, 10, 10, 10);
+            tempDownloadPathLabel.Content = "Temp files location: ";
+            tempDownloadPathLabel.Margin = new Thickness(10, 10, 10, 10);
+
+            // TextBoxes
+            downloadPathTB = new System.Windows.Controls.TextBox();
+            downloadPathTB.IsReadOnly = true;
+            downloadPathTB.Margin = new Thickness(10, 10, 10, 10);
+            try
+            {
+                downloadPathTB.Text = settings["downloadPath"];
+            }
+            catch { }
+
+            // Path Pickers
+            System.Windows.Controls.Button downloadPathPicker = new System.Windows.Controls.Button();
+            downloadPathPicker.Name = "downloadPathPicker";
+            downloadPathPicker.Content = "...";
+            downloadPathPicker.Click += PathPicker_Click;
+            downloadPathPicker.Margin = new Thickness(10, 10, 10, 10);
+            // Set to columns
+            Grid.SetColumn(downloadPathLabel, 0);
+            Grid.SetColumn(tempDownloadPathLabel, 0);
+            Grid.SetColumn(downloadPathTB, 1);
+            Grid.SetColumn(downloadPathPicker, 2);
+            // Add childrens to grid
+            grid1.Children.Add(downloadPathLabel);
+            grid1.Children.Add(downloadPathTB);
+            grid1.Children.Add(downloadPathPicker);
+            row1.Children.Add(grid1);
+            dockPanels.Add(row1);
+            dockPanels.Add(row2);
+            return dockPanels;
+        }
+
+        public void PathPicker_Click(object sender, RoutedEventArgs e)
+        {
+            FolderBrowserDialog folderBroserDialog = new FolderBrowserDialog();
+            folderBroserDialog.Description = "Choose a path";
+
+            // Mostra il selettore di percorsi e verifica se l'utente ha selezionato un percorso valido
+            DialogResult result = folderBroserDialog.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                if (((System.Windows.Controls.Button)sender).Name.Equals("downloadPathPicker"))
+                {
+                    downloadPathTB.Text = folderBroserDialog.SelectedPath;
+                }
+            }
         }
 
         public void saveSettings()
         {
-            throw new NotImplementedException();
+            Dictionary<string, string> settings = new Dictionary<string, string>();
+            settings.Add("downloadPath", downloadPathTB.Text);
+            JsonSettings jsonSettings = new JsonSettings("Configs", _configFileName, settings);
+            jsonSettings.saveToJson();
         }
     }
 }

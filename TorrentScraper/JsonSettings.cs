@@ -17,7 +17,8 @@ namespace SimpleThingsProvider
         public JsonSettings(string where, string fileName, Dictionary<string, string> pairs)
         {
             directory = where;
-            file = fileName;
+            file = fileName.Replace(".json", string.Empty);
+            file = file + ".json";
             settings = pairs;
         }
         public void saveToJson()

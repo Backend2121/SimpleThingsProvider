@@ -305,6 +305,7 @@ namespace SimpleThingsProvider
                     OpenInBrowserButton.IsEnabled = true;
                     foreach (IExtension ex in IextensionsList)
                     {
+                        Debug.WriteLine(OutputLabel.Content);
                         ex.enableButton(OutputLabel);
                     }
                 }
@@ -398,6 +399,10 @@ namespace SimpleThingsProvider
         public ComboBox getWebsiteSource()
         {
             return WebsiteSource;
+        }
+        public List<IExtension> getExtensions()
+        {
+            return IextensionsList;
         }
         public ListView getResultsList()
         {

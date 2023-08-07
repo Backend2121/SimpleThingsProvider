@@ -169,8 +169,15 @@ namespace VideoDownloaderExtension
             template.stopButton.Click += StopButton_Click;
             var ytdl = new YoutubeDL();
             // set the path of yt-dlp and FFmpeg if they're not in PATH or current directory
-            //await Utils.DownloadYtDlp();
-            //await Utils.DownloadFFmpeg();
+            // Chech if YtDl and FFmpeg are in the CWD
+            if (!File.Exists("yt-dlp.exe"))
+            {
+                await Utils.DownloadYtDlp();
+            }
+            if (!File.Exists("ffmpeg.exe"))
+            {
+                await Utils.DownloadFFmpeg();
+            }
             ytdl.YoutubeDLPath = "yt-dlp.exe";
             ytdl.FFmpegPath = "ffmpeg.exe";
             // TODO set a different download folder

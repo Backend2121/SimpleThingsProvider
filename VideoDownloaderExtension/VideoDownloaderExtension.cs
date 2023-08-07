@@ -16,11 +16,12 @@ namespace SimpleThingsProvider
 {
     partial class VideoDownloaderExtension : IExtension
     {
-        public string name { get { return "Youtube Video Downloader"; } set { } }
+        public string name { get { return "Video Downloader"; } set { } }
         public Window extensionWindow { get; set; }
         private Window dw;
         private System.Windows.Controls.TextBox downloadPathTB;
         private System.Windows.Controls.TextBox tempDownloadPathTB;
+        private string _configFileName = "VD_Config";
         public VideoDownloaderExtension()
         {
             extensionWindow = new VideoDownloaderWindow();
@@ -67,7 +68,7 @@ namespace SimpleThingsProvider
         public List<DockPanel> getSettings()
         {
             Dictionary<string, string> settings = new Dictionary<string, string>();
-            JsonSettings jsonSettings = new JsonSettings("Configs", "VDW_Config.json", settings);
+            JsonSettings jsonSettings = new JsonSettings("Configs", _configFileName, settings);
             settings = jsonSettings.loadFromJson();
             List<DockPanel> dockPanels = new List<DockPanel>();
             DockPanel row1 = new DockPanel();
@@ -173,7 +174,7 @@ namespace SimpleThingsProvider
             Dictionary<string, string> settings = new Dictionary<string, string>();
             settings.Add("downloadPath", downloadPathTB.Text);
             settings.Add("tempDownloadPath", tempDownloadPathTB.Text);
-            JsonSettings jsonSettings = new JsonSettings("Configs", "VDW_Config.json", settings);
+            JsonSettings jsonSettings = new JsonSettings("Configs", _configFileName, settings);
             jsonSettings.saveToJson();
         }
     }

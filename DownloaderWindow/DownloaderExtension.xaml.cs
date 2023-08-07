@@ -139,6 +139,8 @@ namespace DownloaderExtension
     {
         private int _downloadNumber = 0;
         private Regex _extensionExpression = new("(\\.)(jpg|JPG|gif|GIF|doc|DOC|pdf|PDF|zip|ZIP|rar|RAR|7z|7Z)$");
+        private Dictionary<string, string> _settings = new Dictionary<string, string>();
+        private string _configFileName = "Downloader_Config";
         public List<string> formats;
 
         private ProgressBar _progress;
@@ -191,8 +193,23 @@ namespace DownloaderExtension
                 // If match is found
                 if (match.Success)
                 {
+                    JsonSettings jsonSettings = new JsonSettings("Configs", _configFileName, _settings);
+                    _settings = jsonSettings.loadFromJson();
                     bool isPaused = false;
-                    Stream file = File.Open("C:\\Users\\alexi\\Desktop\\" + FilePathUtils.GetValidFilePath(name) + match.Value, FileMode.OpenOrCreate);
+                    Stream file;
+                    try
+                    {
+                        if (_settings["downloadPath"].Equals(""))
+                        {
+                            file = File.Open(FilePathUtils.GetValidFilePath(name) + match.Value, FileMode.OpenOrCreate);
+                        }
+                        file = File.Open(_settings["downloadPath"] + "\\" + FilePathUtils.GetValidFilePath(name) + match.Value, FileMode.OpenOrCreate);
+                    }
+                    catch (KeyNotFoundException e)
+                    {
+                        file = File.Open(FilePathUtils.GetValidFilePath(name) + match.Value, FileMode.OpenOrCreate);
+                    }
+
                     Stream response = await HttpClientSingleton.client.GetStreamAsync(url);
                     CancellationTokenSource cancellationToken = new CancellationTokenSource();
                     IsPaused p = new IsPaused(false);
