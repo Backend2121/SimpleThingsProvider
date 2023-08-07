@@ -39,7 +39,9 @@ namespace SimpleThingsProvider
                 {
                     try
                     {
-                        results.Add(new Result() { Title = game.Attributes["title"].Value });
+                        var title = game.Attributes["title"].Value;
+                        title = title.Replace("&#038;", "&");
+                        results.Add(new Result() { Title = title });
                         _underlying.Add(game.Attributes["href"].Value);
                     }
                     catch { continue; }

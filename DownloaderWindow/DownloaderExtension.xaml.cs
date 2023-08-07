@@ -62,22 +62,18 @@ namespace DownloaderExtension
             ColumnDefinition columnDefinition3 = new ColumnDefinition();
             ColumnDefinition columnDefinition4 = new ColumnDefinition();
             ColumnDefinition columnDefinition5 = new ColumnDefinition();
-            ColumnDefinition columnDefinition6 = new ColumnDefinition();
             columnDefinition1.Width = new GridLength(200, GridUnitType.Star);
-            columnDefinition2.Width = new GridLength(50, GridUnitType.Star);
-            columnDefinition3.Width = new GridLength(50, GridUnitType.Star);
-            columnDefinition4.Width = new GridLength(300, GridUnitType.Star);
+            columnDefinition2.Width = new GridLength(100, GridUnitType.Star);
+            columnDefinition3.Width = new GridLength(300, GridUnitType.Star);
+            columnDefinition4.Width = new GridLength(50, GridUnitType.Star);
             columnDefinition5.Width = new GridLength(50, GridUnitType.Star);
-            columnDefinition6.Width = new GridLength(50, GridUnitType.Star);
             grid.ColumnDefinitions.Add(columnDefinition1);
             grid.ColumnDefinitions.Add(columnDefinition2);
             grid.ColumnDefinitions.Add(columnDefinition3);
             grid.ColumnDefinitions.Add(columnDefinition4);
             grid.ColumnDefinitions.Add(columnDefinition5);
-            grid.ColumnDefinitions.Add(columnDefinition6);
             // The 3 labels
             Label titleLabel = new Label();
-            Label ETALabel = new Label();
             Label percentageLabel = new Label();
             Label urlLabel = new Label();
             titleLabel.Content = t;
@@ -85,7 +81,6 @@ namespace DownloaderExtension
             urlLabel.Content = u;
             urlLabel.Name = "urlLabel" + i.ToString();
             urlLabel.Visibility = Visibility.Collapsed;
-            ETALabel.Content = "NULL";
             percentageLabel.Content = "%";
             // Progress bar
             ProgressBar progressBar = new ProgressBar();
@@ -96,14 +91,12 @@ namespace DownloaderExtension
             pauseButton.Content = "P";
             Grid.SetColumn(titleLabel, 0);
             Grid.SetColumn(urlLabel, 0);
-            Grid.SetColumn(ETALabel, 1);
-            Grid.SetColumn(percentageLabel, 2);
-            Grid.SetColumn(progressBar, 3);
-            Grid.SetColumn(pauseButton, 4);
-            Grid.SetColumn(stopButton, 5);
+            Grid.SetColumn(percentageLabel, 1);
+            Grid.SetColumn(progressBar, 2);
+            Grid.SetColumn(pauseButton, 3);
+            Grid.SetColumn(stopButton, 4);
             // Setting the margins
             titleLabel.Margin = new Thickness(0, 0, 10, 0);
-            ETALabel.Margin = new Thickness(10, 0, 10, 0);
             percentageLabel.Margin = new Thickness(10, 0, 10, 0);
             progressBar.Margin = new Thickness(10, 5, 10, 5);
             stopButton.Margin = new Thickness(10, 0, 10, 0);
@@ -112,7 +105,6 @@ namespace DownloaderExtension
             // Appending everything to the grid
             grid.Children.Add(titleLabel);
             grid.Children.Add(urlLabel);
-            grid.Children.Add(ETALabel);
             grid.Children.Add(percentageLabel);
             grid.Children.Add(progressBar);
             grid.Children.Add(pauseButton);
@@ -173,19 +165,19 @@ namespace DownloaderExtension
                 name = ((Label)col[0]).Content.ToString();
                 url = ((Label)col[1]).Content.ToString();
                 // Give a name to the percentage label
-                Label percentageLabel = (Label)col[3];
+                Label percentageLabel = (Label)col[2];
                 percentageLabel.Name = "PercentageLabel_" + _downloadNumber.ToString();
                 // Pause/Resume button: name and function
-                Button pauseBtn = (Button)col[5];
+                Button pauseBtn = (Button)col[4];
                 pauseBtn.Name = "PauseButton_" + _downloadNumber.ToString();
                 pauseBtn.Click += PauseButton_Click;
                 // Stop button: name and function
-                Button stopBtn = (Button)col[6];
+                Button stopBtn = (Button)col[5];
                 stopBtn.Name = "DownloadButton_" + _downloadNumber.ToString();
                 stopBtn.Click += StopButton_Click;
 
-                _progress = (ProgressBar)col[4];
-                _percentage = (Label)col[3];
+                _progress = (ProgressBar)col[3];
+                _percentage = (Label)col[2];
                 // Find a match in the regex expression
                 Match match = _extensionExpression.Match(url);
                 Debug.WriteLine(match.Success);
