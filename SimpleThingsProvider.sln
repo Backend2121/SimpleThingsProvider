@@ -30,6 +30,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoDownloaderExtension", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DownloaderExtension", "DownloaderExtension\DownloaderExtension.csproj", "{5337E41B-DA20-4C23-AAEB-2788B1B33189}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeatureProviderExtension", "FeaturesProviderExtension\FeatureProviderExtension.csproj", "{51F85090-810B-4BB8-AC4C-7870F49FC4F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -184,6 +186,18 @@ Global
 		{5337E41B-DA20-4C23-AAEB-2788B1B33189}.Release|x64.Build.0 = Release|Any CPU
 		{5337E41B-DA20-4C23-AAEB-2788B1B33189}.Release|x86.ActiveCfg = Release|Any CPU
 		{5337E41B-DA20-4C23-AAEB-2788B1B33189}.Release|x86.Build.0 = Release|Any CPU
+		{51F85090-810B-4BB8-AC4C-7870F49FC4F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51F85090-810B-4BB8-AC4C-7870F49FC4F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51F85090-810B-4BB8-AC4C-7870F49FC4F7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{51F85090-810B-4BB8-AC4C-7870F49FC4F7}.Debug|x64.Build.0 = Debug|Any CPU
+		{51F85090-810B-4BB8-AC4C-7870F49FC4F7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{51F85090-810B-4BB8-AC4C-7870F49FC4F7}.Debug|x86.Build.0 = Debug|Any CPU
+		{51F85090-810B-4BB8-AC4C-7870F49FC4F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51F85090-810B-4BB8-AC4C-7870F49FC4F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51F85090-810B-4BB8-AC4C-7870F49FC4F7}.Release|x64.ActiveCfg = Release|Any CPU
+		{51F85090-810B-4BB8-AC4C-7870F49FC4F7}.Release|x64.Build.0 = Release|Any CPU
+		{51F85090-810B-4BB8-AC4C-7870F49FC4F7}.Release|x86.ActiveCfg = Release|Any CPU
+		{51F85090-810B-4BB8-AC4C-7870F49FC4F7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
