@@ -169,19 +169,29 @@ namespace VideoDownloaderExtension
             template.stopButton.Click += StopButton_Click;
             var ytdl = new YoutubeDL();
             // set the path of yt-dlp and FFmpeg if they're not in PATH or current directory
-            // Chech if YtDl and FFmpeg are in the CWD
+            // Check if YtDl and FFmpeg are in the CWD
             if (!File.Exists("yt-dlp.exe"))
             {
-                await Utils.DownloadYtDlp();
+                MessageBoxResult choice = AlertClass.Alert("You are missing a necessary component: Yt-Dlp.exe \n Would you like to download it?", "VD_Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (choice == MessageBoxResult.Yes)
+                {
+                    await Utils.DownloadYtDlp();
+                    AlertClass.Alert("Done", "VD_Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
             if (!File.Exists("ffmpeg.exe"))
             {
-                await Utils.DownloadFFmpeg();
+                MessageBoxResult choice = AlertClass.Alert("You are missing a necessary component: ffmpeg.exe \n Would you like to download it?", "VD_Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (choice == MessageBoxResult.Yes)
+                {
+                    await Utils.DownloadFFmpeg();
+                    AlertClass.Alert("Done", "VD_Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
             ytdl.YoutubeDLPath = "yt-dlp.exe";
             ytdl.FFmpegPath = "ffmpeg.exe";
-            // TODO set a different download folder
             var currentFormat = "best";
+
             if (FormatMenu.SelectedValue != null)
             {
                 currentFormat = formats[FormatMenu.SelectedValue.ToString()];
@@ -213,11 +223,6 @@ namespace VideoDownloaderExtension
             {
                 template.progressBar.Value = 0;
                 template.percentageTB.Text = "Stopped";
-                // Delete temporary files umm no
-                /*foreach (string file in Directory.GetFiles(settings["tempDownloadPath"]))
-                {
-                    File.Delete(file);
-                }*/
             }
             template.stopButton.IsEnabled = false;
         }
