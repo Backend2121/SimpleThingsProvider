@@ -123,9 +123,10 @@ namespace SimpleThingsProvider
                     IExtension e = (IExtension)Activator.CreateInstance(dllType, new Object[] { });
                     IextensionsList.Add(e);
                     addUIElements(e);
-                    ExtensionsMenu.Items.Add(e.name);
+                    ExtensionsMenu.Items.Add(e.Name);
                     e.disableButton(OutputLabel);
-                }   
+                    e.checkUpdate();
+                }
             }
         }
         private void addUIElements(IExtension extension)
@@ -152,7 +153,7 @@ namespace SimpleThingsProvider
             }
             else
             {
-                Logger.Log("No button provided by " + extension.name, "Main");
+                Logger.Log("No button provided by " + extension.Name, "Main");
             }
         }
         private void checkUpdate()
@@ -357,7 +358,7 @@ namespace SimpleThingsProvider
         {
             foreach (IExtension extension in IextensionsList)
             {
-                if (extension.name == "Downloader")
+                if (extension.Name == "Downloader")
                 {
                     var w = extension.getExtensionWindow();
                     w.Show();
@@ -420,7 +421,7 @@ namespace SimpleThingsProvider
                 // Iterate through extensions list and find the selected one, then open it's corresponding window
                 foreach (IExtension ex in IextensionsList)
                 {
-                    if (ex.name.Equals(ExtensionsMenu.SelectedItem))
+                    if (ex.Name.Equals(ExtensionsMenu.SelectedItem))
                     {
                         ex.showWindow();
                     }
@@ -431,7 +432,7 @@ namespace SimpleThingsProvider
         {
             foreach (IExtension ex in IextensionsList)
             {
-                if (ex.name.Equals(ExtensionsMenu.SelectedItem))
+                if (ex.Name.Equals(ExtensionsMenu.SelectedItem))
                 {
                     ex.showWindow();
                 }

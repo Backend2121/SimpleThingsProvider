@@ -115,8 +115,8 @@ namespace SimpleThingsProvider
             code = web.StatusCode;
             return code;
         }
-        public async void checkUpdate()
-        {
+       public async void checkUpdate()
+       {
             string repoURL = "https://raw.githubusercontent.com/Backend2121/SimpleThingsProvider/Development/ElAmigosModule/Info.json";
             HttpClient client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, repoURL);
@@ -124,16 +124,18 @@ namespace SimpleThingsProvider
             HttpResponseMessage response = await client.SendAsync(requestMessage);
             string content = await response.Content.ReadAsStringAsync();
             int start = content.IndexOf(": \"");
-            Debug.WriteLine("Start: " + start);
             int end = content.IndexOf('"', start + 3);
-            Debug.WriteLine("End: " + end);
             string version = content.Substring(start + 3, end - start - 3);
-            Debug.WriteLine(version);
-            Debug.WriteLine(ModuleVersion);
             if (!version.Equals(ModuleVersion))
             {
-                AlertClass.Alert("An update for " + Name + " is available, open the GitHub page?", Name, MessageBoxButton.YesNo, MessageBoxImage.Information);
+                MessageBoxResult r = AlertClass.Alert("An update for " + Name + " is available, open the GitHub page?", Name, MessageBoxButton.YesNo, MessageBoxImage.Information);
+                if (r == MessageBoxResult.Yes)
+                {
+                    var process = new System.Diagnostics.ProcessStartInfo() { UseShellExecute = true, FileName = "https://github.com/Backend2121/SimpleThingsProvider/releases/latest" };
+                    System.Diagnostics.Process.Start(process);
+                    Logger.Log($"Newer version for {Name}: {version} found!", Name + " Updater");
+                }
             }
-        }
+       }
     }
 }

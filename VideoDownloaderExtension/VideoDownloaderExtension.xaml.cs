@@ -19,6 +19,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using YoutubeDLSharp;
+using YoutubeDLSharp.Metadata;
 using YoutubeDLSharp.Options;
 
 namespace VideoDownloaderExtension
@@ -123,6 +124,8 @@ namespace VideoDownloaderExtension
     /// </summary>
     public partial class VideoDownloaderWindow : Window
     {
+        private YoutubeDL _ytdl = new YoutubeDL();
+        private RunResult<YoutubeDLSharp.Metadata.VideoData> runResult;
         private int downloadNumber = 0;
         private List<Pair> pairs = new List<Pair>();
         private Dictionary<string, string> formats = new Dictionary<string, string>();
@@ -133,9 +136,6 @@ namespace VideoDownloaderExtension
         public VideoDownloaderWindow()
         {
             InitializeComponent();
-            formats.Add("Best audio+video", "best");
-            formats.Add("Best video", "bestvideo");
-            formats.Add("Best audio", "bestaudio");
             FormatMenu.ItemsSource = formats;
             foreach (string key in formats.Keys)
             {
@@ -159,72 +159,102 @@ namespace VideoDownloaderExtension
         }
         private async void DownloadButtonClick(object sender, RoutedEventArgs e)
         {
-            JsonSettings jsonSettings = new JsonSettings("Configs", "VDW_Config.json", settings);
-            settings = jsonSettings.loadFromJson();
-            // Add new download bar to the listview
-            downloadNumber++;
-            DownloaderTemplate template = new DownloaderTemplate(downloadNumber, LinkBox.Text, "Title");
-            sp.Children.Add(template.e);
-            // Add click event to stop button
-            template.stopButton.Click += StopButton_Click;
-            var ytdl = new YoutubeDL();
-            // set the path of yt-dlp and FFmpeg if they're not in PATH or current directory
-            // Check if YtDl and FFmpeg are in the CWD
-            if (!File.Exists("yt-dlp.exe"))
+            if (runResult.Data != null)
             {
-                MessageBoxResult choice = AlertClass.Alert("You are missing a necessary component: Yt-Dlp.exe \n Would you like to download it?", "VD_Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (choice == MessageBoxResult.Yes)
-                {
-                    await Utils.DownloadYtDlp();
-                    AlertClass.Alert("Done", "VD_Info", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-            }
-            if (!File.Exists("ffmpeg.exe"))
-            {
-                MessageBoxResult choice = AlertClass.Alert("You are missing a necessary component: ffmpeg.exe \n Would you like to download it?", "VD_Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (choice == MessageBoxResult.Yes)
-                {
-                    await Utils.DownloadFFmpeg();
-                    AlertClass.Alert("Done", "VD_Info", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-            }
-            ytdl.YoutubeDLPath = "yt-dlp.exe";
-            ytdl.FFmpegPath = "ffmpeg.exe";
-            var currentFormat = "best";
+                // Specify the format immediatly
+                var currentFormat = "best";
 
-            if (FormatMenu.SelectedValue != null)
-            {
-                currentFormat = formats[FormatMenu.SelectedValue.ToString()];
-            }
-            var options = new OptionSet()
-            {
-                NoContinue = true,
-                RestrictFilenames = true,
-                Format = currentFormat,
-            };
-            options.AddCustomOption<string>("-P", settings["downloadPath"]);
-            options.AddCustomOption<string>("-P", "temp:" + settings["tempDownloadPath"]);
-            // --paths temp:name_of_tmp_dir
-            // Progress handler with a callback that updates a progress bar
-            Progress<DownloadProgress> progress = new Progress<DownloadProgress>(p => template.progressBar.Value = p.Progress * 100);
-            var res = await ytdl.RunVideoDataFetch(LinkBox.Text);
-            template.titleLabel.Content = res.Data.Title + " [" + currentFormat + "]";
-            options.AddCustomOption<string>("-o", res.Data.Title + "_" + currentFormat + ".%(ext)s");
-            // Cancellation token source used for cancelling the download
-            CancellationTokenSource cts = new CancellationTokenSource();
-            pairs.Add(new Pair("stopButton" + downloadNumber.ToString(), cts));
-            template.progressBar.Value = 0;
-            try
-            {
-                await ytdl.RunVideoDownload(LinkBox.Text, progress: progress, ct: cts.Token, overrideOptions: options);
-                template.progressBar.Value = 100;
-            }
-            catch (TaskCanceledException ex)
-            {
+                if (FormatMenu.SelectedValue != null)
+                {
+                    currentFormat = formats[FormatMenu.SelectedValue.ToString()];
+                }
+                JsonSettings jsonSettings = new JsonSettings("Configs", "VDW_Config.json", settings);
+                settings = jsonSettings.loadFromJson();
+                // Add new download bar to the listview
+                downloadNumber++;
+                DownloaderTemplate template = new DownloaderTemplate(downloadNumber, LinkBox.Text, "Title");
+                sp.Children.Add(template.e);
+                // Add click event to stop button
+                template.stopButton.Click += StopButton_Click;
+                // set the path of yt-dlp and FFmpeg if they're not in PATH or current directory
+                // Check if YtDl and FFmpeg are in the CWD
+                // Always needed
+                if (!File.Exists("yt-dlp.exe"))
+                {
+                    MessageBoxResult choice = AlertClass.Alert("You are missing a necessary component: Yt-Dlp.exe \n Would you like to download it?", "VD_Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    if (choice == MessageBoxResult.Yes)
+                    {
+                        await Utils.DownloadYtDlp();
+                        AlertClass.Alert("Done", "VD_Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+                // Needed only for reconversions and post-processing operations
+                if (currentFormat == "aac" || currentFormat == "alac" || currentFormat == "flac" || currentFormat == "m4a" || currentFormat == "mp3" || currentFormat == "opus" || currentFormat == "vorbis" || currentFormat == "wav")
+                {
+                    if (!File.Exists("ffmpeg.exe"))
+                    {
+                        MessageBoxResult choice = AlertClass.Alert("You are missing a necessary component: ffmpeg.exe \n Would you like to download it?", "VD_Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                        if (choice == MessageBoxResult.Yes)
+                        {
+                            await Utils.DownloadFFmpeg();
+                            AlertClass.Alert("Done", "VD_Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                    }
+                    if (!File.Exists("ffprobe.exe"))
+                    {
+                        MessageBoxResult choice = AlertClass.Alert("You are missing a necessary component: ffprobe.exe \n Would you like to download it?", "VD_Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                        if (choice == MessageBoxResult.Yes)
+                        {
+                            await Utils.DownloadFFprobe();
+                            AlertClass.Alert("Done", "VD_Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                    }
+                }
+                _ytdl.YoutubeDLPath = "yt-dlp.exe";
+                _ytdl.FFmpegPath = "ffmpeg.exe";
+
+                var options = new OptionSet()
+                {
+                    NoContinue = true,
+                    RestrictFilenames = true,
+                    Format = currentFormat,
+                };
+                options.AddCustomOption<string>("-P", settings["downloadPath"]);
+                options.AddCustomOption<string>("-P", "temp:" + settings["tempDownloadPath"]);
+                // --paths temp:name_of_tmp_dir
+                // Progress handler with a callback that updates a progress bar
+                Progress<DownloadProgress> progress = new Progress<DownloadProgress>(p => template.progressBar.Value = p.Progress * 100);
+                template.titleLabel.Content = runResult.Data.Title + " [" + currentFormat + "]";
+                options.AddCustomOption<string>("-o", runResult.Data.Title + "_" + currentFormat + ".%(ext)s");
+                // Cancellation token source used for cancelling the download
+                CancellationTokenSource cts = new CancellationTokenSource();
+                pairs.Add(new Pair("stopButton" + downloadNumber.ToString(), cts));
                 template.progressBar.Value = 0;
-                template.percentageTB.Text = "Stopped";
+                try
+                {
+                    if (currentFormat == "aac" || currentFormat == "alac" || currentFormat == "flac" || currentFormat == "m4a" || currentFormat == "mp3" || currentFormat == "opus" || currentFormat == "vorbis" || currentFormat == "wav")
+                    {
+                        Debug.WriteLine("Conversion to " + currentFormat + " needed");
+                        options.Format = "best";
+                        // Here we need to run the conversion option
+                        options.ExtractAudio = true;
+                        options.AudioFormat = AudioConversionFormat.Mp3;
+                    }
+                    RunResult<string> r = await _ytdl.RunVideoDownload(LinkBox.Text, progress: progress, ct: cts.Token, overrideOptions: options);
+                    foreach (string error in r.ErrorOutput)
+                    {
+                        Debug.WriteLine(error);
+                    }
+                    
+                    template.progressBar.Value = 100;
+                }
+                catch (TaskCanceledException ex)
+                {
+                    template.progressBar.Value = 0;
+                    template.percentageTB.Text = "Stopped";
+                }
+                template.stopButton.IsEnabled = false;
             }
-            template.stopButton.IsEnabled = false;
         }
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
@@ -235,6 +265,35 @@ namespace VideoDownloaderExtension
                     pair._cancellationTokenSource.Cancel();
                 }
             }
+        }
+
+        private async void LinkBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // Do this only if the textbox contains something that resemples a link using REGEX
+            runResult = await _ytdl.RunVideoDataFetch(LinkBox.Text);
+            formats.Clear();
+            if (runResult.Data != null)
+            {
+                foreach (FormatData item in runResult.Data.Formats)
+                {
+                    formats.Add(item.Format, item.FormatId);
+                }
+                formats.Add("Best Audio+Video", "best");
+                formats.Add("Best Video", "bestvideo");
+                formats.Add("Best Audio", "bestaudio");
+                formats.Add("Worst Audio+Video", "worst");
+                formats.Add("Worst Video", "worstvideo");
+                formats.Add("Worst Audio", "worstaudio");
+                formats.Add("Convert to 'aac'", "aac");
+                formats.Add("Convert to 'alac'", "alac");
+                formats.Add("Convert to 'flac'", "flac");
+                formats.Add("Convert to 'm4a'", "m4a");
+                formats.Add("Convert to 'mp3'", "mp3");
+                formats.Add("Convert to 'opus'", "opus");
+                formats.Add("Convert to 'vorbis'", "vorbis");
+                formats.Add("Convert to 'wav'", "wav");
+            }
+            FormatMenu.ItemsSource = formats.Keys;
         }
     }
 }

@@ -11,12 +11,15 @@ using VideoDownloaderExtension;
 using System.Windows.Forms;
 using Label = System.Windows.Controls.Label;
 using System.Security;
+using System.Net.Http.Headers;
+using System.Net.Http;
 
 namespace SimpleThingsProvider
 {
     partial class VideoDownloaderExtension : IExtension
     {
-        public string name { get { return "Video Downloader"; } set { } }
+        public string Name { get { return "Video Downloader"; } set { } }
+        public string ExtensionVersion { get { return "1.0.0"; } set { } }
         public Window extensionWindow { get; set; }
         private Window dw;
         private System.Windows.Controls.TextBox downloadPathTB;
@@ -27,23 +30,19 @@ namespace SimpleThingsProvider
             extensionWindow = new VideoDownloaderWindow();
             dw = (VideoDownloaderWindow)extensionWindow;
         }
-
         public void disableButton(Label outputLabel)
         {
             return;
         }
-
         public void enableButton(Label putLabel)
         {
             return;
         }
-
         public List<UIElement> getElements(System.Windows.Controls.ListView lv, Label ol)
         { 
             List<UIElement> list = new List<UIElement>();
             return list;
         }
-
         public Window getExtensionWindow()
         {
             if (dw == null)
@@ -52,19 +51,16 @@ namespace SimpleThingsProvider
             }
             return dw;
         }
-
         public void showWindow()
         {
             // Show the downloader window
             dw.Show();
             dw.Focus();
         }
-
         public bool startFunction(object[] args)
         {
             throw new NotImplementedException();
         }
-
         public List<DockPanel> getSettings()
         {
             Dictionary<string, string> settings = new Dictionary<string, string>();
@@ -147,7 +143,6 @@ namespace SimpleThingsProvider
             dockPanels.Add(row2);
             return dockPanels;
         }
-
         private void PathPicker_Click(object sender, RoutedEventArgs e)
         {
             FolderBrowserDialog folderBroserDialog = new FolderBrowserDialog();
@@ -168,7 +163,6 @@ namespace SimpleThingsProvider
                 }
             }
         }
-
         public void saveSettings()
         {
             Dictionary<string, string> settings = new Dictionary<string, string>();
@@ -176,6 +170,28 @@ namespace SimpleThingsProvider
             settings.Add("tempDownloadPath", tempDownloadPathTB.Text);
             JsonSettings jsonSettings = new JsonSettings("Configs", _configFileName, settings);
             jsonSettings.saveToJson();
+        }
+        public async void checkUpdate()
+        {
+            string repoURL = "https://raw.githubusercontent.com/Backend2121/SimpleThingsProvider/Development/VideoDownloaderExtension/Info.json";
+            HttpClient client = new HttpClient();
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, repoURL);
+            requestMessage.Headers.UserAgent.Add(new ProductInfoHeaderValue("User-Agent", "SimpleThingsProvider"));
+            HttpResponseMessage response = await client.SendAsync(requestMessage);
+            string content = await response.Content.ReadAsStringAsync();
+            int start = content.IndexOf(": \"");
+            int end = content.IndexOf('"', start + 3);
+            string version = content.Substring(start + 3, end - start - 3);
+            if (!version.Equals(ExtensionVersion))
+            {
+                MessageBoxResult r = AlertClass.Alert("An update for " + Name + " is available, open the GitHub page?", Name, MessageBoxButton.YesNo, MessageBoxImage.Information);
+                if (r == MessageBoxResult.Yes)
+                {
+                    var process = new System.Diagnostics.ProcessStartInfo() { UseShellExecute = true, FileName = "https://github.com/Backend2121/SimpleThingsProvider/releases/latest" };
+                    System.Diagnostics.Process.Start(process);
+                    Logger.Log($"Newer version for {Name}: {version} found!", Name + " Updater");
+                }
+            }
         }
     }
 }

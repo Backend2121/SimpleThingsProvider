@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http;
 using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -12,12 +14,14 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace SimpleThingsProvider
 {
     internal class DownloaderExtension : IExtension
     {
-        public string name { get { return "Downloader"; } set { } }
+        public string Name { get { return "Downloader"; } set { } }
+        public string ExtensionVersion { get { return "1.0.0"; } set { } }
         private Regex _extensionExpression = new("(\\.)(jpg|JPG|gif|GIF|doc|DOC|pdf|PDF|zip|ZIP|rar|RAR|7z|7Z)$");
         private string _configFileName = "Downloader_Config";
         private System.Windows.Controls.TextBox downloadPathTB;
@@ -208,6 +212,29 @@ namespace SimpleThingsProvider
             settings.Add("downloadPath", downloadPathTB.Text);
             JsonSettings jsonSettings = new JsonSettings("Configs", _configFileName, settings);
             jsonSettings.saveToJson();
+        }
+
+        public async void checkUpdate()
+        {
+            string repoURL = "https://raw.githubusercontent.com/Backend2121/SimpleThingsProvider/Development/DownloaderExtension/Info.json";
+            HttpClient client = new HttpClient();
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, repoURL);
+            requestMessage.Headers.UserAgent.Add(new ProductInfoHeaderValue("User-Agent", "SimpleThingsProvider"));
+            HttpResponseMessage response = await client.SendAsync(requestMessage);
+            string content = await response.Content.ReadAsStringAsync();
+            int start = content.IndexOf(": \"");
+            int end = content.IndexOf('"', start + 3);
+            string version = content.Substring(start + 3, end - start - 3);
+            if (!version.Equals(ExtensionVersion))
+            {
+                MessageBoxResult r = AlertClass.Alert("An update for " + Name + " is available, open the GitHub page?", Name, MessageBoxButton.YesNo, MessageBoxImage.Information);
+                if (r == MessageBoxResult.Yes)
+                {
+                    var process = new System.Diagnostics.ProcessStartInfo() { UseShellExecute = true, FileName = "https://github.com/Backend2121/SimpleThingsProvider/releases/latest" };
+                    System.Diagnostics.Process.Start(process);
+                    Logger.Log($"Newer version for {Name}: {version} found!", Name + " Updater");
+                }
+            }
         }
     }
 }

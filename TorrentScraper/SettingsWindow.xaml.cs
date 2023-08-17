@@ -35,7 +35,7 @@ namespace SimpleThingsProvider
             Logger.Log("Initialized Proxy Window", "Proxy");
             foreach (IExtension extension in extensions)
             {
-                ExtensionsListView.Items.Add(extension.name);
+                ExtensionsListView.Items.Add(extension.Name);
                 // Get all extension's settings
             }
             getSettings();
@@ -134,7 +134,7 @@ namespace SimpleThingsProvider
             // Load new grid got from the extension getSettings function
             foreach (IExtension extension in extensions)
             {
-                if (extension.name.Equals(ExtensionsListView.SelectedItem))
+                if (extension.Name.Equals(ExtensionsListView.SelectedItem))
                 {
                     List<DockPanel> docks = extension.getSettings();
                     SettingsGridSP.Children.Clear();

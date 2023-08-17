@@ -8,7 +8,8 @@ using System.Windows.Controls;
 
 public interface IExtension
 {
-    string name { get; set; }
+    string Name { get; set; }
+    string ExtensionVersion { get; set; }
     public Window extensionWindow { get; set; }
     public Window getExtensionWindow();
     public bool startFunction(object[] args);
@@ -18,4 +19,5 @@ public interface IExtension
     public void enableButton(Label outputLabel);
     public void disableButton(Label outputLabel);
     public void saveSettings();
+    public void checkUpdate();
 }
