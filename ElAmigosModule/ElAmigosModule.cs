@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using System.Diagnostics;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -117,6 +118,17 @@ namespace SimpleThingsProvider
 
             code = web.StatusCode;
             return code;
+        }
+
+        public async void checkUpdate()
+        {
+            string repoURL = "https://raw.githubusercontent.com/Backend2121/SimpleThingsProvider/Development/ElAmigosModule/Info.json";
+            HttpClient client = new HttpClient();
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, repoURL);
+            requestMessage.Headers.UserAgent.Add(new ProductInfoHeaderValue("User-Agent:", "SimpleThingsProvider"));
+            HttpResponseMessage response = await client.SendAsync(requestMessage);
+            string content = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine(content);
         }
     }
 }

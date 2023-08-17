@@ -17,4 +17,5 @@ public interface IModule
     public string getLink(string gameURL);
     public HttpStatusCode search(string toSearch);
     public void buildListView(GridView view);
+    public void checkUpdate();
 }
