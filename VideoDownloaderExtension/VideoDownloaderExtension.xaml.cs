@@ -232,13 +232,36 @@ namespace VideoDownloaderExtension
                 template.progressBar.Value = 0;
                 try
                 {
-                    if (currentFormat == "aac" || currentFormat == "alac" || currentFormat == "flac" || currentFormat == "m4a" || currentFormat == "mp3" || currentFormat == "opus" || currentFormat == "vorbis" || currentFormat == "wav")
+                    if (currentFormat == "aac" || currentFormat == "flac" || currentFormat == "m4a" || currentFormat == "mp3" || currentFormat == "opus" || currentFormat == "vorbis" || currentFormat == "wav")
                     {
                         Debug.WriteLine("Conversion to " + currentFormat + " needed");
                         options.Format = "best";
                         // Here we need to run the conversion option
                         options.ExtractAudio = true;
-                        options.AudioFormat = AudioConversionFormat.Mp3;
+                        switch (currentFormat)
+                        {
+                            case "aac":
+                                options.AudioFormat = AudioConversionFormat.Aac;
+                                break;
+                            case "flac":
+                                options.AudioFormat = AudioConversionFormat.Flac;
+                                break;
+                            case "m4a":
+                                options.AudioFormat = AudioConversionFormat.M4a;
+                                break;
+                            case "mp3":
+                                options.AudioFormat = AudioConversionFormat.Mp3;
+                                break;
+                            case "opus":
+                                options.AudioFormat = AudioConversionFormat.Opus;
+                                break;
+                            case "vorbis":
+                                options.AudioFormat = AudioConversionFormat.Vorbis;
+                                break;
+                            case "wav":
+                                options.AudioFormat = AudioConversionFormat.Wav;
+                                break;
+                        }
                     }
                     RunResult<string> r = await _ytdl.RunVideoDownload(LinkBox.Text, progress: progress, ct: cts.Token, overrideOptions: options);
                     foreach (string error in r.ErrorOutput)
@@ -285,7 +308,6 @@ namespace VideoDownloaderExtension
                 formats.Add("Worst Video", "worstvideo");
                 formats.Add("Worst Audio", "worstaudio");
                 formats.Add("Convert to 'aac'", "aac");
-                formats.Add("Convert to 'alac'", "alac");
                 formats.Add("Convert to 'flac'", "flac");
                 formats.Add("Convert to 'm4a'", "m4a");
                 formats.Add("Convert to 'mp3'", "mp3");
