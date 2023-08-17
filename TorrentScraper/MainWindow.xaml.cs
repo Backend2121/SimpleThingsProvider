@@ -111,6 +111,7 @@ namespace SimpleThingsProvider
                 IModule m = (IModule)Activator.CreateInstance(dllType, new Object[] { });
                 ImodulesList.Add(m);
                 WebsiteSource.Items.Add(m.Name);
+                m.checkUpdate();
             }
             string[] extensions = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\Extensions\\");
             foreach (string extension in extensions)

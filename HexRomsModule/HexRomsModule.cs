@@ -1,7 +1,10 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -11,6 +14,7 @@ namespace SimpleThingsProvider
     internal class HexRomsModule : IModule
     {
         public string Name { get { return "HexRom"; } set { } }
+        public string ModuleVersion { get { return "1.0.0"; } set { } }
         public HtmlDocument Doc { get; set; }
         private List<string> _underlying;
         public bool needsSubSelector { get { return false; } }
@@ -130,6 +134,26 @@ namespace SimpleThingsProvider
 
             code = web.StatusCode;
             return code;
+        }
+        public async void checkUpdate()
+        {
+            string repoURL = "https://raw.githubusercontent.com/Backend2121/SimpleThingsProvider/Development/ElAmigosModule/Info.json";
+            HttpClient client = new HttpClient();
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, repoURL);
+            requestMessage.Headers.UserAgent.Add(new ProductInfoHeaderValue("User-Agent", "SimpleThingsProvider"));
+            HttpResponseMessage response = await client.SendAsync(requestMessage);
+            string content = await response.Content.ReadAsStringAsync();
+            int start = content.IndexOf(": \"");
+            Debug.WriteLine("Start: " + start);
+            int end = content.IndexOf('"', start + 3);
+            Debug.WriteLine("End: " + end);
+            string version = content.Substring(start + 3, end - start - 3);
+            Debug.WriteLine(version);
+            Debug.WriteLine(ModuleVersion);
+            if (!version.Equals(ModuleVersion))
+            {
+                AlertClass.Alert("An update for " + Name + " is available, open the GitHub page?", Name, MessageBoxButton.YesNo, MessageBoxImage.Information);
+            }
         }
     }
 }

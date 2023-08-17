@@ -9,6 +9,7 @@ using System.Windows.Controls;
 public interface IModule
 {
     string Name { get; set; }
+    string ModuleVersion { get; set; }
     public HtmlDocument Doc { get; set; }
     public bool needsSubSelector { get; }
     public LinksWindow linksWindow { get; }

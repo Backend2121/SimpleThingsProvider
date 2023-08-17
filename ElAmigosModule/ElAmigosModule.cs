@@ -11,6 +11,7 @@ namespace SimpleThingsProvider
     public class ElAmigosModule : IModule
     {
         public string Name { get { return "ElAmigos"; } set { } }
+        public string ModuleVersion { get { return "1.0.0"; } set { } }
         public HtmlDocument Doc { get; set; }
         private List<string> _underlying;
         public bool needsSubSelector { get { return false; } }
@@ -125,10 +126,20 @@ namespace SimpleThingsProvider
             string repoURL = "https://raw.githubusercontent.com/Backend2121/SimpleThingsProvider/Development/ElAmigosModule/Info.json";
             HttpClient client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, repoURL);
-            requestMessage.Headers.UserAgent.Add(new ProductInfoHeaderValue("User-Agent:", "SimpleThingsProvider"));
+            requestMessage.Headers.UserAgent.Add(new ProductInfoHeaderValue("User-Agent", "SimpleThingsProvider"));
             HttpResponseMessage response = await client.SendAsync(requestMessage);
             string content = await response.Content.ReadAsStringAsync();
-            Debug.WriteLine(content);
+            int start = content.IndexOf(": \"");
+            Debug.WriteLine("Start: " + start);
+            int end = content.IndexOf('"', start + 3);
+            Debug.WriteLine("End: " + end);
+            string version = content.Substring(start + 3, end - start - 3);
+            Debug.WriteLine(version);
+            Debug.WriteLine(ModuleVersion);
+            if (!version.Equals(ModuleVersion))
+            {
+                AlertClass.Alert("An update for " + Name + " is available, open the GitHub page?", Name, MessageBoxButton.YesNo, MessageBoxImage.Information);
+            }
         }
     }
 }

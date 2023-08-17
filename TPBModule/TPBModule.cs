@@ -5,12 +5,16 @@ using System.Windows.Controls;
 using System.Windows;
 using System.Net;
 using System.Windows.Data;
+using System.Diagnostics;
+using System.Net.Http.Headers;
+using System.Net.Http;
 
 namespace SimpleThingsProvider
 {
     class TPBModule : IModule
     {
         public string Name { get { return "ThePirateBay"; } set { } }
+        public string ModuleVersion { get { return "1.0.0"; } set { } }
         private List<string> _underlying;
         public HtmlDocument Doc { get; set; }
         public bool needsSubSelector { get { return false; } }
@@ -160,6 +164,25 @@ namespace SimpleThingsProvider
             return _underlying[index];
         }
         public string getLink(string gameURL) { return null; }
-
+        public async void checkUpdate()
+        {
+            string repoURL = "https://raw.githubusercontent.com/Backend2121/SimpleThingsProvider/Development/ElAmigosModule/Info.json";
+            HttpClient client = new HttpClient();
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, repoURL);
+            requestMessage.Headers.UserAgent.Add(new ProductInfoHeaderValue("User-Agent", "SimpleThingsProvider"));
+            HttpResponseMessage response = await client.SendAsync(requestMessage);
+            string content = await response.Content.ReadAsStringAsync();
+            int start = content.IndexOf(": \"");
+            Debug.WriteLine("Start: " + start);
+            int end = content.IndexOf('"', start + 3);
+            Debug.WriteLine("End: " + end);
+            string version = content.Substring(start + 3, end - start - 3);
+            Debug.WriteLine(version);
+            Debug.WriteLine(ModuleVersion);
+            if (!version.Equals(ModuleVersion))
+            {
+                AlertClass.Alert("An update for " + Name + " is available, open the GitHub page?", Name, MessageBoxButton.YesNo, MessageBoxImage.Information);
+            }
+        }
     }
 }
