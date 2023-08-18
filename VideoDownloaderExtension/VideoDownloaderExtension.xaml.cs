@@ -151,6 +151,7 @@ namespace VideoDownloaderExtension
             }
             downloadPath = settings["downloadPath"];
             tempDownloadPath = settings["tempDownloadPath"];
+
         }
         private void Window_Closing(object sender, CancelEventArgs e)
         {
@@ -178,16 +179,6 @@ namespace VideoDownloaderExtension
                 template.stopButton.Click += StopButton_Click;
                 // set the path of yt-dlp and FFmpeg if they're not in PATH or current directory
                 // Check if YtDl and FFmpeg are in the CWD
-                // Always needed
-                if (!File.Exists("yt-dlp.exe"))
-                {
-                    MessageBoxResult choice = AlertClass.Alert("You are missing a necessary component: Yt-Dlp.exe \n Would you like to download it?", "VD_Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                    if (choice == MessageBoxResult.Yes)
-                    {
-                        await Utils.DownloadYtDlp();
-                        AlertClass.Alert("Done", "VD_Info", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
-                }
                 // Needed only for reconversions and post-processing operations
                 if (currentFormat == "aac" || currentFormat == "alac" || currentFormat == "flac" || currentFormat == "m4a" || currentFormat == "mp3" || currentFormat == "opus" || currentFormat == "vorbis" || currentFormat == "wav")
                 {
@@ -196,7 +187,10 @@ namespace VideoDownloaderExtension
                         MessageBoxResult choice = AlertClass.Alert("You are missing a necessary component: ffmpeg.exe \n Would you like to download it?", "VD_Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                         if (choice == MessageBoxResult.Yes)
                         {
+                            var msg = new AlertClass.CustomMessageBox("VD_Info", "Downloading...");
+                            msg.Show();
                             await Utils.DownloadFFmpeg();
+                            msg.Close();
                             AlertClass.Alert("Done", "VD_Info", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
                     }
@@ -205,7 +199,10 @@ namespace VideoDownloaderExtension
                         MessageBoxResult choice = AlertClass.Alert("You are missing a necessary component: ffprobe.exe \n Would you like to download it?", "VD_Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                         if (choice == MessageBoxResult.Yes)
                         {
+                            var msg = new AlertClass.CustomMessageBox("VD_Info", "Downloading...");
+                            msg.Show();
                             await Utils.DownloadFFprobe();
+                            msg.Close();
                             AlertClass.Alert("Done", "VD_Info", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
                     }
@@ -292,6 +289,19 @@ namespace VideoDownloaderExtension
 
         private async void LinkBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            // Always needed
+            if (!File.Exists("yt-dlp.exe"))
+            {
+                MessageBoxResult choice = AlertClass.Alert("You are missing a necessary component: Yt-Dlp.exe \n Would you like to download it?", "VD_Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (choice == MessageBoxResult.Yes)
+                {
+                    var msg = new AlertClass.CustomMessageBox("VD_Info", "Downloading...");
+                    msg.Show();
+                    await Utils.DownloadYtDlp();
+                    msg.Close();
+                    AlertClass.Alert("Done", "VD_Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
             // Do this only if the textbox contains something that resemples a link using REGEX
             runResult = await _ytdl.RunVideoDataFetch(LinkBox.Text);
             formats.Clear();
