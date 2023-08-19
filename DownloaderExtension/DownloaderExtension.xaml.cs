@@ -87,8 +87,10 @@ namespace DownloaderExtension
             // Pause/Resume and Stop buttons
             Button stopButton = new Button();
             Button pauseButton = new Button();
-            stopButton.Content = "S";
-            pauseButton.Content = "P";
+            stopButton.Content = "Stop";
+            stopButton.FontSize = 10;
+            pauseButton.Content = "Pause";
+            pauseButton.FontSize = 10;
             Grid.SetColumn(titleLabel, 0);
             Grid.SetColumn(urlLabel, 0);
             Grid.SetColumn(percentageLabel, 1);
@@ -101,7 +103,9 @@ namespace DownloaderExtension
             progressBar.Margin = new Thickness(10, 5, 10, 5);
             stopButton.Margin = new Thickness(10, 0, 10, 0);
             grid.Margin = new Thickness(0, 0, 0, 10);
+
             grid.ShowGridLines = true;
+
             // Appending everything to the grid
             grid.Children.Add(titleLabel);
             grid.Children.Add(urlLabel);
@@ -116,10 +120,21 @@ namespace DownloaderExtension
     {
         private ProgressBar progressBar;
         private Label percentageLabel;
+        private float _max = -1;
         public void Report(float value)
         {
-            progressBar.Value = MathF.Round(value, 1);
-            percentageLabel.Content = MathF.Round(value, 1) + "%";
+            if (_max > value)
+            {
+                // Stopped
+                progressBar.Value = 0;
+                percentageLabel.Content = "Stopped";
+            }
+            else
+            {
+                _max = value;
+                progressBar.Value = MathF.Round(value, 1);
+                percentageLabel.Content = MathF.Round(value, 1) + "%";
+            }
         }
         public Progress(ProgressBar pb, Label pl) 
         {
@@ -141,6 +156,38 @@ namespace DownloaderExtension
         public DownloaderWindow()
         {
             InitializeComponent();
+            // Add "header" grid containing infos about the columns
+            DockPanel headers = new DockPanel();
+
+            // Grid definitions
+            Grid grid = new Grid();
+            ColumnDefinition columnDefinition1 = new ColumnDefinition();
+            ColumnDefinition columnDefinition2 = new ColumnDefinition();
+            ColumnDefinition columnDefinition3 = new ColumnDefinition();
+            ColumnDefinition columnDefinition4 = new ColumnDefinition();
+            ColumnDefinition columnDefinition5 = new ColumnDefinition();
+            columnDefinition1.Width = new GridLength(200, GridUnitType.Star);
+            columnDefinition2.Width = new GridLength(100, GridUnitType.Star);
+            columnDefinition3.Width = new GridLength(300, GridUnitType.Star);
+            columnDefinition4.Width = new GridLength(50, GridUnitType.Star);
+            columnDefinition5.Width = new GridLength(50, GridUnitType.Star);
+            grid.ColumnDefinitions.Add(columnDefinition1);
+            grid.ColumnDefinitions.Add(columnDefinition2);
+            grid.ColumnDefinitions.Add(columnDefinition3);
+            grid.ColumnDefinitions.Add(columnDefinition4);
+            grid.ColumnDefinitions.Add(columnDefinition5);
+            Label titleLabel = new Label();
+            titleLabel.Content = "Title";
+            Label percentageLabel = new Label();
+            percentageLabel.Content = "Percentage";
+            Grid.SetColumn(titleLabel, 0);
+            Grid.SetColumn(percentageLabel, 1);
+            percentageLabel.VerticalAlignment = VerticalAlignment.Center;
+
+            grid.Children.Add(titleLabel);
+            grid.Children.Add(percentageLabel);
+            headers.Children.Add(grid);
+            sp.Children.Add(headers);
         }
         public void addDownload(string title, string url)
         {
@@ -207,6 +254,8 @@ namespace DownloaderExtension
                     IsPaused p = new IsPaused(false);
                     cancellationTokens.Add(new HttpClientPair(cancellationToken, stopBtn, pauseBtn, p, percentageLabel));
                     await HttpClientSingleton.DownloadAsync(HttpClientSingleton.client, url, file, new Progress(_progress, _percentage), cancellationToken.Token, p);
+                    stopBtn.IsEnabled = false;
+                    pauseBtn.IsEnabled = false;
                 }
             }
         }
@@ -224,11 +273,6 @@ namespace DownloaderExtension
                     pair.cancellation.Cancel();
                     cancellationTokens.Remove(pair);
                     Thread.Sleep(200);
-                    if (pair.percentageLabel.Content.ToString().Contains("0%"))
-                    {
-                        pair.percentageLabel.Content = "Aborted";
-                    }
-                    pair.pauseButton.IsEnabled = false;                    
                     break;
                 }
             }
@@ -244,14 +288,14 @@ namespace DownloaderExtension
                         pair.isPaused.pause = false;
                         Thread.Sleep(200);
                         pair.percentageLabel.Content = "Resuming";
-                        ((Button)sender).Content = "P";
+                        ((Button)sender).Content = "Pause";
                     }
                     else
                     {
                         pair.isPaused.pause = true;
                         Thread.Sleep(200);
                         pair.percentageLabel.Content = "Paused";
-                        ((Button)sender).Content = "R";
+                        ((Button)sender).Content = "Resume";
                     }
                 }
             }

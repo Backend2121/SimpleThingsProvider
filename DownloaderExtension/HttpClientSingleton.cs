@@ -47,7 +47,6 @@ namespace SimpleThingsProvider
                     {
                         progress.Report(100);
                     }
-                    
                     destination.Close();
                 }
             }

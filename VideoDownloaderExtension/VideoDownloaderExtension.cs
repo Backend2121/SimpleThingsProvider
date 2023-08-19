@@ -166,8 +166,13 @@ namespace SimpleThingsProvider
         public void saveSettings()
         {
             Dictionary<string, string> settings = new Dictionary<string, string>();
-            settings.Add("downloadPath", downloadPathTB.Text);
-            settings.Add("tempDownloadPath", tempDownloadPathTB.Text);
+            try
+            {
+                settings.Add("downloadPath", downloadPathTB.Text);
+                settings.Add("tempDownloadPath", tempDownloadPathTB.Text);
+            }
+            catch(NullReferenceException e) { }
+            
             JsonSettings jsonSettings = new JsonSettings("Configs", _configFileName, settings);
             jsonSettings.saveToJson();
         }

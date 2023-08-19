@@ -307,7 +307,6 @@ namespace SimpleThingsProvider
                     OpenInBrowserButton.IsEnabled = true;
                     foreach (IExtension ex in IextensionsList)
                     {
-                        Debug.WriteLine(OutputLabel.Content);
                         ex.enableButton(OutputLabel);
                     }
                 }
@@ -354,7 +353,7 @@ namespace SimpleThingsProvider
             settingsWindow.Show();
             settingsWindow.Focus();
         }
-        private void OpenDownloader(object sender, RoutedEventArgs e)
+        /*private void OpenDownloader(object sender, RoutedEventArgs e)
         {
             foreach (IExtension extension in IextensionsList)
             {
@@ -367,7 +366,7 @@ namespace SimpleThingsProvider
                     extension.startFunction(args);
                 }
             }
-        }
+        }*/
         private void SaveSelected(object sender, RoutedEventArgs e)
         {
             // Enables subselector for the next time it changes
@@ -424,6 +423,10 @@ namespace SimpleThingsProvider
                     if (ex.Name.Equals(ExtensionsMenu.SelectedItem))
                     {
                         ex.showWindow();
+                        if (Settings.Default.SyncWithWindows) { ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncWithAppMode; }
+                        else { ThemeManager.Current.ChangeTheme(ex.extensionWindow, Settings.Default.MainTheme + "." + Settings.Default.SubTheme); }
+
+                        ThemeManager.Current.SyncTheme();
                     }
                 }
             }

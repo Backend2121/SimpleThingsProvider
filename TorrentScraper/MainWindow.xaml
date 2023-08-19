@@ -26,10 +26,7 @@
     <mah:MetroWindow.LeftWindowCommands>
         <mah:WindowCommands>
             <Button Click="OpenWebsiteStatus" Content="Websites Status"/>
-            <Button x:Name="DownloaderMenuButton" Click="OpenDownloader" Content="Downloader" Visibility="Collapsed"/>
-            <mah:SplitButton x:Name="ExtensionsMenu" SelectionChanged="ExtensionsMenu_SelectionChanged" Click="ExtensionsMenu_Click" SelectedIndex="0">
-                
-            </mah:SplitButton>
+            <mah:SplitButton x:Name="ExtensionsMenu" SelectionChanged="ExtensionsMenu_SelectionChanged" Click="ExtensionsMenu_Click" SelectedIndex="0"></mah:SplitButton>
         </mah:WindowCommands>
     </mah:MetroWindow.LeftWindowCommands>
     <mah:MetroWindow.Resources>
@@ -43,7 +40,6 @@
     <mah:MetroWindow.CommandBindings>
         <CommandBinding Command="{StaticResource Search}" Executed="Search"/>
         <CommandBinding Command="{StaticResource WebsiteStatus}" Executed="OpenWebsiteStatus"/>
-        <CommandBinding Command="{StaticResource Downloader}" Executed="OpenDownloader"/>
         <CommandBinding Command="{StaticResource About}" Executed="OpenAboutWindow"/>
         <CommandBinding Command="{StaticResource Settings}" Executed="OpenSettingsWindow"/>
         <CommandBinding Command="{StaticResource Help}" Executed="OpenHelpWindow"/>

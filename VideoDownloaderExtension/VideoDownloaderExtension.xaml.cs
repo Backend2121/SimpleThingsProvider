@@ -68,6 +68,28 @@ namespace VideoDownloaderExtension
             // The 3 labels
             titleLabel = new Label();
             percentageTB = new TextBlock();
+            SolidColorBrush color;
+            if (Settings.Default.SyncWithWindows)
+            {
+                if (SimpleThingsProvider.Utils.IsLightTheme())
+                {
+                    color = new SolidColorBrush(Colors.Black);
+                }
+                else
+                {
+                    color = new SolidColorBrush(Colors.White);
+                }
+            }
+            else if (Settings.Default.MainTheme == "Light")
+            {
+                color = new SolidColorBrush(Colors.Black);
+            }
+            else
+            {
+                color = new SolidColorBrush(Colors.White);
+            }
+
+            percentageTB.Foreground = color;
             Label urlLabel = new Label();
             titleLabel.Content = t;
             titleLabel.Name = "titleLabel" + i.ToString();
@@ -79,22 +101,23 @@ namespace VideoDownloaderExtension
             progressBar.Name = "progressBar" + i.ToString();
             // Stop button
             stopButton = new Button();
-            stopButton.Content = "S";
+            stopButton.Content = "Stop";
             stopButton.Name = "stopButton" + i.ToString();
 
             // Set the elements to the grid
             Grid.SetColumn(titleLabel, 0);
             Grid.SetColumn(urlLabel, 0);
             Grid.SetColumn(percentageTB, 1);
+            Grid.SetColumnSpan(percentageTB, 2);
             Grid.SetColumn(progressBar, 3);
             Grid.SetColumn(stopButton, 4);
+            Grid.SetColumnSpan(stopButton, 2);
             // Setting the margins
             titleLabel.Margin = new Thickness(0, 0, 10, 0);
             percentageTB.Margin = new Thickness(10, 0, 10, 0);
             progressBar.Margin = new Thickness(10, 5, 10, 5);
             stopButton.Margin = new Thickness(10, 0, 10, 0);
             grid.Margin = new Thickness(0, 0, 0, 10);
-            grid.ShowGridLines = true;
             // Appending everything to the grid
             grid.Children.Add(titleLabel);
             grid.Children.Add(urlLabel);
@@ -107,8 +130,6 @@ namespace VideoDownloaderExtension
             percentageTB.TextAlignment = TextAlignment.Center;
             percentageTB.VerticalAlignment = VerticalAlignment.Center;
 
-            // Imposta il colore del testo su bianco
-            percentageTB.Foreground = Brushes.White;
             // Set Up percentage label's binding
             Binding binding = new Binding();
             binding.Path = new PropertyPath("Value");
@@ -152,6 +173,43 @@ namespace VideoDownloaderExtension
             downloadPath = settings["downloadPath"];
             tempDownloadPath = settings["tempDownloadPath"];
 
+            // Add "header" grid containing infos about the columns
+            DockPanel headers = new DockPanel();
+
+            // Grid definitions
+            Grid grid = new Grid();
+            ColumnDefinition columnDefinition1 = new ColumnDefinition();
+            ColumnDefinition columnDefinition2 = new ColumnDefinition();
+            ColumnDefinition columnDefinition3 = new ColumnDefinition();
+            ColumnDefinition columnDefinition4 = new ColumnDefinition();
+            ColumnDefinition columnDefinition5 = new ColumnDefinition();
+            ColumnDefinition columnDefinition6 = new ColumnDefinition();
+            columnDefinition1.Width = new GridLength(200, GridUnitType.Star);
+            columnDefinition2.Width = new GridLength(50, GridUnitType.Star);
+            columnDefinition3.Width = new GridLength(50, GridUnitType.Star);
+            columnDefinition4.Width = new GridLength(300, GridUnitType.Star);
+            columnDefinition5.Width = new GridLength(50, GridUnitType.Star);
+            columnDefinition6.Width = new GridLength(50, GridUnitType.Star);
+            grid.ColumnDefinitions.Add(columnDefinition1);
+            grid.ColumnDefinitions.Add(columnDefinition2);
+            grid.ColumnDefinitions.Add(columnDefinition3);
+            grid.ColumnDefinitions.Add(columnDefinition4);
+            grid.ColumnDefinitions.Add(columnDefinition5);
+            grid.ColumnDefinitions.Add(columnDefinition6);
+            Label titleLabel = new Label();
+            titleLabel.Content = "Title";
+            Label percentageLabel = new Label();
+            percentageLabel.Content = "Percentage";
+            Grid.SetColumn(titleLabel, 0);
+            Grid.SetColumn(percentageLabel, 1);
+            Grid.SetColumnSpan(percentageLabel, 2);
+            percentageLabel.VerticalAlignment = VerticalAlignment.Center;
+            percentageLabel.HorizontalContentAlignment = HorizontalAlignment.Center;
+
+            grid.Children.Add(titleLabel);
+            grid.Children.Add(percentageLabel);
+            headers.Children.Add(grid);
+            sp.Children.Add(headers);
         }
         private void Window_Closing(object sender, CancelEventArgs e)
         {
@@ -160,7 +218,7 @@ namespace VideoDownloaderExtension
         }
         private async void DownloadButtonClick(object sender, RoutedEventArgs e)
         {
-            if (runResult.Data != null)
+            if (runResult != null)
             {
                 // Specify the format immediatly
                 var currentFormat = "best";
@@ -189,7 +247,7 @@ namespace VideoDownloaderExtension
                         {
                             var msg = new AlertClass.CustomMessageBox("VD_Info", "Downloading...");
                             msg.Show();
-                            await Utils.DownloadFFmpeg();
+                            await YoutubeDLSharp.Utils.DownloadFFmpeg();
                             msg.Close();
                             AlertClass.Alert("Done", "VD_Info", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
@@ -201,7 +259,7 @@ namespace VideoDownloaderExtension
                         {
                             var msg = new AlertClass.CustomMessageBox("VD_Info", "Downloading...");
                             msg.Show();
-                            await Utils.DownloadFFprobe();
+                            await YoutubeDLSharp.Utils.DownloadFFprobe();
                             msg.Close();
                             AlertClass.Alert("Done", "VD_Info", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
@@ -297,7 +355,7 @@ namespace VideoDownloaderExtension
                 {
                     var msg = new AlertClass.CustomMessageBox("VD_Info", "Downloading...");
                     msg.Show();
-                    await Utils.DownloadYtDlp();
+                    await YoutubeDLSharp.Utils.DownloadYtDlp();
                     msg.Close();
                     AlertClass.Alert("Done", "VD_Info", MessageBoxButton.OK, MessageBoxImage.Information);
                 }

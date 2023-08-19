@@ -31,7 +31,18 @@ namespace SimpleThingsProvider
                 WindowStyle = WindowStyle.ToolWindow;
                 ResizeMode = ResizeMode.NoResize;
                 SolidColorBrush color;
-                if (Settings.Default.MainTheme == "Light")
+                if (Settings.Default.SyncWithWindows)
+                {
+                    if (SimpleThingsProvider.Utils.IsLightTheme())
+                    {
+                        color = new SolidColorBrush(Colors.Black);
+                    }
+                    else
+                    {
+                        color = new SolidColorBrush(Colors.White);
+                    }
+                }
+                else if (Settings.Default.MainTheme == "Light")
                 {
                     color = new SolidColorBrush(Colors.Black);
                 }
