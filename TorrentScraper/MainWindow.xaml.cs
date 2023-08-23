@@ -101,8 +101,18 @@ namespace SimpleThingsProvider
         {
             Assembly dll;
             Type dllType;
+            string[] modules;
             // Load all dlls found inside the "Modules" folder
-            string[] modules = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\Modules\\");
+            try
+            {
+                modules = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\Modules\\");
+            }
+            catch(DirectoryNotFoundException e)
+            {
+                Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\Modules");
+            }
+            modules = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\Modules\\");
+
             WebsiteSource.Items.Clear();
             foreach (string module in modules)
             {
@@ -113,7 +123,16 @@ namespace SimpleThingsProvider
                 WebsiteSource.Items.Add(m.Name);
                 m.checkUpdate();
             }
-            string[] extensions = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\Extensions\\");
+            string[] extensions;
+            try
+            {
+                extensions = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\Extensions\\");
+            }
+            catch (DirectoryNotFoundException e)
+            {
+                Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\Extensions");
+            }
+            extensions = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\Extensions\\");
             foreach (string extension in extensions)
             {
                 if (extension.Contains("Extension.dll"))
@@ -353,20 +372,6 @@ namespace SimpleThingsProvider
             settingsWindow.Show();
             settingsWindow.Focus();
         }
-        /*private void OpenDownloader(object sender, RoutedEventArgs e)
-        {
-            foreach (IExtension extension in IextensionsList)
-            {
-                if (extension.Name == "Downloader")
-                {
-                    var w = extension.getExtensionWindow();
-                    w.Show();
-                    w.Focus();
-                    object[] args = Array.Empty<object>();
-                    extension.startFunction(args);
-                }
-            }
-        }*/
         private void SaveSelected(object sender, RoutedEventArgs e)
         {
             // Enables subselector for the next time it changes
@@ -439,6 +444,22 @@ namespace SimpleThingsProvider
                 {
                     ex.showWindow();
                 }
+            }
+        }
+        private void MainWindow_Closing(object sender, CancelEventArgs e)
+        {
+            // ABSOLUTELY NOT, HERE TEMPORARLY
+            // Probably i need to rewrite something when instantiating the Extensions, since even calling an empty constructor spawns a background process that doesn't go away when the main window gets closed
+            Process[] childs = Process.GetProcessesByName("SimpleThingsProvider");
+
+            foreach (Process process in childs)
+            {
+                try
+                {
+                    // Termina brutalmente il processo figlio
+                    process.Kill();
+                }
+                catch (Exception ex) { }
             }
         }
     }

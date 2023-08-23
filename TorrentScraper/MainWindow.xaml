@@ -14,7 +14,8 @@
                  WindowStartupLocation="CenterScreen"
                  mc:Ignorable="d"
                  ResizeMode="CanMinimize"
-                 SizeToContent="WidthAndHeight">
+                 SizeToContent="WidthAndHeight"
+                 Closing="MainWindow_Closing">
 
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>

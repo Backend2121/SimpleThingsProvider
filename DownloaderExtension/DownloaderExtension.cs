@@ -34,7 +34,7 @@ namespace SimpleThingsProvider
         public DownloaderExtension()
         {
             extensionWindow = new DownloaderWindow();
-            dw = (DownloaderWindow)extensionWindow;
+            //dw = (DownloaderWindow)extensionWindow;
         }
         public Window getExtensionWindow() 
         {
@@ -235,6 +235,7 @@ namespace SimpleThingsProvider
                     Logger.Log($"Newer version for {Name}: {version} found!", Name + " Updater");
                 }
             }
+            return;
         }
     }
 }
