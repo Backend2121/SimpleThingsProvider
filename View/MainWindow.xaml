@@ -1,0 +1,239 @@
+﻿<mah:MetroWindow
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:System="clr-namespace:System;assembly=System.Runtime" x:Class="SimpleThingsProvider.MainWindow"
+                 Title="Simple Things Provider"
+                 Width="800"
+                 Height="600"
+                 MaxWidth="800"
+                 MaxHeight="600"
+                 WindowStartupLocation="CenterScreen"
+                 mc:Ignorable="d"
+                 ResizeMode="CanMinimize"
+                 SizeToContent="WidthAndHeight">
+
+    <mah:MetroWindow.RightWindowCommands>
+        <mah:WindowCommands>
+            <Button Click="OpenAboutWindow" ToolTip="Open up the GitHub site" Content="About"/>
+            <Button Click="OpenSettingsWindow" Content="Settings"/>
+            <Button Click="OpenHelpWindow" Content="FAQ"/>
+        </mah:WindowCommands>
+    </mah:MetroWindow.RightWindowCommands>
+    <mah:MetroWindow.LeftWindowCommands>
+        <mah:WindowCommands>
+            <Button Click="OpenWebsiteStatus" Content="Websites Status"/>
+        </mah:WindowCommands>
+    </mah:MetroWindow.LeftWindowCommands>
+    <mah:MetroWindow.Resources>
+        <RoutedCommand x:Key="Search"/>
+        <RoutedCommand x:Key="WebsiteStatus"/>
+        <RoutedCommand x:Key="About"/>
+        <RoutedCommand x:Key="Settings"/>
+        <RoutedCommand x:Key="Help"/>
+    </mah:MetroWindow.Resources>
+    <mah:MetroWindow.CommandBindings>
+        <CommandBinding Command="{StaticResource Search}" Executed="Search"/>
+        <CommandBinding Command="{StaticResource WebsiteStatus}" Executed="OpenWebsiteStatus"/>
+        <CommandBinding Command="{StaticResource About}" Executed="OpenAboutWindow"/>
+        <CommandBinding Command="{StaticResource Settings}" Executed="OpenSettingsWindow"/>
+        <CommandBinding Command="{StaticResource Help}" Executed="OpenHelpWindow"/>
+    </mah:MetroWindow.CommandBindings>
+    <mah:MetroWindow.InputBindings>
+        <KeyBinding Key="ENTER" Command="{StaticResource Search}"/>
+        <KeyBinding Key="W" Modifiers="Ctrl" Command="{StaticResource WebsiteStatus}"/>
+        <KeyBinding Key="A" Modifiers="Ctrl" Command="{StaticResource About}"/>
+        <KeyBinding Key="P" Modifiers="Ctrl" Command="{StaticResource Settings}"/>
+        <KeyBinding Key="H" Modifiers="Ctrl" Command="{StaticResource Help}"/>
+    </mah:MetroWindow.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="91*"/>
+            <RowDefinition Height="276*"/>
+            <RowDefinition Height="67*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="133*"/>
+            <ColumnDefinition Width="432*"/>
+            <ColumnDefinition Width="133*"/>
+            <ColumnDefinition Width="102*"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="CallButton" Margin="10,10,10,0" VerticalAlignment="Top" Command="{StaticResource Search}" Grid.Column="3" Height="30">
+            <DockPanel>
+                <Image Width="15" Height="15">
+                    <Image.Source>
+                        <BitmapImage UriSource="/data/WebScraping.png"/>
+                    </Image.Source>
+                </Image>
+                <TextBlock Text="Search" Margin="10,0,0,0"/>
+            </DockPanel>
+        </Button>
+        <Label x:Name="StatusCodeLabel" Content="Status Code" Margin="10,50,10,10" FontWeight="Bold" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="SearchTextBox" Margin="10,10,10,0" TextWrapping="Wrap" VerticalAlignment="Top" AutomationProperties.HelpText="Search Bar" ToolTip="Search Bar" HorizontalContentAlignment="Left" RenderTransformOrigin="0.5,0.5" Height="26" Grid.Column="1"/>
+        <ListView x:Name="TorrentResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                    <GridViewColumn Width="Auto" Header="Seeds" DisplayMemberBinding="{Binding Seeds}"/>
+                    <GridViewColumn Width="Auto" Header="Leechs" DisplayMemberBinding="{Binding Leechs}"/>
+                    <GridViewColumn Width="Auto" Header="Time" DisplayMemberBinding="{Binding Time}"/>
+                    <GridViewColumn Width="Auto" Header="Size" DisplayMemberBinding="{Binding Size}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView x:Name="VimmResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                    <GridViewColumn Width="Auto" Header="System" DisplayMemberBinding="{Binding System}"/>
+                    <GridViewColumn Width="Auto" Header="Region" DisplayMemberBinding="{Binding Region}"/>
+                    <GridViewColumn Width="Auto" Header="Version" DisplayMemberBinding="{Binding Version}"/>
+                    <GridViewColumn Width="Auto" Header="Languages" DisplayMemberBinding="{Binding Languages}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView x:Name="FitGirlResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                    <GridViewColumn Width="Auto" Header="Size" DisplayMemberBinding="{Binding OriginalSize}"/>
+                    <GridViewColumn Width="Auto" Header="RepackSize" DisplayMemberBinding="{Binding RepackSize}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView x:Name="WowRomsResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                    <GridViewColumn Width="Auto" Header="Region" DisplayMemberBinding="{Binding Region}"/>
+                    <GridViewColumn Width="Auto" Header="Size" DisplayMemberBinding="{Binding Size}"/>
+                    <GridViewColumn Width="Auto" Header="Downloads" DisplayMemberBinding="{Binding Downloads}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView x:Name="RPGOnlyResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView x:Name="HexRomResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView x:Name="NxBrewResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView x:Name="MangaWorldResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                    <GridViewColumn Width="Auto" Header="Type" DisplayMemberBinding="{Binding Type}"/>
+                    <GridViewColumn Width="Auto" Header="State" DisplayMemberBinding="{Binding State}"/>
+                    <GridViewColumn Width="Auto" Header="Authors" DisplayMemberBinding="{Binding Authors}"/>
+                    <GridViewColumn Width="Auto" Header="Artists" DisplayMemberBinding="{Binding Artists}"/>
+                    <GridViewColumn Width="Auto" Header="Genres" DisplayMemberBinding="{Binding Genres}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView x:Name="MangaFreakResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                    <GridViewColumn Width="Auto" Header="Chapters" DisplayMemberBinding="{Binding Chapters}"/>
+                    <GridViewColumn Width="Auto" Header="Type" DisplayMemberBinding="{Binding Type}"/>
+                    <GridViewColumn Width="Auto" Header="Genres" DisplayMemberBinding="{Binding Genres}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView x:Name="ZipertoResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,19,0,90" Grid.ColumnSpan="4" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="Auto" Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Label x:Name="ResultsNumber" Content="Results: " Margin="10,47,10,20" Grid.Column="3"/>
+        <Label x:Name="OutputLabel" Content="Output" Margin="10,10,10,10" Grid.Row="2" Focusable="True" MaxWidth="600" Grid.ColumnSpan="2"/>
+        <Button x:Name="CopyButton" Grid.Column="3" Content="Copy" Grid.Row="2" FontWeight="Bold" Width="auto" IsEnabled="False" Click="Copy" Margin="0,10,0,0"/>
+        <ComboBox x:Name="WebsiteSource" HorizontalAlignment="Center" Width="120" Grid.Column="2" Height="26" VerticalAlignment="Top" ToolTip="Website Source" IsReadOnly="True" SelectedIndex="-1" SelectionChanged="SaveSelected" Margin="0,10,0,0">
+            <System:String>x1337</System:String>
+            <System:String>ThePirateBay</System:String>
+            <System:String>FitGirl</System:String>
+            <System:String>VimmsLair</System:String>
+            <System:String>NxBrew</System:String>
+            <System:String>RPGOnly</System:String>
+            <System:String>Ziperto</System:String>
+            <System:String>HexRom</System:String>
+            <System:String>WoWRoms</System:String>
+        </ComboBox>
+        <Button x:Name="OpenInBrowserButton" Grid.Column="2" Content="Open In Browser" Margin="0,10,0,0" Grid.Row="2" FontWeight="Bold" IsEnabled="False" Click="OpenInBrowserButton_Click"/>
+        <ComboBox x:Name="WebsiteSubSelector" Grid.Column="2" Margin="0,46,0,0" SelectionChanged="WebsiteSubSelector_SelectionChanged" HorizontalAlignment="Center" MinWidth="120" MaxHeight="20" VerticalAlignment="Top" Height="26" Width="120">
+            <System:String>MAME 0.139u1</System:String>
+            <System:String>Nintendo Gameboy Color</System:String>
+            <System:String>Playstation</System:String>
+            <System:String>Acorn Archimedes</System:String>
+            <System:String>Acorn Electron</System:String>
+            <System:String>Acorn Atom</System:String>
+            <System:String>Amiga</System:String>
+            <System:String>Apple I</System:String>
+            <System:String>Apple II</System:String>
+            <System:String>Apple II GS</System:String>
+            <System:String>Atari 2600</System:String>
+            <System:String>Atari 5200</System:String>
+            <System:String>Atari 7800</System:String>
+            <System:String>Atari 800</System:String>
+            <System:String>Atari Jaguar</System:String>
+            <System:String>Atari Lynx</System:String>
+            <System:String>Atari ST</System:String>
+            <System:String>Acorn BBC Micro</System:String>
+            <System:String>Capcom Play System 1</System:String>
+            <System:String>Capcom Play System 2</System:String>
+            <System:String>Capcom Play System 3</System:String>
+            <System:String>Commodore 64</System:String>
+            <System:String>DOS</System:String>
+            <System:String>Nintendo Famicom Disk System</System:String>
+            <System:String>Future Pinball</System:String>
+            <System:String>Nintendo Gameboy</System:String>
+            <System:String>Nintendo Gameboy Advance</System:String>
+            <System:String>Nintendo 64</System:String>
+            <System:String>PC Engine/TurboGrafx 16</System:String>
+            <System:String>PC Engine CD/Turbo Duo/TurboGrafx CD</System:String>
+            <System:String>Neo Geo Pocket</System:String>
+            <System:String>Neo Geo Pocket Color</System:String>
+            <System:String>Neo Geo</System:String>
+            <System:String>Nintendo DS</System:String>
+            <System:String>Nintendo Entertainment System</System:String>
+            <System:String>Nintendo Virtual Boy</System:String>
+            <System:String>Nokia N Gage</System:String>
+            <System:String>Playstation 2</System:String>
+            <System:String>Playstation Portable</System:String>
+            <System:String>Sega 32x</System:String>
+            <System:String>Sega Genesis/MegaDrive</System:String>
+            <System:String>Sega Master System</System:String>
+            <System:String>Sega SG1000</System:String>
+            <System:String>Sharp X68000</System:String>
+            <System:String>Super Nintendo</System:String>
+            <System:String>Windows 3.x</System:String>
+            <System:String>Bandai Wonderswan</System:String>
+            <System:String>Bandai Wonderswan Color</System:String>
+            <System:String>ZX Spectrum</System:String>
+            <System:String>Sinclair ZX81</System:String>
+            <System:String>MAME</System:String>
+            <System:String>Sega Game Gear</System:String>
+            <System:String>MAME 0.37b5</System:String>
+            <System:String>AMSTRAD CPC</System:String>
+        </ComboBox>
+        <Label Content="SearchBar" Height="26" VerticalAlignment="Top" Margin="10,10,10,0"/>
+    </Grid>
+</mah:MetroWindow>

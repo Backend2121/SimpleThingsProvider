@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="data\Discord.png" />
+    <None Remove="data\Github.png" />
+    <None Remove="data\Icon.ico" />
+    <None Remove="data\Patreon.png" />
+    <None Remove="data\Reddit.png" />
+    <None Remove="data\WebScraping.png" />
+    <None Remove="data\Youtube.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="data\Icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
+    <PackageReference Include="MahApps.Metro" Version="2.4.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IModuleProject\IModuleProject.csproj" />
+    <ProjectReference Include="..\Utils\Utils.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="LinksWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="MainWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="WebsiteStatusWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="data\Discord.png" />
+    <Resource Include="data\Github.png" />
+    <Resource Include="data\Patreon.png" />
+    <Resource Include="data\Reddit.png" />
+    <Resource Include="data\WebScraping.png" />
+    <Resource Include="data\Youtube.png" />
+  </ItemGroup>
+
+</Project>

@@ -24,29 +24,38 @@ using MahApps.Metro.Controls;
 using ControlzEx.Theming;
 using MahApps;
 using System.Runtime.CompilerServices;
+using System.Reflection;
+using System.Reflection.Metadata;
+using ControlzEx.Standard;
+using System.ComponentModel;
+using System.Text.RegularExpressions;
+using Microsoft.VisualBasic.FileIO;
 
 namespace SimpleThingsProvider
 {
     public partial class MainWindow
     {
-        public class Result
-        {
-            public string Title { get; set; }
-            public string Seeds { get; set; }
-            public string Leechs { get; set; }
-            public string Time { get; set; }
-            public string Size { get; set; }
-        }
         List<string> underlying;
-        Websites module = new Websites();
+        public List<IModule> ImodulesList;
+        List<IExtension> IextensionsList;
+        List<Result> results = new();
+        HttpStatusCode code = new HttpStatusCode();
+        GridView grid;
+        IModule module;
         Random r = new Random();
-        string[] motd = {"Hi!", "Hello there!", "Hey!", "Honk!", "Whassup!", "I promise i won't hang", "What do you need?", "Here to help!", "How are you doing?", "Join the Discord!", "Praise the Sun!", "For science, you monster", "It's dangerous to go alone, use me!", "Stupid Shinigami", "Trust me i'm a dolphin!", "...", "Oh, it's you...", "The cake is a lie!", "FBI open up!", "You own the game, right?"};
+        string[] motd = { "Hi!", "Hello there!", "Hey!", "Honk!", "Whassup!", "I promise i won't hang", "What do you need?", "Here to help!", "How are you doing?", "Join the Discord!", "Praise the Sun!", "For science, you monster", "It's dangerous to go alone, use me!", "Stupid Shinigami", "Trust me i'm a dolphin!", "...", "Oh, it's you...", "The cake is a lie!", "FBI open up!", "You own the game, right?" };
+        private bool extensionsMenu_FIX = false;
         public MainWindow()
         {
             InitializeComponent();
+            Logger.Log("Loading modules", "Main");
+            ImodulesList = new List<IModule>();
+            IextensionsList = new List<IExtension>();
+            loadModules();
+            StatusCodeLabel.Foreground = new SolidColorBrush(Colors.DarkGoldenrod);
             if (Settings.Default.SyncWithWindows) { ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncWithAppMode; }
             else { ThemeManager.Current.ChangeTheme(this, Settings.Default.MainTheme + "." + Settings.Default.SubTheme); }
-            
+
             ThemeManager.Current.SyncTheme();
             Application.Current.MainWindow = this;
             this.SizeToContent = SizeToContent.WidthAndHeight;
@@ -59,10 +68,16 @@ namespace SimpleThingsProvider
             Logger.Log($"Loaded settings: {WebsiteSource.SelectedIndex}___{WebsiteSubSelector.SelectedIndex}", "Main");
             try
             {
-                if (WebsiteSource.SelectedItem.ToString() == "WoWRoms") { WebsiteSubSelector.IsEnabled = true; }
-                else { WebsiteSubSelector.IsEnabled = false; }
+                foreach (IModule m in ImodulesList)
+                {
+                    if (m.Name.Equals(WebsiteSource.SelectedItem.ToString()))
+                    {
+                        if (m.needsSubSelector) { WebsiteSubSelector.IsEnabled = true; }
+                        else { WebsiteSubSelector.IsEnabled = false; }
+                    }
+                }
             }
-            catch(Exception ex) { Logger.Log(ex.ToString(), "Main"); }
+            catch (Exception ex) { Logger.Log(ex.ToString(), "Main"); }
             try
             {
                 Logger.Log("Searching for new updates", "Updater");
@@ -83,6 +98,84 @@ namespace SimpleThingsProvider
             PiracyDisclaimer();
             OutputLabel.Content = motd[r.Next(0, motd.Length - 1)];
         }
+        private void loadModules()
+        {
+            Assembly dll;
+            Type dllType;
+            string[] modules;
+            // Load all dlls found inside the "Modules" folder
+            try
+            {
+                modules = Directory.GetFiles(SpecialDirectories.MyDocuments + "\\STP\\Modules\\");
+            }
+            catch(DirectoryNotFoundException e)
+            {
+                Directory.CreateDirectory(SpecialDirectories.MyDocuments + "\\STP\\Modules");
+            }
+            modules = Directory.GetFiles(SpecialDirectories.MyDocuments + "\\STP\\Modules\\");
+
+            WebsiteSource.Items.Clear();
+            foreach (string module in modules)
+            {
+                dll = Assembly.LoadFrom(module);
+                dllType = dll.GetType("SimpleThingsProvider." + module.Substring(module.LastIndexOf("\\") + 1, module.Length - module.LastIndexOf("\\") - 5));
+                IModule m = (IModule)Activator.CreateInstance(dllType, new Object[] { });
+                ImodulesList.Add(m);
+                WebsiteSource.Items.Add(m.Name);
+                m.checkUpdate();
+            }
+            string[] extensions;
+            try
+            {
+                extensions = Directory.GetFiles(SpecialDirectories.MyDocuments + "\\STP\\Extensions\\");
+            }
+            catch (DirectoryNotFoundException e)
+            {
+                Directory.CreateDirectory(SpecialDirectories.MyDocuments + "\\STP\\Extensions");
+            }
+            extensions = Directory.GetFiles(SpecialDirectories.MyDocuments + "\\STP\\Extensions\\");
+            foreach (string extension in extensions)
+            {
+                if (extension.Contains("Extension.dll"))
+                {
+                    dll = Assembly.LoadFrom(extension);
+                    dllType = dll.GetType("SimpleThingsProvider." + extension.Substring(extension.LastIndexOf("\\") + 1, extension.Length - extension.LastIndexOf("\\") - 5));
+                    IExtension e = (IExtension)Activator.CreateInstance(dllType, new Object[] { });
+                    IextensionsList.Add(e);
+                    addUIElements(e);
+                    ExtensionsMenu.Items.Add(e.Name);
+                    e.disableButton(OutputLabel);
+                    e.checkUpdate();
+                }
+            }
+        }
+        private void addUIElements(IExtension extension)
+        {
+            // Check available spaces for the SINGLE button an extension can provide, if any
+            List<UIElement> uIElements = new List<UIElement>();
+            uIElements = extension.getElements(ResultsList, OutputLabel);
+            if (uIElements.Count > 0)
+            {
+                Button eButton = (Button)uIElements[0];
+                int currentColumn = 0;
+                int currentRow = 0;
+                if (eButton != null)
+                {
+                    Grid.SetColumn(eButton, currentColumn++);
+                    Grid.SetRow(eButton, currentRow);
+                    if (currentColumn <= 0)
+                    {
+                        currentColumn = 2;
+                        currentRow++;
+                    }
+                    ButtonGrid.Children.Add(eButton);
+                }
+            }
+            else
+            {
+                Logger.Log("No button provided by " + extension.Name, "Main");
+            }
+        }
         private void checkUpdate()
         {
             string repoURL = "https://raw.githubusercontent.com/Backend2121/SimpleThingsProvider/master/TorrentScraper/Settings.settings";
@@ -90,8 +183,7 @@ namespace SimpleThingsProvider
             WebClient webClient = new WebClient();
             Stream stream = webClient.OpenRead(repoURL);
             StreamReader reader = new StreamReader(stream);
-            String content = reader.ReadToEnd();
-
+            string content = reader.ReadToEnd();
             var start = content.IndexOf("ApplicationVersion");
             var end = content.IndexOf("</Value>", start);
             var start2 = content.IndexOf("(Default)", start);
@@ -112,21 +204,22 @@ namespace SimpleThingsProvider
             // Reset to default
             OpenInBrowserButton.IsEnabled = false;
             CopyButton.IsEnabled = false;
+            foreach (IExtension ex in IextensionsList)
+            {
+                ex.disableButton(OutputLabel);
+            }
             OutputLabel.Content = motd[r.Next(0, motd.Length - 1)];
+            StatusCodeLabel.Content = "Status Code: ";
+            StatusCodeLabel.Foreground = new SolidColorBrush(Colors.DarkGoldenrod);
+            results.Clear();
 
-            // Hide all ResultsLists
-            TorrentResultsList.Visibility = Visibility.Hidden;
-            VimmResultsList.Visibility = Visibility.Hidden;
-            FitGirlResultsList.Visibility = Visibility.Hidden;
-            NxBrewResultsList.Visibility = Visibility.Hidden;
-            ZipertoResultsList.Visibility = Visibility.Hidden;
-            WowRomsResultsList.Visibility = Visibility.Hidden;
-            RPGOnlyResultsList.Visibility = Visibility.Hidden;
-            HexRomResultsList.Visibility = Visibility.Hidden;
-            MangaFreakResultsList.Visibility = Visibility.Hidden;
-            MangaWorldResultsList.Visibility = Visibility.Hidden;
-
-            HttpStatusCode code = module.Search(SearchTextBox.Text, WebsiteSource.SelectedItem.ToString());
+            foreach (IModule m in ImodulesList)
+            {
+                if (m.Name == WebsiteSource.Text)
+                {
+                    module = m;
+                }
+            }
             if (!Settings.Default.NSFWContent)
             {
                 foreach (string s in BannedWords.nsfwWords)
@@ -139,19 +232,63 @@ namespace SimpleThingsProvider
                     }
                 }
             }
-            
-            if (code != HttpStatusCode.OK) { Alert("Received a non 200(OK) response!" + "\n" + code, "STP: Error"); StatusCodeLabel.Content = "Status Code: " + code; StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Red); return; }
-            else
-            {
-                underlying = module.getResults(module.doc, SearchTextBox.Text); StatusCodeLabel.Content = "Status Code: " + code; StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Green);
-            }
+            // Add background check
+            BackgroundWorker statusCodeWorker = new BackgroundWorker();
+            statusCodeWorker.DoWork += Worker_StatusCode;
+            statusCodeWorker.RunWorkerCompleted += Worker_StatusCodeCompleted;
+            statusCodeWorker.RunWorkerAsync(SearchTextBox.Text);
+            // Loading gif
+            //LoadingGif.Visibility = Visibility.Visible;
+        }
+        private void Worker_Search(object? sender, DoWorkEventArgs e)
+        {
+            (results, underlying) = ((IModule)e.Argument).getResults(module.Doc);
+        }
+        private void Worker_SearchCompleted(object? sender, RunWorkerCompletedEventArgs e)
+        {
             if (underlying.Count <= 0)
             {
                 Alert("No results found!", "STP: Warning");
                 ResultsNumber.Content = "Results: 0";
                 return;
             }
-            else{ ResultsNumber.Content = "Results: " + underlying.Count;}
+            else { ResultsNumber.Content = "Results: " + underlying.Count; }
+            getResultsList().View = grid;
+            getResultsList().ItemsSource = results;
+            getResultsList().Visibility = Visibility.Visible;
+            //LoadingGif.Visibility = Visibility.Hidden;
+        }
+        private void Worker_StatusCode(object? sender, DoWorkEventArgs e)
+        {
+            code = module.search(e.Argument.ToString());
+        }
+        private void Worker_StatusCodeCompleted(object? sender, RunWorkerCompletedEventArgs e)
+        {
+            if (code != HttpStatusCode.OK)
+            {
+                //Alert("Received a non 200(OK) response!" + "\n" + code, "STP: Error");
+                StatusCodeLabel.Content = "Status Code: " + code;
+                StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Red);
+                return;
+            }
+            else
+            {
+                foreach (IModule m in ImodulesList)
+                {
+                    if (m.Name.Equals(WebsiteSource.Text))
+                    {
+                        // Start async thread to fetch results
+                        grid = new GridView();
+                        m.buildListView(grid);
+                        BackgroundWorker searchWorker = new BackgroundWorker();
+                        searchWorker.DoWork += Worker_Search;
+                        searchWorker.RunWorkerCompleted += Worker_SearchCompleted;
+                        searchWorker.RunWorkerAsync(m);
+                    }
+                }
+                StatusCodeLabel.Content = "Status Code: " + code;
+                StatusCodeLabel.Foreground = new SolidColorBrush(Colors.Green);
+            }
         }
         public void Alert(string messageBoxText, string caption)
         {
@@ -178,54 +315,34 @@ namespace SimpleThingsProvider
         }
         private void ResultsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            HtmlWeb web = new HtmlWeb();
             try
             {
                 string entry = "";
-                if (TorrentResultsList.Visibility == Visibility.Visible)
+                if (ResultsList.SelectedIndex != null)
                 {
-                    entry = module.getMagnet(TorrentResultsList.SelectedIndex);
+                    entry = module.getLink(ResultsList.SelectedIndex);
+                    Logger.Log($"Entry {entry} has been selected", "Main");
+                    OutputLabel.Content = entry;
+                    CopyButton.IsEnabled = true;
+                    OpenInBrowserButton.IsEnabled = true;
+                    foreach (IExtension ex in IextensionsList)
+                    {
+                        ex.enableButton(OutputLabel);
+                    }
                 }
-                else if (VimmResultsList.Visibility == Visibility.Visible)
-                {
-                    entry = module.getMagnet(VimmResultsList.SelectedIndex);
-                }
-                else if (FitGirlResultsList.Visibility == Visibility.Visible)
-                {
-                    entry = module.getMagnet(FitGirlResultsList.SelectedIndex);
-                }
-                else if (WowRomsResultsList.Visibility == Visibility.Visible)
-                {
-                    entry = module.getMagnet(WowRomsResultsList.SelectedIndex);
-                }
-                else if (RPGOnlyResultsList.Visibility == Visibility.Visible)
-                {
-                    entry = module.getMagnet(RPGOnlyResultsList.SelectedIndex);
-                }
-                else if (HexRomResultsList.Visibility == Visibility.Visible)
-                {
-                    entry = module.getMagnet(HexRomResultsList.SelectedIndex);
-                }
-                else if (NxBrewResultsList.Visibility == Visibility.Visible)
-                {
-                    entry = module.getMagnet(NxBrewResultsList.SelectedIndex);
-                }
-                else if (ZipertoResultsList.Visibility == Visibility.Visible)
-                {
-                    entry = module.getMagnet(ZipertoResultsList.SelectedIndex);
-                }
-                else if (MangaWorldResultsList.Visibility == Visibility.Visible)
-                {
-                    entry = module.getMagnet(MangaWorldResultsList.SelectedIndex);
-                }
-
-                Logger.Log($"Entry {entry} has been selected", "Main");
-                OutputLabel.Content = entry;
-                CopyButton.IsEnabled = true;
-                OpenInBrowserButton.IsEnabled = true;
                 return;
             }
-            catch (ArgumentOutOfRangeException) { CopyButton.IsEnabled = true; OpenInBrowserButton.IsEnabled = false; OutputLabel.Content = "Error "; return; }
+            catch (ArgumentOutOfRangeException)
+            {
+                CopyButton.IsEnabled = true;
+                OpenInBrowserButton.IsEnabled = false;
+                foreach (IExtension ex in IextensionsList)
+                {
+                    ex.disableButton(OutputLabel);
+                }
+                OutputLabel.Content = "Error ";
+                return;
+            }
         }
         private void Copy(object sender, RoutedEventArgs e)
         {
@@ -252,15 +369,22 @@ namespace SimpleThingsProvider
         }
         private void OpenSettingsWindow(object sender, RoutedEventArgs e)
         {
-            SettingsWindow settingsWindow = new SettingsWindow();
+            SettingsWindow settingsWindow = new SettingsWindow(IextensionsList);
             settingsWindow.Show();
             settingsWindow.Focus();
         }
         private void SaveSelected(object sender, RoutedEventArgs e)
         {
+            // Enables subselector for the next time it changes
             Logger.Log("Saving settings", "Main");
-            if (WebsiteSource.SelectedItem.ToString() == "WoWRoms") { WebsiteSubSelector.IsEnabled = true; }
-            else { WebsiteSubSelector.IsEnabled = false; }
+            foreach(IModule m in ImodulesList)
+            {
+                if (m.Name.Equals((sender as ComboBox).SelectedItem.ToString()))
+                {
+                    if (m.needsSubSelector) { WebsiteSubSelector.IsEnabled = true; }
+                    else { WebsiteSubSelector.IsEnabled = false; }
+                }
+            }
             Settings.Default.WebsiteSelected = WebsiteSource.SelectedIndex;
             Settings.Default.Save();
             Logger.Log("Saved settings", "Main");
@@ -278,6 +402,66 @@ namespace SimpleThingsProvider
         {
             Settings.Default.WebsiteSubSelected = WebsiteSubSelector.SelectedIndex;
             Settings.Default.Save();
+        }
+        public ComboBox getWebsiteSource()
+        {
+            return WebsiteSource;
+        }
+        public List<IExtension> getExtensions()
+        {
+            return IextensionsList;
+        }
+        public ListView getResultsList()
+        {
+            return ResultsList;
+        }
+        private void ExtensionsMenu_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!extensionsMenu_FIX)
+            {
+                extensionsMenu_FIX = true;
+            }
+            else
+            {
+                // Iterate through extensions list and find the selected one, then open it's corresponding window
+                foreach (IExtension ex in IextensionsList)
+                {
+                    if (ex.Name.Equals(ExtensionsMenu.SelectedItem))
+                    {
+                        ex.showWindow();
+                        if (Settings.Default.SyncWithWindows) { ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncWithAppMode; }
+                        else { ThemeManager.Current.ChangeTheme(ex.extensionWindow, Settings.Default.MainTheme + "." + Settings.Default.SubTheme); }
+
+                        ThemeManager.Current.SyncTheme();
+                    }
+                }
+            }
+        }
+        public void ExtensionsMenu_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (IExtension ex in IextensionsList)
+            {
+                if (ex.Name.Equals(ExtensionsMenu.SelectedItem))
+                {
+                    ex.showWindow();
+                }
+            }
+        }
+        private void MainWindow_Closing(object sender, CancelEventArgs e)
+        {
+            // ABSOLUTELY NOT, HERE TEMPORARLY
+            // Probably i need to rewrite something when instantiating the Extensions, since even calling an empty constructor spawns a background process that doesn't go away when the main window gets closed
+            Process[] childs = Process.GetProcessesByName("SimpleThingsProvider");
+
+            foreach (Process process in childs)
+            {
+                try
+                {
+                    // Termina brutalmente il processo figlio
+                    process.Kill();
+                }
+                catch (Exception ex) { }
+            }
         }
     }
 }

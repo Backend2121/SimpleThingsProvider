@@ -1,0 +1,30 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VideoDownloaderExtension"
+        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" xmlns:System="clr-namespace:System;assembly=System.Runtime" x:Class="VideoDownloaderExtension.VideoDownloaderWindow"
+        mc:Ignorable="d"
+        Title="Youtube Video Downloader" Height="450" Width="800"
+        Closing="Window_Closing">
+    <Window.Resources>
+        <local:PercentageConverter x:Key="PercentageConverter" />
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="114*"/>
+            <ColumnDefinition Width="573*"/>
+            <ColumnDefinition Width="114*"/>
+        </Grid.ColumnDefinitions>
+        <TextBox x:Name="LinkBox" Margin="10,10,5,0" TextWrapping="Wrap" ToolTip="Youtube Link" Height="26" VerticalAlignment="Top" Grid.Column="1" TextChanged="LinkBox_TextChanged"/>
+        <ComboBox x:Name="FormatMenu" Margin="10,41,5,0" ToolTip="Download format" Height="26" VerticalAlignment="Top" Grid.Column="1"/>
+        <Button x:Name="DownloadButton" Content="Download" Margin="5,10,10,0" VerticalAlignment="Top" Height="57" Grid.Column="2" Click="DownloadButtonClick"/>
+        <StackPanel x:Name="sp" Grid.ColumnSpan="3" Margin="10,72,10,10"/>
+        <Label Content="Link bar" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Width="94" Height="26"/>
+        <Label Content="Format" HorizontalAlignment="Center" Margin="0,41,0,0" VerticalAlignment="Top" Width="94" Height="26"/>
+    </Grid>
+</Window>

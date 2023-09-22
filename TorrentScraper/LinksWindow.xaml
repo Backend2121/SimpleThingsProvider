@@ -17,22 +17,5 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <ListView x:Name="HexRomsLinksList" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionChanged="SelectionChanged" Visibility="Hidden">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Width="Auto" Header="Infos" DisplayMemberBinding="{Binding Infos}"/>
-                    <GridViewColumn Width="Auto" Header="Website Link" DisplayMemberBinding="{Binding Link}"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <ListView x:Name="NxBrewLinksList" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionChanged="SelectionChanged" Visibility="Hidden">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Width="Auto" Header="Infos" DisplayMemberBinding="{Binding Infos}"/>
-                    <GridViewColumn Width="Auto" Header="Website Name" DisplayMemberBinding="{Binding Name}"/>
-                    <GridViewColumn Width="Auto" Header="Website Link" DisplayMemberBinding="{Binding Link}"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
     </Grid>
 </Window>

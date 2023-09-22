@@ -14,6 +14,7 @@
     <None Remove="data\Discord.png" />
     <None Remove="data\Github.png" />
     <None Remove="data\Icon.ico" />
+    <None Remove="data\Loading.gif" />
     <None Remove="data\MahApps.Metro.dll" />
     <None Remove="data\Microsoft.Xaml.Behaviors.dll" />
     <None Remove="data\NSFWWords.json" />
@@ -66,6 +67,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Include="App.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="data\Icon.ico" />
   </ItemGroup>
 
@@ -76,7 +85,9 @@
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
     <PackageReference Include="MahApps.Metro" Version="2.4.9" />
-    <PackageReference Include="wix" Version="3.11.2" />
+    <PackageReference Include="wix" Version="3.10.4" />
+    <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
+    <PackageReference Include="XamlAnimatedGif" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -84,6 +95,7 @@
     <Resource Include="data\Discord.png" />
     <Resource Include="data\Github.png" />
     <Resource Include="data\Icon.ico" />
+    <Resource Include="data\Loading.gif" />
     <Resource Include="data\MahApps.Metro.dll" />
     <Resource Include="data\Microsoft.Xaml.Behaviors.dll" />
     <Resource Include="data\Patreon.png" />
@@ -136,17 +148,39 @@
     <Resource Include="data\WebScraping.png" />
     <Resource Include="data\Youtube.png" />
     <Resource Include="Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
     </Resource>
   </ItemGroup>
 
   <ItemGroup>
     <Compile Update="Settings.Designer.cs">
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="AboutWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="HelpWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="LinksWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="MainWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="SettingsWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="WebsiteStatusWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
   </ItemGroup>
 
 </Project>

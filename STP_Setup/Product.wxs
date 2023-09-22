@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"><?define SimpleThingsProvider_TargetDir=$(var.SimpleThingsProvider.TargetDir)?>
-	<Product Id="*" Name="Simple Things Provider" Language="1033" Version="1.0.3.1" Manufacturer="Backend2121" UpgradeCode="9c8751eb-af2f-437a-b5be-ea0a5eeb646c">
-		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+	<Product Id="*" Name="Simple Things Provider" Language="1033" Version="2.0.1.0" Manufacturer="Backend2121" UpgradeCode="9c8751eb-af2f-437a-b5be-ea0a5eeb646c">
+		<Package InstallerVersion="201" Compressed="yes" InstallScope="perMachine" />
 		<UIRef Id="WixUI_Minimal"/>
 		<WixVariable Id="WixUILicenseRtf" Value="$(var.ProjectDir)license.rtf" />
 		<MajorUpgrade
@@ -16,6 +16,8 @@
 			<ComponentRef Id="ApplicationShortcutDesktop" />
 			<ComponentRef Id="ControlzEx"/>
 			<ComponentRef Id="MahAppsMetro"/>
+			<ComponentRef Id="WpfAnimatedGif"/>
+			<ComponentRef Id="XamlAnimatedGif"/>
 		</Feature>
 	</Product>
 
@@ -73,6 +75,13 @@
 			</Component>
 			<Component Id="XamlBehaviors">
 				<File Id="Microsoft.Xaml.Behaviors.dll" Name="Microsoft.Xaml.Behaviors.dll" Source="$(var.SimpleThingsProvider_TargetDir)Microsoft.Xaml.Behaviors.dll"/>
+			</Component>
+			<Component Id="WpfAnimatedGif">
+				<File Id="WpfAnimatedGif.dll" Name="WpfAnimatedGif.dll" Source="$(var.SimpleThingsProvider_TargetDir)WpfAnimatedGif.dll"/>
+			</Component>
+			
+			<Component Id="XamlAnimatedGif">
+				<File Id="XamlAnimatedGif.dll" Name="XamlAnimatedGif.dll" Source="$(var.SimpleThingsProvider_TargetDir)XamlAnimatedGif.dll"/>
 			</Component>
 		</ComponentGroup>
 	</Fragment>
