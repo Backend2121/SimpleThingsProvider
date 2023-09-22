@@ -54,7 +54,7 @@
                 <TextBlock Padding="0,0,0,0" DockPanel.Dock="Right" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0" FontSize="16"><Run Language="it-it" Text="Youtube"/></TextBlock>
             </DockPanel>
         </Button>
-        <Label Content="Developed by: Backend2121&#xD;&#xA;" Margin="0,159,0,4" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center"/>
+        <Label Content="Made with love by: Backend2121&#xD;&#xA;" Margin="0,159,0,4" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center"/>
         <TextBox x:Name="SuperSecretCodeTextBox" Grid.Row="1" TextWrapping="Wrap" TextChanged="openEE" Height="14" Margin="370,159,10,4" FontSize="10"/>
     </Grid>
 </Window>
