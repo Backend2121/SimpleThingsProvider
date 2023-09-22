@@ -166,7 +166,7 @@ namespace SimpleThingsProvider
         public string getLink(string gameURL) { return null; }
         public async void checkUpdate()
         {
-            string repoURL = "https://raw.githubusercontent.com/Backend2121/SimpleThingsProvider/Development/ElAmigosModule/Info.json";
+            string repoURL = "https://raw.githubusercontent.com/Backend2121/SimpleThingsProvider/master/TPBModule/Info.json";
             HttpClient client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, repoURL);
             requestMessage.Headers.UserAgent.Add(new ProductInfoHeaderValue("User-Agent", "SimpleThingsProvider"));
