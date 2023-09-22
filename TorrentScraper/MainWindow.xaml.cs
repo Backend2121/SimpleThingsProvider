@@ -29,13 +29,14 @@ using System.Reflection.Metadata;
 using ControlzEx.Standard;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
+using Microsoft.VisualBasic.FileIO;
 
 namespace SimpleThingsProvider
 {
     public partial class MainWindow
     {
         List<string> underlying;
-        List<IModule> ImodulesList;
+        public List<IModule> ImodulesList;
         List<IExtension> IextensionsList;
         List<Result> results = new();
         HttpStatusCode code = new HttpStatusCode();
@@ -105,13 +106,13 @@ namespace SimpleThingsProvider
             // Load all dlls found inside the "Modules" folder
             try
             {
-                modules = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\Modules\\");
+                modules = Directory.GetFiles(SpecialDirectories.MyDocuments + "\\STP\\Modules\\");
             }
             catch(DirectoryNotFoundException e)
             {
-                Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\Modules");
+                Directory.CreateDirectory(SpecialDirectories.MyDocuments + "\\STP\\Modules");
             }
-            modules = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\Modules\\");
+            modules = Directory.GetFiles(SpecialDirectories.MyDocuments + "\\STP\\Modules\\");
 
             WebsiteSource.Items.Clear();
             foreach (string module in modules)
@@ -126,13 +127,13 @@ namespace SimpleThingsProvider
             string[] extensions;
             try
             {
-                extensions = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\Extensions\\");
+                extensions = Directory.GetFiles(SpecialDirectories.MyDocuments + "\\STP\\Extensions\\");
             }
             catch (DirectoryNotFoundException e)
             {
-                Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\Extensions");
+                Directory.CreateDirectory(SpecialDirectories.MyDocuments + "\\STP\\Extensions");
             }
-            extensions = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\Extensions\\");
+            extensions = Directory.GetFiles(SpecialDirectories.MyDocuments + "\\STP\\Extensions\\");
             foreach (string extension in extensions)
             {
                 if (extension.Contains("Extension.dll"))
@@ -237,7 +238,7 @@ namespace SimpleThingsProvider
             statusCodeWorker.RunWorkerCompleted += Worker_StatusCodeCompleted;
             statusCodeWorker.RunWorkerAsync(SearchTextBox.Text);
             // Loading gif
-            LoadingGif.Visibility = Visibility.Visible;
+            //LoadingGif.Visibility = Visibility.Visible;
         }
         private void Worker_Search(object? sender, DoWorkEventArgs e)
         {
@@ -255,7 +256,7 @@ namespace SimpleThingsProvider
             getResultsList().View = grid;
             getResultsList().ItemsSource = results;
             getResultsList().Visibility = Visibility.Visible;
-            LoadingGif.Visibility = Visibility.Hidden;
+            //LoadingGif.Visibility = Visibility.Hidden;
         }
         private void Worker_StatusCode(object? sender, DoWorkEventArgs e)
         {

@@ -14,8 +14,6 @@
         <Label Content="Simply because the website you are searching from doesn't have what you are searching for!" HorizontalAlignment="Left" Margin="15,135,0,0" VerticalAlignment="Top"/>
         <Label Content="Which VPN should i use?" HorizontalAlignment="Left" Margin="10,166,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
         <Label Content="Nothing particular, i would suggest using ProtonVPN since it's free!" HorizontalAlignment="Left" Margin="15,197,0,0" VerticalAlignment="Top"/>
-        <Label Content="Why NxBrew is unreachable?" HorizontalAlignment="Left" Margin="10,228,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-        <Label Content="NxBrew is locked behind a security check, some VPNs/proxys trigger it, some don't.&#xD;&#xA;If you are in the US you probably do not need a VPN/proxy to access it!" HorizontalAlignment="Left" Margin="15,259,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>

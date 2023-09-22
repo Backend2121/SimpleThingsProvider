@@ -1,11 +1,11 @@
-﻿<mah:MetroWindow
+﻿<!--xmlns:gif="http://wpfanimatedgif.codeplex.com"-->
+    <mah:MetroWindow
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:System="clr-namespace:System;assembly=System.Runtime" x:Class="SimpleThingsProvider.MainWindow"
-                 xmlns:gif="http://wpfanimatedgif.codeplex.com"
                  Title="Simple Things Provider"
                  Width="800"
                  Height="600"
@@ -78,7 +78,7 @@
             </DockPanel>
         </Button>
         <Label x:Name="StatusCodeLabel" Content="Status Code:" Margin="10,64,10,10" FontWeight="Bold" Grid.ColumnSpan="2"/>
-        <Image x:Name="LoadingGif" gif:ImageBehavior.AnimatedSource="Data/Loading.gif" Margin="10,79,10,8" Visibility="Hidden"/>
+        <!--<Image x:Name="LoadingGif" gif:ImageBehavior.AnimatedSource="Data/Loading.gif" Margin="10,79,10,8" Visibility="Hidden"/>-->
         <ListView x:Name="ResultsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,20,0,100" Grid.ColumnSpan="5" ToolTip="Results List" SelectionChanged="ResultsList_SelectionChanged" Visibility="Hidden" Grid.Row="1" Grid.RowSpan="2">
             <ListView.View>
                 <GridView>

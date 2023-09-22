@@ -34,7 +34,7 @@ namespace SimpleThingsProvider
         public DownloaderExtension()
         {
             extensionWindow = new DownloaderWindow();
-            //dw = (DownloaderWindow)extensionWindow;
+            dw = (DownloaderWindow)extensionWindow;
         }
         public Window getExtensionWindow() 
         {

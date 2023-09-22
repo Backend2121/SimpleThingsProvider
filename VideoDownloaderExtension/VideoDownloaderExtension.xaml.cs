@@ -1,4 +1,5 @@
-﻿using SimpleThingsProvider;
+﻿using Microsoft.VisualBasic.FileIO;
+using SimpleThingsProvider;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -146,7 +147,7 @@ namespace VideoDownloaderExtension
     public partial class VideoDownloaderWindow : Window
     {
         private YoutubeDL _ytdl = new YoutubeDL();
-        private RunResult<YoutubeDLSharp.Metadata.VideoData> runResult;
+        private RunResult<YoutubeDLSharp.Metadata.VideoData> runResult = null;
         private int downloadNumber = 0;
         private List<Pair> pairs = new List<Pair>();
         private Dictionary<string, string> formats = new Dictionary<string, string>();
@@ -157,21 +158,28 @@ namespace VideoDownloaderExtension
         public VideoDownloaderWindow()
         {
             InitializeComponent();
+            Debug.WriteLine("Hello World");
             FormatMenu.ItemsSource = formats;
             foreach (string key in formats.Keys)
             {
                 formatStrings.Add(key);
             }
             FormatMenu.ItemsSource = formatStrings;
-            JsonSettings jsonSettings = new JsonSettings("Configs", "VDW_Config.json", settings);
+            JsonSettings jsonSettings = new JsonSettings("Configs", "VD_Config.json", settings);
             settings = jsonSettings.loadFromJson();
+            Debug.WriteLine("Here 1");
             if (settings.Count <= 0)
             {
                 settings.Add("downloadPath", downloadPath);
                 settings.Add("tempDownloadPath", tempDownloadPath);
+                Debug.WriteLine("Here 2");
+                jsonSettings.saveToJson();
             }
+            
             downloadPath = settings["downloadPath"];
             tempDownloadPath = settings["tempDownloadPath"];
+            _ytdl.YoutubeDLPath = SpecialDirectories.MyDocuments + "\\STP\\Extensions\\yt-dlp.exe";
+            _ytdl.FFmpegPath = SpecialDirectories.MyDocuments + "\\STP\\Extensions\\ffmpeg.exe";
 
             // Add "header" grid containing infos about the columns
             DockPanel headers = new DockPanel();
@@ -218,6 +226,7 @@ namespace VideoDownloaderExtension
         }
         private async void DownloadButtonClick(object sender, RoutedEventArgs e)
         {
+            Debug.WriteLine("Button clicked");
             if (runResult != null)
             {
                 // Specify the format immediatly
@@ -227,46 +236,42 @@ namespace VideoDownloaderExtension
                 {
                     currentFormat = formats[FormatMenu.SelectedValue.ToString()];
                 }
-                JsonSettings jsonSettings = new JsonSettings("Configs", "VDW_Config.json", settings);
-                settings = jsonSettings.loadFromJson();
                 // Add new download bar to the listview
                 downloadNumber++;
                 DownloaderTemplate template = new DownloaderTemplate(downloadNumber, LinkBox.Text, "Title");
                 sp.Children.Add(template.e);
                 // Add click event to stop button
                 template.stopButton.Click += StopButton_Click;
-                // set the path of yt-dlp and FFmpeg if they're not in PATH or current directory
+                // Set the path of yt-dlp and FFmpeg if they're not in PATH or current directory
                 // Check if YtDl and FFmpeg are in the CWD
                 // Needed only for reconversions and post-processing operations
                 if (currentFormat == "aac" || currentFormat == "alac" || currentFormat == "flac" || currentFormat == "m4a" || currentFormat == "mp3" || currentFormat == "opus" || currentFormat == "vorbis" || currentFormat == "wav")
                 {
-                    if (!File.Exists("ffmpeg.exe"))
+                    if (!File.Exists(SpecialDirectories.MyDocuments + "\\STP\\Extensions\\" + "ffmpeg.exe"))
                     {
                         MessageBoxResult choice = AlertClass.Alert("You are missing a necessary component: ffmpeg.exe \n Would you like to download it?", "VD_Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                         if (choice == MessageBoxResult.Yes)
                         {
                             var msg = new AlertClass.CustomMessageBox("VD_Info", "Downloading...");
                             msg.Show();
-                            await YoutubeDLSharp.Utils.DownloadFFmpeg();
+                            await YoutubeDLSharp.Utils.DownloadFFmpeg(SpecialDirectories.MyDocuments + "\\STP\\Extensions");
                             msg.Close();
                             AlertClass.Alert("Done", "VD_Info", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
                     }
-                    if (!File.Exists("ffprobe.exe"))
+                    if (!File.Exists(SpecialDirectories.MyDocuments + "\\STP\\Extensions\\" + "ffprobe.exe"))
                     {
                         MessageBoxResult choice = AlertClass.Alert("You are missing a necessary component: ffprobe.exe \n Would you like to download it?", "VD_Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                         if (choice == MessageBoxResult.Yes)
                         {
                             var msg = new AlertClass.CustomMessageBox("VD_Info", "Downloading...");
                             msg.Show();
-                            await YoutubeDLSharp.Utils.DownloadFFprobe();
+                            await YoutubeDLSharp.Utils.DownloadFFprobe(SpecialDirectories.MyDocuments + "\\STP\\Extensions");
                             msg.Close();
                             AlertClass.Alert("Done", "VD_Info", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
                     }
                 }
-                _ytdl.YoutubeDLPath = "yt-dlp.exe";
-                _ytdl.FFmpegPath = "ffmpeg.exe";
 
                 var options = new OptionSet()
                 {
@@ -276,7 +281,6 @@ namespace VideoDownloaderExtension
                 };
                 options.AddCustomOption<string>("-P", settings["downloadPath"]);
                 options.AddCustomOption<string>("-P", "temp:" + settings["tempDownloadPath"]);
-                // --paths temp:name_of_tmp_dir
                 // Progress handler with a callback that updates a progress bar
                 Progress<DownloadProgress> progress = new Progress<DownloadProgress>(p => template.progressBar.Value = p.Progress * 100);
                 template.titleLabel.Content = runResult.Data.Title + " [" + currentFormat + "]";
@@ -348,27 +352,43 @@ namespace VideoDownloaderExtension
         private async void LinkBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             // Always needed
-            if (!File.Exists("yt-dlp.exe"))
+            if (!File.Exists(SpecialDirectories.MyDocuments + "\\STP\\Extensions\\" + "yt-dlp.exe"))
             {
                 MessageBoxResult choice = AlertClass.Alert("You are missing a necessary component: Yt-Dlp.exe \n Would you like to download it?", "VD_Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (choice == MessageBoxResult.Yes)
                 {
                     var msg = new AlertClass.CustomMessageBox("VD_Info", "Downloading...");
                     msg.Show();
-                    await YoutubeDLSharp.Utils.DownloadYtDlp();
+                    await YoutubeDLSharp.Utils.DownloadYtDlp(SpecialDirectories.MyDocuments + "\\STP\\Extensions");
                     msg.Close();
                     AlertClass.Alert("Done", "VD_Info", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
-            // Do this only if the textbox contains something that resemples a link using REGEX
+            // Do this only if the textbox contains something that resembles a link using REGEX
             runResult = await _ytdl.RunVideoDataFetch(LinkBox.Text);
             formats.Clear();
             if (runResult.Data != null)
             {
+                formats.Add("Best Audio+Video", "best");
+                formats.Add("Best Video", "bestvideo");
+                formats.Add("Best Audio", "bestaudio");
+                formats.Add("Worst Audio+Video", "worst");
+                formats.Add("Worst Video", "worstvideo");
+                formats.Add("Worst Audio", "worstaudio");
+                formats.Add("Convert to 'aac'", "aac");
+                formats.Add("Convert to 'flac'", "flac");
+                formats.Add("Convert to 'm4a'", "m4a");
+                formats.Add("Convert to 'mp3'", "mp3");
+                formats.Add("Convert to 'opus'", "opus");
+                formats.Add("Convert to 'vorbis'", "vorbis");
+                formats.Add("Convert to 'wav'", "wav");
                 foreach (FormatData item in runResult.Data.Formats)
                 {
                     formats.Add(item.Format, item.FormatId);
                 }
+            }
+            else
+            {
                 formats.Add("Best Audio+Video", "best");
                 formats.Add("Best Video", "bestvideo");
                 formats.Add("Best Audio", "bestaudio");

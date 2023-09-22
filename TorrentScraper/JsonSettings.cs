@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.FileIO;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -16,9 +17,9 @@ namespace SimpleThingsProvider
         private Dictionary<string, string> settings;
         public JsonSettings(string where, string fileName, Dictionary<string, string> pairs)
         {
-            directory = where;
+            directory = SpecialDirectories.MyDocuments + "\\STP\\" + where;
             file = fileName.Replace(".json", string.Empty);
-            file = file + ".json";
+            file += ".json";
             settings = pairs;
         }
         public void saveToJson()

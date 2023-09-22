@@ -204,6 +204,27 @@ namespace SimpleThingsProvider
                         });
                         break;
                     }
+                case "ElAmigos":
+                    try
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            Website elAmigos = new Website() { name = "ElAmigos", code = getStatus("https://www.elamigos-games.com/") };
+                            WebsiteList.Items.Add(elAmigos);
+                            Logger.Log($"Website {elAmigos.name} answered with {elAmigos.code} code", "WebsiteStatus");
+                        });
+                        break;
+                    }
+                    catch (System.Net.WebException err)
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            Website elAmigos = new Website() { name = "ElAmigos", code = HttpStatusCode.ServiceUnavailable, info = "Website is down or unreachable without a VPN or Proxy" };
+                            WebsiteList.Items.Add(elAmigos);
+                            Logger.Log($"Website {elAmigos.name} answered with {elAmigos.code} code, {err}", "WebsiteStatus");
+                        });
+                        break;
+                    }
             }
             
         }
