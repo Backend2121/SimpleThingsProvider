@@ -118,16 +118,21 @@ namespace SimpleThingsProvider
             WebsiteSource.Items.Clear();
             foreach (string module in modules)
             {
-                try
+                if (module.Contains("Module.dll"))
                 {
-                    dll = Assembly.LoadFrom(module);
-                    dllType = dll.GetType("SimpleThingsProvider." + module.Substring(module.LastIndexOf("\\") + 1, module.Length - module.LastIndexOf("\\") - 5));
-                    IModule m = (IModule)Activator.CreateInstance(dllType, new Object[] { });
-                    ImodulesList.Add(m);
-                    WebsiteSource.Items.Add(m.Name);
-                    m.checkUpdate();
+                    try
+                    {
+                        dll = Assembly.LoadFrom(module);
+                        dllType = dll.GetType("SimpleThingsProvider." + module.Substring(module.LastIndexOf("\\") + 1, module.Length - module.LastIndexOf("\\") - 5));
+                        IModule m = (IModule)Activator.CreateInstance(dllType, new Object[] { });
+                        ImodulesList.Add(m);
+                        WebsiteSource.Items.Add(m.Name);
+                        m.checkUpdate();
+                    }
+                    catch (FileLoadException e) { Alert("Unable to load " + module + " is it in the correct folder?", "Error"); continue; }
+                    catch (InvalidCastException e) { Alert("Unable to load " + module + " is it in the correct folder?", "Error"); continue; }
+                    catch (ArgumentNullException e) { Alert("Unable to load " + module + " is it in the correct folder?", "Error"); continue; }
                 }
-                catch(FileLoadException e ) { Alert("Unable to load " + module + " is it in the correct folder?", "Error"); continue; }
             }
             string[] extensions;
             try
@@ -155,6 +160,8 @@ namespace SimpleThingsProvider
                         e.checkUpdate();
                     }
                     catch (FileLoadException e) { Alert("Unable to load " + extension + " is it in the correct folder?", "Error"); continue; }
+                    catch (InvalidCastException e) { Alert("Unable to load " + extension + " is it in the correct folder?", "Error"); continue; }
+                    catch (ArgumentNullException e) { Alert("Unable to load " + extension + " is it in the correct folder?", "Error"); continue; }
                 }
             }
         }
