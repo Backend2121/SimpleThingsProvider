@@ -1,12 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"><?define SimpleThingsProvider_TargetDir=$(var.SimpleThingsProvider.TargetDir)?>
-	<Product Id="*" Name="Simple Things Provider" Language="1033" Version="2.0.1.0" Manufacturer="Backend2121" UpgradeCode="9c8751eb-af2f-437a-b5be-ea0a5eeb646c">
-		<Package InstallerVersion="201" Compressed="yes" InstallScope="perMachine" />
-		<UIRef Id="WixUI_Minimal"/>
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui"><?define SimpleThingsProvider_TargetDir=$(var.SimpleThingsProvider.TargetDir)?>
+	<Package Name="Simple Things Provider" Language="1033" Version="2.0.3.0" Manufacturer="Backend2121" UpgradeCode="9c8751eb-af2f-437a-b5be-ea0a5eeb646c" InstallerVersion="203">
+		
+		<ui:WixUI Id="WixUI_Minimal" />
 		<WixVariable Id="WixUILicenseRtf" Value="$(var.ProjectDir)license.rtf" />
-		<MajorUpgrade
-			Schedule="afterInstallInitialize"
-			DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit."/>
+		<MajorUpgrade Schedule="afterInstallInitialize" DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit." />
 		<MediaTemplate EmbedCab="yes" />
 		<Icon Id="icon.ico" SourceFile="$(var.ProjectDir)/Icon.ico" />
 		<Property Id="ARPPRODUCTICON" Value="icon.ico" />
@@ -14,24 +11,22 @@
 			<ComponentGroupRef Id="ProductComponents" />
 			<ComponentRef Id="ApplicationShortcut" />
 			<ComponentRef Id="ApplicationShortcutDesktop" />
-			<ComponentRef Id="ControlzEx"/>
-			<ComponentRef Id="MahAppsMetro"/>
-			<ComponentRef Id="WpfAnimatedGif"/>
-			<ComponentRef Id="XamlAnimatedGif"/>
+			<ComponentRef Id="ControlzEx" />
+			<ComponentRef Id="MahAppsMetro" />
+			<ComponentRef Id="WpfAnimatedGif" />
+			<ComponentRef Id="XamlAnimatedGif" />
 		</Feature>
-	</Product>
+	</Package>
 
 	<Fragment>
-		<Directory Id="TARGETDIR" Name="SourceDir">
-			<Directory Id="ProgramFilesFolder">
+			<StandardDirectory Id="ProgramFilesFolder">
 				<Directory Id="INSTALLFOLDER" Name="SimpleThingsProvider" />
-			</Directory>
-			<Directory Id="ProgramMenuFolder">
-				<Directory Id="ApplicationProgramsFolder" Name="SimpleThingsProvider"/>
-			</Directory>
-			<Directory Id="DesktopFolder" Name="Desktop"/>
-		</Directory>
-	</Fragment>
+			</StandardDirectory>
+			<StandardDirectory Id="ProgramMenuFolder">
+				<Directory Id="ApplicationProgramsFolder" Name="SimpleThingsProvider" />
+			</StandardDirectory>
+			<StandardDirectory Id="DesktopFolder" />
+		</Fragment>
 
 	<Fragment>
 		<DirectoryRef Id="ApplicationProgramsFolder">
@@ -41,13 +36,13 @@
 				<RegistryValue Root="HKCU" Key="Software\SimpleThingsProvider" Name="installed" Type="integer" Value="1" KeyPath="yes" />
 			</Component>
 		</DirectoryRef>
-		<DirectoryRef Id="DesktopFolder">
+		<StandardDirectory Id="DesktopFolder">
 			<Component Id="ApplicationShortcutDesktop" Guid="9B69FE87-88FA-499F-91C6-BC6B87039416">
 				<Shortcut Id="ApplicationDesktopShortcut" Name="SimpleThingsProvider" Description="SimpleThingsProvider" Target="[INSTALLFOLDER]SimpleThingsProvider.exe" WorkingDirectory="INSTALLFOLDER" />
 				<RemoveFolder Id="RemoveDesktopFolder" Directory="DesktopFolder" On="uninstall" />
 				<RegistryValue Root="HKCU" Key="Software\SimpleThingsProvider" Name="installed" Type="integer" Value="1" KeyPath="yes" />
 			</Component>
-		</DirectoryRef>
+		</StandardDirectory>
 	</Fragment>
 
 	<Fragment>
@@ -65,23 +60,23 @@
 				<File Id="SimpleThingsProvider.exe" Name="SimpleThingsProvider.exe" Source="$(var.SimpleThingsProvider_TargetDir)SimpleThingsProvider.exe" />
 			</Component>
 			<Component Id="NSFWWords">
-				<File Id="NSFWWords.json" Name="NSFWWords.json" Source="$(var.SimpleThingsProvider_TargetDir)NSFWWords.json"/>
+				<File Id="NSFWWords.json" Name="NSFWWords.json" Source="$(var.SimpleThingsProvider_TargetDir)NSFWWords.json" />
 			</Component>
 				<Component Id="MahAppsMetro">
 					<File Id="MahApps.Metro.dll" Name="MahApps.Metro.dll" Source="$(var.SimpleThingsProvider_TargetDir)MahApps.Metro.dll" />
 				</Component>
 			<Component Id="ControlzEx">
-				<File Id="ControlzEx.dll" Name="ControlzEx.dll" Source="$(var.SimpleThingsProvider_TargetDir)ControlzEx.dll"/>
+				<File Id="ControlzEx.dll" Name="ControlzEx.dll" Source="$(var.SimpleThingsProvider_TargetDir)ControlzEx.dll" />
 			</Component>
 			<Component Id="XamlBehaviors">
-				<File Id="Microsoft.Xaml.Behaviors.dll" Name="Microsoft.Xaml.Behaviors.dll" Source="$(var.SimpleThingsProvider_TargetDir)Microsoft.Xaml.Behaviors.dll"/>
+				<File Id="Microsoft.Xaml.Behaviors.dll" Name="Microsoft.Xaml.Behaviors.dll" Source="$(var.SimpleThingsProvider_TargetDir)Microsoft.Xaml.Behaviors.dll" />
 			</Component>
 			<Component Id="WpfAnimatedGif">
-				<File Id="WpfAnimatedGif.dll" Name="WpfAnimatedGif.dll" Source="$(var.SimpleThingsProvider_TargetDir)WpfAnimatedGif.dll"/>
+				<File Id="WpfAnimatedGif.dll" Name="WpfAnimatedGif.dll" Source="$(var.SimpleThingsProvider_TargetDir)WpfAnimatedGif.dll" />
 			</Component>
 			
 			<Component Id="XamlAnimatedGif">
-				<File Id="XamlAnimatedGif.dll" Name="XamlAnimatedGif.dll" Source="$(var.SimpleThingsProvider_TargetDir)XamlAnimatedGif.dll"/>
+				<File Id="XamlAnimatedGif.dll" Name="XamlAnimatedGif.dll" Source="$(var.SimpleThingsProvider_TargetDir)XamlAnimatedGif.dll" />
 			</Component>
 		</ComponentGroup>
 	</Fragment>

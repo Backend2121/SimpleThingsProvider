@@ -134,6 +134,8 @@ namespace SimpleThingsProvider
                     }
                 }
             }
+            Debug.WriteLine(_underlying);
+            Debug.WriteLine(_underlying.Count);
             return Tuple.Create(results, _underlying);
         }
         public HttpStatusCode search(string toSearch)
