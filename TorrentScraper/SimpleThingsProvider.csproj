@@ -7,6 +7,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>data\Icon.ico</ApplicationIcon>
     <Platforms>AnyCPU;x64</Platforms>
+    <StartupObject>SimpleThingsProvider.App</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
@@ -83,11 +84,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
-    <PackageReference Include="MahApps.Metro" Version="2.4.9" />
-    <PackageReference Include="wix" Version="3.10.4" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
+    <PackageReference Include="MahApps.Metro" Version="2.4.10" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
-    <PackageReference Include="XamlAnimatedGif" Version="2.1.1" />
+    <PackageReference Include="XamlAnimatedGif" Version="2.2.1" />
   </ItemGroup>
 
   <ItemGroup>
