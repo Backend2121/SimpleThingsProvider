@@ -14,7 +14,7 @@ namespace SimpleThingsProvider
     class VimmslairModule : IModule
     {
         public string Name { get { return "VimmsLair"; } set { } }
-        public string ModuleVersion { get { return "1.0.0"; } set { } }
+        public string ModuleVersion { get { return "1.0.1"; } set { } }
         public HtmlDocument Doc { get; set; }
         private List<string> _underlying;
         public bool needsSubSelector { get { return false; } }
@@ -64,7 +64,12 @@ namespace SimpleThingsProvider
         {
             _underlying = new List<string>();
             List<Result> results = new();
-            HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div[4]/div[2]/div/div[3]/table/tr");
+            // /html/body/div[2]/div[2]/div/main/table/tbody/tr
+            HtmlNodeCollection games = document.DocumentNode.SelectNodes("/html/body/div/div[2]/div[1]/main/table/tr");
+            foreach (HtmlNode node in games)
+            {
+                Debug.WriteLine(node.InnerText);
+            }
             Logger.Log($"Found {games.Count} results", "Websites (getResults - VimmsLair)");
             foreach (HtmlNode game in games)
             {
@@ -78,6 +83,7 @@ namespace SimpleThingsProvider
 
                     results.Add(new Result() { System = tds[0].InnerText, Title = title, Region = tds[2].FirstChild.Attributes["title"].Value, Version = tds[3].InnerText, Languages = tds[4].InnerText });
                     _underlying.Add("https://vimm.net" + tds[1].FirstChild.Attributes["href"].Value);
+                    Debug.WriteLine(tds[1].FirstChild.Attributes["href"].Value);
                 }
                 catch (NullReferenceException) { Logger.Log("No results found!", "Websites (getResults - VimmsLair)"); return Tuple.Create(new List<Result>(), new List<string>()); }
             }

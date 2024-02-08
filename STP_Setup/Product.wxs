@@ -1,7 +1,9 @@
+
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui"><?define SimpleThingsProvider_TargetDir=$(var.SimpleThingsProvider.TargetDir)?>
 	<Package Name="Simple Things Provider" Language="1033" Version="2.0.3.0" Manufacturer="Backend2121" UpgradeCode="9c8751eb-af2f-437a-b5be-ea0a5eeb646c" InstallerVersion="203">
 		
 		<ui:WixUI Id="WixUI_Minimal" />
+
 		<WixVariable Id="WixUILicenseRtf" Value="$(var.ProjectDir)license.rtf" />
 		<MajorUpgrade Schedule="afterInstallInitialize" DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit." />
 		<MediaTemplate EmbedCab="yes" />

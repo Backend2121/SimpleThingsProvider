@@ -11,6 +11,8 @@ THIS SOFTWARE MUST BE USED TO DOWNLOAD ONLY LEGALLY OWNED MEDIA! I DECLINE ANY R
 # FEATURES
 * User-friendly GUI
 * Game search functionality
+* Extendable features through Extensions
+* Extendable sources through Modules
 * Multiple Sources
 * Configurable Proxy
 * Update notifier
@@ -18,11 +20,13 @@ THIS SOFTWARE MUST BE USED TO DOWNLOAD ONLY LEGALLY OWNED MEDIA! I DECLINE ANY R
 * Light & Dark mode
 
 # SOURCES
-**x1337** for Torrents
+**x1337** for Torrents (Broken right now)
 
 **ThePirateBay** for Torrents
 
 **FitGirl** for PC Repacks
+
+**ElAmigos** for PC Games
 
 **RPGOnly** for Switch Games
 
@@ -35,6 +39,13 @@ THIS SOFTWARE MUST BE USED TO DOWNLOAD ONLY LEGALLY OWNED MEDIA! I DECLINE ANY R
 **WoWRoms** for old Games
 
 **Vimm's Lair** for old Games
+
+# HOW TO INSTALL
+Download "STP_Setup.msi", run it (smartscreen will probably block it), finish the installation by leaving everything as is and start downloading the Modules/Extensions you are interested in from the same page where you downloaded the Setup, extract the "STP" folder from the ".zip" file(s) inside your Documents folder and run STP!
+
+As an example for the path:
+C:\Users\{USER}\Documents\STP\Modules\SomethingModule.dll
+C:\Users\{USER}\Documents\STP\Extensions\SomethingExtension.dll
 
 # HOW TO USE
 Just type whatever you want to search from the selected website (in the drop-down menu) and press search!

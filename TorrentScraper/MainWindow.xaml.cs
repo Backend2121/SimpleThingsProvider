@@ -112,17 +112,27 @@ namespace SimpleThingsProvider
             {
                 Directory.CreateDirectory(SpecialDirectories.MyDocuments + "\\STP\\Modules");
             }
+            
             modules = Directory.GetFiles(SpecialDirectories.MyDocuments + "\\STP\\Modules\\");
 
             WebsiteSource.Items.Clear();
             foreach (string module in modules)
             {
-                dll = Assembly.LoadFrom(module);
-                dllType = dll.GetType("SimpleThingsProvider." + module.Substring(module.LastIndexOf("\\") + 1, module.Length - module.LastIndexOf("\\") - 5));
-                IModule m = (IModule)Activator.CreateInstance(dllType, new Object[] { });
-                ImodulesList.Add(m);
-                WebsiteSource.Items.Add(m.Name);
-                m.checkUpdate();
+                if (module.Contains("Module.dll"))
+                {
+                    try
+                    {
+                        dll = Assembly.LoadFrom(module);
+                        dllType = dll.GetType("SimpleThingsProvider." + module.Substring(module.LastIndexOf("\\") + 1, module.Length - module.LastIndexOf("\\") - 5));
+                        IModule m = (IModule)Activator.CreateInstance(dllType, new Object[] { });
+                        ImodulesList.Add(m);
+                        WebsiteSource.Items.Add(m.Name);
+                        m.checkUpdate();
+                    }
+                    catch (FileLoadException e) { Alert("Unable to load " + module + " is it in the correct folder?", "Error"); continue; }
+                    catch (InvalidCastException e) { Alert("Unable to load " + module + " is it in the correct folder?", "Error"); continue; }
+                    catch (ArgumentNullException e) { Alert("Unable to load " + module + " is it in the correct folder?", "Error"); continue; }
+                }
             }
             string[] extensions;
             try
@@ -138,14 +148,20 @@ namespace SimpleThingsProvider
             {
                 if (extension.Contains("Extension.dll"))
                 {
-                    dll = Assembly.LoadFrom(extension);
-                    dllType = dll.GetType("SimpleThingsProvider." + extension.Substring(extension.LastIndexOf("\\") + 1, extension.Length - extension.LastIndexOf("\\") - 5));
-                    IExtension e = (IExtension)Activator.CreateInstance(dllType, new Object[] { });
-                    IextensionsList.Add(e);
-                    addUIElements(e);
-                    ExtensionsMenu.Items.Add(e.Name);
-                    e.disableButton(OutputLabel);
-                    e.checkUpdate();
+                    try
+                    {
+                        dll = Assembly.LoadFrom(extension);
+                        dllType = dll.GetType("SimpleThingsProvider." + extension.Substring(extension.LastIndexOf("\\") + 1, extension.Length - extension.LastIndexOf("\\") - 5));
+                        IExtension e = (IExtension)Activator.CreateInstance(dllType, new Object[] { });
+                        IextensionsList.Add(e);
+                        addUIElements(e);
+                        ExtensionsMenu.Items.Add(e.Name);
+                        e.disableButton(OutputLabel);
+                        e.checkUpdate();
+                    }
+                    catch (FileLoadException e) { Alert("Unable to load " + extension + " is it in the correct folder?", "Error"); continue; }
+                    catch (InvalidCastException e) { Alert("Unable to load " + extension + " is it in the correct folder?", "Error"); continue; }
+                    catch (ArgumentNullException e) { Alert("Unable to load " + extension + " is it in the correct folder?", "Error"); continue; }
                 }
             }
         }
