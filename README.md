@@ -63,6 +63,6 @@ Finally, the site matters. The chances of receiving an ISP letter while using a 
 # DISCORD
 For any help with the software join the Discord and ask for help!
 
-![Discord Banner 1](https://discordapp.com/api/guilds/857306107113766912/widget.png?style=banner3)
+![Discord Banner 1]([https://discordapp.com/api/guilds/857306107113766912/widget.png?style=banner3](https://discord.com/invite/vBkxx7rR))
 
 # [TUTORIAL](https://youtu.be/49bENmhpf_s)
